@@ -1,0 +1,39 @@
+{
+  "name": "ERPFreezeFood",
+  "version": "1.0.0",
+  "description": "ERPFreezeFood",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "build": "next build",
+    "start": "NODE_ENV=production node server.js"
+  },
+  "keywords": [],
+  "author": "rattanapol",
+  "license": "ISC",
+  "dependencies": {
+    "@zeit/next-css": "^1.0.1",
+    "antd": "^3.11.0",
+    "axios": "^0.18.0",
+    "babel-plugin-import": "^1.11.0",
+    "cookie-parser": "^1.4.4",
+    "dotenv": "^6.1.0",
+    "dotenv-webpack": "^1.5.7",
+    "express": "^4.16.4",
+    "lodash": "^4.17.11",
+    "mongoose": "^5.4.5",
+    "next": "7.0.2",
+    "nodemon": "^1.18.10",
+    "react": "^16.7.0",
+    "react-dom": "^16.4.2",
+    "react-redux": "^5.0.1",
+    "redux": "^3.6.0",
+    "redux-devtools-extension": "^2.13.2",
+    "redux-thunk": "^2.1.0",
+    "styled-components": "^4.1.2"
+  },
+  "devDependencies": {
+    "babel-plugin-antd": "^0.5.1",
+    "babel-plugin-styled-components": "^1.9.2"
+  }
+}
