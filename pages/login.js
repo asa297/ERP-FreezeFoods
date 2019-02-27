@@ -4,12 +4,7 @@ import { authInitialProps } from "<utils>/auth";
 
 class Login extends React.PureComponent {
   render() {
-    return (
-      <Layout>
-        <Sider auth={this.props.auth} />
-        <LoginForm />
-      </Layout>
-    );
+    return <LoginForm />;
   }
 }
 

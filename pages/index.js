@@ -12,13 +12,7 @@ class Index extends React.PureComponent {
   }
 
   render() {
-    return (
-      <Layout>
-        <Sider auth={this.props.auth} />
-
-        <h1>test</h1>
-      </Layout>
-    );
+    return <h1>test</h1>;
   }
 }
 
