@@ -11,7 +11,7 @@ class MyApp extends App {
     return (
       <Container>
         <Head>
-          <title>Rattanapol Black Jack Game</title>
+          <title>Freeze Food</title>
         </Head>
         <Provider store={reduxStore}>
           <Component {...pageProps} />

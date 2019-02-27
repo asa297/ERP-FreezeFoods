@@ -10,15 +10,13 @@ const next = require("next");
 const dev = process.env.NODE_ENV !== "production";
 const nextApp = next({ dev });
 const handle = nextApp.getRequestHandler();
-// const mongoose = require("mongoose");
+const mongoose = require("mongoose");
 
 //require
 require("dotenv").config();
-// require("./models/ScoreModel");
+require("./models/UserModel");
 
-// mongoose.connect(`${process.env.DB}`);
-
-// const COOKIE_SECRET = "asldkfjals23ljk";
+mongoose.connect(`${process.env.DB}`);
 
 app.use(express.json());
 app.use(cookieParser(process.env.COOKIE_SECRET));

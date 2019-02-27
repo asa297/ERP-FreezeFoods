@@ -50,8 +50,8 @@ const redirectUser = (res, path) => {
   return {};
 };
 
-export const loginUser = async (email, password) => {
-  const { data } = await axios.post("/api/login", { email, password });
+export const loginUser = async (Username, Password) => {
+  const { data } = await axios.post("/api/login", { Username, Password });
   if (typeof window !== "undefined") {
     window[WINDOW_USER_SCRIPT_VARIABLE] = data || {};
   }

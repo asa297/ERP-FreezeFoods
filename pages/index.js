@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { authInitialProps } from "<utils>/auth";
 import { testaction } from "<actions>";
 import { Layout } from "antd";
-import Silder from "<components>/Sider";
+import { Sider } from "<components>";
 
 class Index extends React.PureComponent {
   componentWillMount() {
@@ -12,10 +12,9 @@ class Index extends React.PureComponent {
   }
 
   render() {
-    console.log(this.props);
     return (
       <Layout>
-        <Silder auth={this.props.auth} />
+        <Sider auth={this.props.auth} />
 
         <h1>test</h1>
       </Layout>
@@ -25,7 +24,6 @@ class Index extends React.PureComponent {
 
 Index.getInitialProps = ctx => {
   const { auth } = authInitialProps()(ctx);
-
   return { auth };
 };
 
