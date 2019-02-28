@@ -1,6 +1,6 @@
 import { Layout } from "antd";
-import { Sider, LoginForm } from "<components>";
-import { authInitialProps } from "<utils>/auth";
+import { LoginForm } from "<components>";
+import { authInitialProps, checkUserRole } from "<utils>/auth";
 
 class Login extends React.PureComponent {
   render() {
@@ -10,6 +10,7 @@ class Login extends React.PureComponent {
 
 Login.getInitialProps = ctx => {
   const { auth } = authInitialProps()(ctx);
+
   return { auth };
 };
 

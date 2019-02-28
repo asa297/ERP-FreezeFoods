@@ -53,6 +53,7 @@ module.exports = app => {
       return res.status(403).send("Invalid email or password");
 
     const userData = {
+      _id: userInDB._id,
       name: userInDB.Name,
       username: userInDB.Username,
       type: AUTH_USER_TYPE
@@ -66,16 +67,28 @@ module.exports = app => {
     res.sendStatus(204);
   });
 
-  app.get("/api/profile", async (req, res) => {
-    const { signedCookies = {} } = req;
-    const { token } = signedCookies;
-    if (token && token.email) {
-      const { data } = await axios.get(
-        "https://jsonplaceholder.typicode.com/users"
-      );
-      const userProfile = data.find(user => user.email === token.email);
-      return res.json({ user: userProfile });
-    }
-    res.sendStatus(404);
-  });
+  // app.get("/api/profile", async (req, res) => {
+  //   const { signedCookies = {} } = req;
+  //   const { token } = signedCookies;
+  //   if (token && token.email) {
+  //     const { data } = await axios.get(
+  //       "https://jsonplaceholder.typicode.com/users"
+  //     );
+  //     const userProfile = data.find(user => user.email === token.email);
+  //     return res.json({ user: userProfile });
+  //   }
+  //   res.sendStatus(404);
+  // });
+
+  // app.get("/api/checkRole", async (req, res) => {
+  //   const { _id } = req.params;
+  //   const userInDB = await User.findById(_id, { Role: 1 });
+
+  //   if (userInDB) {
+  //     console.log(userInDB);
+  //     res.send();
+  //   }
+
+  //   res.status(404);
+  // });
 };

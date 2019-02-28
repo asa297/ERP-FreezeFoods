@@ -9,14 +9,14 @@ import { Layout } from "antd";
 class MyApp extends App {
   render() {
     const { Component, pageProps, reduxStore } = this.props;
-
+    // console.log(pageProps, "app");
     return (
       <Container>
         <Head>
           <title>Freeze Food</title>
         </Head>
         <Layout>
-          <Sider />
+          <Sider {...pageProps} />
           <Provider store={reduxStore}>
             <Component {...pageProps} />
           </Provider>

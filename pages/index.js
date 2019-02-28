@@ -1,10 +1,8 @@
 // import Layout from "../components/Layout";
-import Link from "next/link";
+
 import { connect } from "react-redux";
 import { authInitialProps } from "<utils>/auth";
 import { testaction } from "<actions>";
-import { Layout } from "antd";
-import { Sider } from "<components>";
 
 class Index extends React.PureComponent {
   componentWillMount() {
@@ -18,6 +16,7 @@ class Index extends React.PureComponent {
 
 Index.getInitialProps = ctx => {
   const { auth } = authInitialProps()(ctx);
+
   return { auth };
 };
 
