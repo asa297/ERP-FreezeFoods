@@ -1,21 +1,17 @@
 // import Layout from "../components/Layout";
 
 import { connect } from "react-redux";
-import { authInitialProps } from "<utils>/auth";
+import { authInitialProps, checkUserRole } from "<utils>/auth";
 import { testaction } from "<actions>";
 
 class Index extends React.PureComponent {
-  componentWillMount() {
-    this.props.testaction();
-  }
-
   render() {
     return <h1>test</h1>;
   }
 }
 
-Index.getInitialProps = ctx => {
-  const { auth } = authInitialProps()(ctx);
+Index.getInitialProps = async ctx => {
+  const { auth } = await authInitialProps()(ctx);
 
   return { auth };
 };

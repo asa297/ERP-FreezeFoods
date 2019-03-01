@@ -56,6 +56,7 @@ module.exports = app => {
       _id: userInDB._id,
       name: userInDB.Name,
       username: userInDB.Username,
+      role: userInDB.Role,
       type: AUTH_USER_TYPE
     };
     res.cookie("token", userData, COOKIE_OPTIONS);
@@ -63,22 +64,10 @@ module.exports = app => {
   });
 
   app.post("/api/logout", (req, res) => {
+    console.log("logout na");
     res.clearCookie("token", COOKIE_OPTIONS);
     res.sendStatus(204);
   });
-
-  // app.get("/api/profile", async (req, res) => {
-  //   const { signedCookies = {} } = req;
-  //   const { token } = signedCookies;
-  //   if (token && token.email) {
-  //     const { data } = await axios.get(
-  //       "https://jsonplaceholder.typicode.com/users"
-  //     );
-  //     const userProfile = data.find(user => user.email === token.email);
-  //     return res.json({ user: userProfile });
-  //   }
-  //   res.sendStatus(404);
-  // });
 
   app.get("/api/checkRole/:id", async (req, res) => {
     const { id } = req.params;

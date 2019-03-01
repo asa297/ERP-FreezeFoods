@@ -8,9 +8,8 @@ class Login extends React.PureComponent {
   }
 }
 
-Login.getInitialProps = ctx => {
-  const { auth } = authInitialProps()(ctx);
-
+Login.getInitialProps = async ctx => {
+  const { auth } = await authInitialProps()(ctx);
   return { auth };
 };
 

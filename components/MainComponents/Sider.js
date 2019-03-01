@@ -8,7 +8,8 @@ import { isEmpty } from "lodash";
 const { Sider } = Layout;
 const SubMenu = Menu.SubMenu;
 
-const SiderComponent = ({ auth }) => {
+const SiderComponent = ({ auth, UserRole }) => {
+  console.log("UserRole", auth);
   const [collapsed, setCollapsed] = useState(true);
   return (
     <SiderContainer

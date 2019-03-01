@@ -30,7 +30,7 @@ export const getUserScript = user => {
 };
 
 export const authInitialProps = isProtectedRoute => ({ req, res }) => {
-  const auth = req ? getServerSideToken(req) : getClientSideToken();
+  let auth = req ? getServerSideToken(req) : getClientSideToken();
   const currentPath = req ? req.url : window.location.pathname;
   const user = auth ? auth.user : false;
 
@@ -57,7 +57,6 @@ export const loginUser = async (Username, Password) => {
   if (typeof window !== "undefined") {
     window[WINDOW_USER_SCRIPT_VARIABLE] = data || undefined;
     Router.push("/");
-    // redirectUser(res, "/");
   }
 };
 
@@ -65,7 +64,6 @@ export const logoutUser = async () => {
   if (typeof window !== "undefined") {
     window[WINDOW_USER_SCRIPT_VARIABLE] = undefined;
     Router.push("/");
-    // redirectUser(res, "/");
   }
   await axios.post("/api/logout");
 };
@@ -78,19 +76,26 @@ export const getUserProfile = async () => {
 export const checkUserRole = auth => async ({ req, res }) => {
   if (auth) {
     const {
-      user: { _id }
+      user: { _id, role }
     } = auth;
     const baseUrl = req ? `${req.protocol}://${req.get("Host")}` : "";
     const { data, status } = await axios.get(baseUrl + "/api/checkRole/" + _id);
 
-    if (status !== 200) return redirectUser(res, "/");
+    if (status !== 200) redirectUser(res, "/");
     const { UserRole } = data;
+    if (role !== UserRole) {
+      res.clearCookie("token");
+      return redirectUser(res, "/");
+    }
     const path = RoleMappingRoute.find(l => l.path === req.url);
     if (!path) return redirectUser(res, "/");
     const hasPermission = path.role.find(role => role === UserRole);
-
     if (!hasPermission) return redirectUser(res, "/");
   } else {
     return redirectUser(res, "/");
   }
+
+  return {};
 };
+
+// export const MenuRender
