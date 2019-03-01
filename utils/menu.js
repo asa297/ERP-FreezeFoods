@@ -1,5 +1,6 @@
 import { Menu, Icon } from "antd";
 import { MenuItem } from "<components>";
+import { logoutUser } from "<utils>/auth";
 import { RoleMappingRoute } from "../static/data.json";
 import Router from "next/router";
 const SubMenu = Menu.SubMenu;

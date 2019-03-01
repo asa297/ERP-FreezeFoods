@@ -2,12 +2,10 @@ import React, { useState } from "react";
 import { Layout, Menu, Icon } from "antd";
 import styled from "styled-components";
 import Router from "next/router";
-import { logoutUser } from "<utils>/auth";
+
 import { MenuManage } from "<utils>/menu";
-import { isEmpty } from "lodash";
 
 const { Sider } = Layout;
-const SubMenu = Menu.SubMenu;
 
 const SiderComponent = ({ auth }) => {
   // console.log("UserRole", auth);
