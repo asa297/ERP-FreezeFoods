@@ -80,15 +80,11 @@ module.exports = app => {
   //   res.sendStatus(404);
   // });
 
-  // app.get("/api/checkRole", async (req, res) => {
-  //   const { _id } = req.params;
-  //   const userInDB = await User.findById(_id, { Role: 1 });
+  app.get("/api/checkRole/:id", async (req, res) => {
+    const { id } = req.params;
 
-  //   if (userInDB) {
-  //     console.log(userInDB);
-  //     res.send();
-  //   }
-
-  //   res.status(404);
-  // });
+    const userInDB = await User.findById(id, { Role: 1 });
+    if (!userInDB) res.status(404).send("Roke is invalid");
+    res.send({ UserRole: userInDB.Role });
+  });
 };

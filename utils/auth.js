@@ -1,5 +1,6 @@
 import axios from "axios";
 import Router from "next/router";
+import { RoleMappingRoute } from "../static/data.json";
 
 axios.defaults.withCredentials = true;
 
@@ -74,15 +75,22 @@ export const getUserProfile = async () => {
   return data;
 };
 
-// export const checkUserRole = auth => async ({ req, res }) => {
-//   if (auth) {
-//     const {
-//       user: { _id }
-//     } = auth;
-//     axios.get("/api/checkRole", { _id }).then(test => {
-//       console.log(test);
-//     });
+export const checkUserRole = auth => async ({ req, res }) => {
+  if (auth) {
+    const {
+      user: { _id }
+    } = auth;
+    const baseUrl = req ? `${req.protocol}://${req.get("Host")}` : "";
+    const { data, status } = await axios.get(baseUrl + "/api/checkRole/" + _id);
 
-// console.log(data);
-// }
-// };
+    if (status !== 200) return redirectUser(res, "/");
+    const { UserRole } = data;
+    const path = RoleMappingRoute.find(l => l.path === req.url);
+    if (!path) return redirectUser(res, "/");
+    const hasPermission = path.role.find(role => role === UserRole);
+
+    if (!hasPermission) return redirectUser(res, "/");
+  } else {
+    return redirectUser(res, "/");
+  }
+};
