@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Layout, Menu, Icon } from "antd";
 import styled from "styled-components";
 import Router from "next/router";
 import { logoutUser } from "<utils>/auth";
+import { MenuManage } from "<utils>/menu";
 import { isEmpty } from "lodash";
 
 const { Sider } = Layout;
 const SubMenu = Menu.SubMenu;
 
-const SiderComponent = ({ auth, UserRole }) => {
-  console.log("UserRole", auth);
+const SiderComponent = ({ auth }) => {
+  // console.log("UserRole", auth);
   const [collapsed, setCollapsed] = useState(true);
   return (
     <SiderContainer
@@ -20,7 +21,6 @@ const SiderComponent = ({ auth, UserRole }) => {
       <div className="logo">
         <TextInLogo>{auth ? auth.user.name : "Guest"}</TextInLogo>
       </div>
-
       {!auth ? (
         <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
           <Menu.Item key="1" onClick={() => Router.push("/")}>
@@ -33,22 +33,9 @@ const SiderComponent = ({ auth, UserRole }) => {
           </Menu.Item>
         </Menu>
       ) : (
-        <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
-          <Menu.Item key="1" onClick={() => Router.push("/")}>
-            <Icon type="home" />
-            <span>Home</span>
-          </Menu.Item>
-          <Menu.Item
-            key="999"
-            onClick={() => {
-              logoutUser();
-            }}
-          >
-            <Icon type="unlock" />
-            <span>Logout</span>
-          </Menu.Item>
-        </Menu>
+        MenuManage({ UserRole: auth.user.role })
       )}
+      }
     </SiderContainer>
   );
 };
