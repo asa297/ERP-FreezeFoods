@@ -18,6 +18,8 @@ require("./models/UserModel");
 
 mongoose.connect(`${process.env.DB}`);
 
+console.log("db", process.env.DB);
+
 app.use(express.json());
 app.use(cookieParser(process.env.COOKIE_SECRET));
 
