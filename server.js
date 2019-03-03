@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const server = require("http").createServer(app);
 const cookieParser = require("cookie-parser");
-
+const port = process.env.PORT || 3000;
 const next = require("next");
 
 // const bodyParser = require("body-parser");
@@ -30,7 +30,7 @@ nextApp
       return handle(req, res);
     });
 
-    server.listen(3000, err => {
+    server.listen(port, err => {
       if (err) throw err;
       console.log("> Ready on http://localhost:3000");
     });
