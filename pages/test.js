@@ -13,8 +13,9 @@ class Test extends React.PureComponent {
 
 Test.getInitialProps = async ctx => {
   const { auth } = await authInitialProps(true)(ctx);
-
-  await checkUserRole(auth)(ctx);
+  if (auth) {
+    await checkUserRole(auth)(ctx);
+  }
 
   return { auth };
 };

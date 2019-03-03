@@ -34,7 +34,6 @@ export const authInitialProps = isProtectedRoute => ({ req, res }) => {
   const currentPath = req ? req.url : window.location.pathname;
   const user = auth ? auth.user : false;
 
-  console.log("currentPath", currentPath);
   const isAnonymous = !user || user.type !== "authenticated";
   if (isProtectedRoute && isAnonymous && currentPath !== "/login") {
     return redirectUser(res, "/login");
@@ -49,7 +48,7 @@ const redirectUser = (res, path) => {
     res.finished = true;
     return {};
   }
-  Router.replace(path);
+  // Router.replace(path);
   return {};
 };
 
@@ -82,7 +81,7 @@ export const checkUserRole = auth => async ({ req, res }) => {
     const baseUrl = req ? `${req.protocol}://${req.get("Host")}` : "";
     const { data, status } = await axios.get(baseUrl + "/api/checkRole/" + _id);
 
-    if (status !== 200) redirectUser(res, "/");
+    if (status !== 200) return redirectUser(res, "/");
     const { UserRole } = data;
     if (role !== UserRole) {
       res.clearCookie("token");
@@ -97,6 +96,4 @@ export const checkUserRole = auth => async ({ req, res }) => {
   } else {
     return redirectUser(res, "/");
   }
-
-  return {};
 };
