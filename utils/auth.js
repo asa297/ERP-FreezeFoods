@@ -34,6 +34,7 @@ export const authInitialProps = isProtectedRoute => ({ req, res }) => {
   const currentPath = req ? req.url : window.location.pathname;
   const user = auth ? auth.user : false;
 
+  console.log("currentPath", currentPath);
   const isAnonymous = !user || user.type !== "authenticated";
   if (isProtectedRoute && isAnonymous && currentPath !== "/login") {
     return redirectUser(res, "/login");
