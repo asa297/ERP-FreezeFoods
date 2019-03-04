@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
 import { authInitialProps, checkUserRole } from "<utils>/auth";
-import { GetItemCategory } from "<actions>";
+import { test } from "<actions>";
 import { Table } from "antd";
 
 const columns = [
@@ -17,6 +17,10 @@ const columns = [
 ];
 
 class List extends React.PureComponent {
+  componentWillMount() {
+    this.props.test();
+  }
+
   render() {
     return <Table dataSource={[]} columns={columns} />;
   }
@@ -27,11 +31,8 @@ List.getInitialProps = async ctx => {
 
   if (auth) {
     await checkUserRole(auth)(ctx);
-    // console.log(ctx);
-    // console.log(ctx);
-    ctx.reduxStore.dispatch(GetItemCategory());
 
-    // await store.dispatch(fetchPortfolio())
+    // ctx.reduxStore.dispatch(test(ctx));
   }
 
   return { auth };
@@ -39,5 +40,5 @@ List.getInitialProps = async ctx => {
 
 export default connect(
   ({ ItemCategoryReducer }) => ({ ItemCategoryReducer }),
-  null
+  { test }
 )(List);

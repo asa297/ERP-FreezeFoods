@@ -1,4 +1,5 @@
 const { Client } = require("pg");
+const isAuthenticated = require("../middlewares/Authenticated");
 
 const client = new Client({
   connectionString: process.env.DB_SQL,
@@ -28,12 +29,22 @@ module.exports = app => {
     // res.status(400).send();
   });
 
-  app.post("/api/testna", async (req, res) => {
+  app.get("/api/testna", async (req, res) => {
     client.query("SELECT * from item_category", (err, res) => {
       if (err) throw err;
       console.log(res.rows);
       client.end();
     });
+    res.send();
+  });
+
+  app.get("/api/au", isAuthenticated, (req, res) => {
+    // client.query("SELECT * from item_category", (err, res) => {
+    //   if (err) throw err;
+    //   console.log(res.rows);
+    //   client.end();
+    // });
+
     res.send();
   });
 };

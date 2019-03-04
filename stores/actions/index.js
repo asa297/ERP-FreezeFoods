@@ -1,5 +1,6 @@
 import { actionTypes } from "../type";
 import axios from "axios";
+axios.defaults.withCredentials = true;
 
 export const InsertItemCategory = value => async dispatch => {
   const { status, data } = await axios.post("/api/itemcate", value);
@@ -11,4 +12,9 @@ export const InsertItemCategory = value => async dispatch => {
 
 export const GetItemCategory = () => async dispatch => {
   console.log("kuy");
+};
+
+export const test = () => async dispatch => {
+  // const baseUrl = req ? `${req.protocol}://${req.get("Host")}` : "";
+  const au = await axios.get("/api/au").catch(e => null);
 };
