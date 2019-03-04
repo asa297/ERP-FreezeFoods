@@ -1,15 +1,40 @@
+import { connect } from "react-redux";
 import { authInitialProps, checkUserRole } from "<utils>/auth";
+import { GetItemCategory } from "<actions>";
+import { Table } from "antd";
 
-class Test extends React.PureComponent {
+const columns = [
+  {
+    title: "Id",
+    dataIndex: "name",
+    key: "name"
+  },
+  {
+    title: "Name",
+    dataIndex: "name",
+    key: "name"
+  }
+];
+
+class List extends React.PureComponent {
   render() {
-    return <button onClick={() => this.test()}>11111</button>;
+    return <Table dataSource={[]} columns={columns} />;
   }
 }
 
-Test.getInitialProps = async ctx => {
+List.getInitialProps = async ctx => {
   const { auth } = await authInitialProps(true)(ctx);
+  console.log(ctx);
+  if (auth) {
+    await checkUserRole(auth)(ctx);
+    // console.log(ctx);
+    // ctx.store.dispatch(GetItemCategory());
+  }
 
   return { auth };
 };
 
-export default Test;
+export default connect(
+  ({ ItemCategoryReducer }) => ({ ItemCategoryReducer }),
+  null
+)(List);

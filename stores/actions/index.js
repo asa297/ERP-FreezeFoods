@@ -8,3 +8,7 @@ export const InsertItemCategory = value => async dispatch => {
     return { status: true };
   }
 };
+
+export const GetItemCategory = () => async dispatch => {
+  console.log("test");
+};

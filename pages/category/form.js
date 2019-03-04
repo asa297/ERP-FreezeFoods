@@ -7,7 +7,7 @@ import { Formik, Field } from "formik";
 import { Button } from "antd";
 import styled from "styled-components";
 
-class Test extends React.PureComponent {
+class Form extends React.PureComponent {
   state = {
     loading: false
   };
@@ -68,7 +68,7 @@ class Test extends React.PureComponent {
   }
 }
 
-Test.getInitialProps = async ctx => {
+Form.getInitialProps = async ctx => {
   const { auth } = await authInitialProps(true)(ctx);
   if (auth) {
     await checkUserRole(auth)(ctx);
@@ -80,7 +80,7 @@ Test.getInitialProps = async ctx => {
 export default connect(
   null,
   { InsertItemCategory }
-)(Test);
+)(Form);
 
 const MasterContanier = styled.div`
   display: flex;
