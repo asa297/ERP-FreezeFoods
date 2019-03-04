@@ -10,5 +10,5 @@ export const InsertItemCategory = value => async dispatch => {
 };
 
 export const GetItemCategory = () => async dispatch => {
-  console.log("test");
+  console.log("kuy");
 };

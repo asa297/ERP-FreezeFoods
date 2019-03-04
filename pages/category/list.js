@@ -24,11 +24,14 @@ class List extends React.PureComponent {
 
 List.getInitialProps = async ctx => {
   const { auth } = await authInitialProps(true)(ctx);
-  console.log(ctx);
+
   if (auth) {
     await checkUserRole(auth)(ctx);
     // console.log(ctx);
-    // ctx.store.dispatch(GetItemCategory());
+    // console.log(ctx);
+    ctx.reduxStore.dispatch(GetItemCategory());
+
+    // await store.dispatch(fetchPortfolio())
   }
 
   return { auth };
