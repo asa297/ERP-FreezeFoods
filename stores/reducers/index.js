@@ -1,7 +1,7 @@
 import { combineReducers } from "redux";
 
-import PlayerCardReducer from "./PlayerCardReducer";
+import ItemCategoryReducer from "./ItemCategoryReducer";
 
 export default combineReducers({
-  PlayerCardReducer
+  ItemCategoryReducer
 });

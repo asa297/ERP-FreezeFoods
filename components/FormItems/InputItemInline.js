@@ -12,17 +12,23 @@ const InputItem = ({
   return (
     <div>
       <FlexContainer>
-        <label>{label}</label>
-        {requireStar === "true" ? <LabelRequire>*</LabelRequire> : null}
+        <LabelContainer>
+          <label>{label}</label>
+          {requireStar === "true" ? <LabelRequire>*</LabelRequire> : null}
+        </LabelContainer>
+        <InputContainer>
+          <InputForm
+            type="text"
+            {...field}
+            {...props}
+            border={errors[field.name] ? "1px solid red" : null}
+          />
+
+          <div className="error">
+            {(touched[field.name] && errors[field.name]) || errors[field.name]}
+          </div>
+        </InputContainer>
       </FlexContainer>
-      <InputForm
-        {...field}
-        {...props}
-        border={errors[field.name] ? "1px solid red" : null}
-      />
-      <div className="error">
-        {(touched[field.name] && errors[field.name]) || errors[field.name]}
-      </div>
     </div>
   );
 };
@@ -31,7 +37,10 @@ export default InputItem;
 
 const FlexContainer = styled.div`
   display: flex;
-  padding: 5px 0px;
+`;
+const FlexContainerCenter = styled.div`
+  display: flex;
+  align-items: center;
 `;
 
 const LabelRequire = styled.div`
@@ -55,5 +64,4 @@ const LabelContainer = styled.label`
   display: flex;
   padding: 5px 15px;
   white-space: nowrap;
-  width: 10%;
 `;

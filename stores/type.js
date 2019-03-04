@@ -1,3 +1,3 @@
 export const actionTypes = {
-  TEST_ACTION: "TEST_ACTION"
+  SAVE_ITEMCATE: "SAVE_ITEMCATE"
 };

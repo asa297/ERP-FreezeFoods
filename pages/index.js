@@ -1,8 +1,4 @@
-// import Layout from "../components/Layout";
-
-import { connect } from "react-redux";
 import { authInitialProps, checkUserRole } from "<utils>/auth";
-import { testaction } from "<actions>";
 
 class Index extends React.PureComponent {
   render() {
@@ -16,7 +12,4 @@ Index.getInitialProps = async ctx => {
   return { auth };
 };
 
-export default connect(
-  ({ PlayerCardReducer }) => ({ PlayerCardReducer }),
-  { testaction }
-)(Index);
+export default Index;

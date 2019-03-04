@@ -1,8 +1,10 @@
 import { actionTypes } from "../type";
 import axios from "axios";
 
-export const testaction = () => dispatch => {
-  const data = { au: "test" };
-
-  dispatch({ type: actionTypes.TEST_ACTION, payload: data });
+export const InsertItemCategory = value => async dispatch => {
+  const { status, data } = await axios.post("/api/itemcate", value);
+  if (status === 200) {
+    dispatch({ type: actionTypes.SAVE_ITEMCATE, payload: data });
+    return { status: true };
+  }
 };

@@ -1,11 +1,11 @@
 import { actionTypes } from "../type";
 
-const initState = null;
+const initState = [];
 
 export default function(state = initState, action) {
   switch (action.type) {
-    case actionTypes.TEST_ACTION:
-      return { ...action.payload };
+    case actionTypes.SAVE_ITEMCATE:
+      return [...state, ...[action.payload.result]];
     default:
       return state;
   }
