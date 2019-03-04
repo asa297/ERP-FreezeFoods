@@ -13,12 +13,11 @@ const handle = nextApp.getRequestHandler();
 const mongoose = require("mongoose");
 
 //require
+
 require("dotenv").config();
 require("./models/UserModel");
 
 mongoose.connect(`${process.env.DB}`);
-
-console.log("db", process.env.DB);
 
 app.use(express.json());
 app.use(cookieParser(process.env.COOKIE_SECRET));
@@ -27,6 +26,7 @@ nextApp
   .prepare()
   .then(() => {
     require("./routes/AuthRoute")(app);
+    require("./routes/ManageRoute")(app);
 
     app.get("*", (req, res) => {
       return handle(req, res);
