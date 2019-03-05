@@ -11,6 +11,7 @@ const dev = process.env.NODE_ENV !== "production";
 const nextApp = next({ dev });
 const handle = nextApp.getRequestHandler();
 const mongoose = require("mongoose");
+const { Client } = require("pg");
 
 //require
 
@@ -18,6 +19,12 @@ require("dotenv").config();
 require("./models/UserModel");
 
 mongoose.connect(`${process.env.DB}`);
+const client = new Client({
+  connectionString: process.env.DB_SQL,
+  ssl: true
+});
+
+client.connect();
 
 app.use(express.json());
 app.use(cookieParser(process.env.COOKIE_SECRET));
@@ -26,7 +33,8 @@ nextApp
   .prepare()
   .then(() => {
     require("./routes/AuthRoute")(app);
-    require("./routes/ManageRoute")(app);
+    require("./routes/ItemCategoryRoute")(app, client);
+    require("./routes/ItemRoute")(app, client);
 
     app.get("*", (req, res) => {
       return handle(req, res);

@@ -15,7 +15,7 @@ class MyApp extends App {
         <Head>
           <title>Freeze Food</title>
         </Head>
-        <Layout>
+        <Layout style={{ background: "white" }}>
           <Sider {...pageProps} />
           <Provider store={reduxStore}>
             <Component {...pageProps} />

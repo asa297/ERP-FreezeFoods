@@ -25,7 +25,7 @@ export default class MyDocument extends Document {
           <link rel="stylesheet" href="../static/css/index.css" />
           {this.props.styleTags}
         </Head>
-        <body>
+        <body style={{ background: "white" }}>
           <Main />
           <script dangerouslySetInnerHTML={{ __html: getUserScript(user) }} />
           <NextScript />

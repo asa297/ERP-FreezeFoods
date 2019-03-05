@@ -17,7 +17,8 @@ module.exports = (req, res, next) => {
   if (!auth) {
     res.status(401).send("User is not valid");
   } else {
+    req.user = auth.token;
     next();
-    console.log(auth);
+    // console.log(auth);
   }
 };

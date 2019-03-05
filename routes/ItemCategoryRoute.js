@@ -1,14 +1,6 @@
-const { Client } = require("pg");
 const isAuthenticated = require("../middlewares/Authenticated");
 
-const client = new Client({
-  connectionString: process.env.DB_SQL,
-  ssl: true
-});
-
-client.connect();
-
-module.exports = app => {
+module.exports = (app, client) => {
   app.post("/api/itemcate", async (req, res) => {
     const text =
       "INSERT INTO item_category(name, create_by, create_time, last_modify_by, last_modify_time) VALUES($1, $2, $3, $4, $5) RETURNING id, name";
@@ -29,22 +21,18 @@ module.exports = app => {
     // res.status(400).send();
   });
 
-  app.get("/api/testna", async (req, res) => {
-    client.query("SELECT * from item_category", (err, res) => {
-      if (err) throw err;
-      console.log(res.rows);
-      client.end();
-    });
-    res.send();
+  app.get("/api/itemcategory", isAuthenticated, async (req, res) => {
+    const data = await client.query("SELECT id , name from item_category");
+    res.send(data.rows);
   });
 
-  app.get("/api/au", isAuthenticated, (req, res) => {
-    // client.query("SELECT * from item_category", (err, res) => {
-    //   if (err) throw err;
-    //   console.log(res.rows);
-    //   client.end();
-    // });
+  app.delete("/api/itemcategory/:id", isAuthenticated, async (req, res) => {
+    const { id } = req.params;
 
-    res.send();
+    if (!id) res.status(400).send("need id of item category");
+    await client.query(`DELETE from item_category Where id = ${id}`);
+
+    const data = await client.query("SELECT id , name from item_category");
+    res.send(data.rows);
   });
 };

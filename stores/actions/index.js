@@ -10,11 +10,24 @@ export const InsertItemCategory = value => async dispatch => {
   }
 };
 
+// export const GetItemCategory = () => async dispatch => {
+//   console.log("kuy");
+// };
+
 export const GetItemCategory = () => async dispatch => {
-  console.log("kuy");
+  // const baseUrl = req ? `${req.protocol}://${req.get("Host")}` : "";
+  const res = await axios.get("/api/itemcategory").catch(e => null);
+  if (res) {
+    const { data } = res;
+    dispatch({ type: actionTypes.FETCH_ITEMCATEGORY_SCUCESS, payload: data });
+  }
 };
 
-export const test = () => async dispatch => {
-  // const baseUrl = req ? `${req.protocol}://${req.get("Host")}` : "";
-  const au = await axios.get("/api/au").catch(e => null);
+export const DeleteItemCategory = id => async dispatch => {
+  const res = await axios.delete(`/api/itemcategory/${id}`).catch(e => null);
+  if (res) {
+    const { data } = res;
+    dispatch({ type: actionTypes.DELETE_ITEMCATEGORY_SCUCESS, payload: data });
+    return { status: true };
+  }
 };
