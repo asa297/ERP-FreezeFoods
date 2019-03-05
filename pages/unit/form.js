@@ -1,7 +1,7 @@
 import { connect } from "react-redux";
 import { authInitialProps, checkUserRole } from "<utils>/auth";
 import { ItemUnitFormSchema } from "<utils>/validatior";
-import { InputItemInline, InputTextArea } from "<components>";
+import { InputItemInline, InputTextAreaInline } from "<components>";
 import { InsertItemUnit } from "<actions>";
 import { Formik, Field } from "formik";
 import { Button } from "antd";
@@ -19,9 +19,6 @@ class Form extends React.PureComponent {
           <H1TextCenter>Item Unit Form</H1TextCenter>
           <FormContainer>
             <Formik
-              initialValues={{
-                name: ""
-              }}
               validationSchema={ItemUnitFormSchema}
               onSubmit={async (values, actions) => {
                 this.setState({ loading: true });
@@ -53,7 +50,7 @@ class Form extends React.PureComponent {
                   <Field
                     label="Remark Unit"
                     name="remark"
-                    component={InputTextArea}
+                    component={InputTextAreaInline}
                     value={props.values.remark}
                     onChange={e =>
                       props.setFieldValue("remark", e.target.value)

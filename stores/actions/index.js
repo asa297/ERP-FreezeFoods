@@ -51,3 +51,28 @@ export const DeleteItemUnit = id => async dispatch => {
     return { status: true };
   }
 };
+
+export const InsertContact = value => async dispatch => {
+  const { status, data } = await axios.post("/api/contact", value);
+  if (status === 200) {
+    dispatch({ type: actionTypes.SAVE_CONTACT_SUCCESS, payload: data });
+    return { status: true };
+  }
+};
+
+export const GetContact = () => async dispatch => {
+  const res = await axios.get("/api/contact").catch(e => null);
+  if (res) {
+    const { data } = res;
+    dispatch({ type: actionTypes.FETCH_CONTACT_SUCCESS, payload: data });
+  }
+};
+
+export const DeleteContact = id => async dispatch => {
+  const res = await axios.delete(`/api/contact/${id}`).catch(e => null);
+  if (res) {
+    const { data } = res;
+    dispatch({ type: actionTypes.DELETE_CONTACT_SUCCESS, payload: data });
+    return { status: true };
+  }
+};

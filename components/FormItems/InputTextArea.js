@@ -14,23 +14,17 @@ const InputTextArea = ({
   return (
     <div>
       <FlexContainer>
-        <LabelContainer>
-          <label>{label}</label>
-          {requireStar === "true" ? <LabelRequire>*</LabelRequire> : null}
-        </LabelContainer>
-        <InputContainer>
-          <TextAreaForm
-            type="text"
-            {...field}
-            {...props}
-            border={errors[field.name] ? "1px solid red" : null}
-          />
-
-          <div className="error">
-            {(touched[field.name] && errors[field.name]) || errors[field.name]}
-          </div>
-        </InputContainer>
+        <label>{label}</label>
+        {requireStar === "true" ? <LabelRequire>*</LabelRequire> : null}
       </FlexContainer>
+      <TextAreaForm
+        {...field}
+        {...props}
+        border={errors[field.name] ? "1px solid red" : null}
+      />
+      <div className="error">
+        {(touched[field.name] && errors[field.name]) || errors[field.name]}
+      </div>
     </div>
   );
 };
@@ -39,6 +33,7 @@ export default InputTextArea;
 
 const FlexContainer = styled.div`
   display: flex;
+  padding: 5px 0px;
 `;
 
 const LabelRequire = styled.div`
@@ -47,18 +42,7 @@ const LabelRequire = styled.div`
 
 const InputContainer = styled.div`
   margin-left: 10px;
-
-  @media (min-width: 768px) and (max-width: 1170px) {
-    width: 75%;
-  }
-
-  @media (min-width: 1170px) and (max-width: 1600px) {
-    width: 80%;
-  }
-
-  @media (min-width: 1600px) {
-    width: 90%;
-  }
+  width: 100%;
 `;
 
 const TextAreaForm = styled(TextArea)`
@@ -73,16 +57,5 @@ const LabelContainer = styled.label`
   display: flex;
   padding: 5px 15px;
   white-space: nowrap;
-
-  @media (min-width: 768px) and (max-width: 1170px) {
-    width: 20%;
-  }
-
-  @media (min-width: 1170px) and (max-width: 1600px) {
-    width: 15%;
-  }
-
-  @media (min-width: 1600px) {
-    width: 15%;
-  }
+  width: 10%;
 `;

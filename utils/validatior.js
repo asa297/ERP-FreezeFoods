@@ -6,3 +6,9 @@ export const ItemCategoryFormSchema = Yup.object().shape({
 export const ItemUnitFormSchema = Yup.object().shape({
   name: Yup.string().required("Required")
 });
+
+export const ContactFormSchema = Yup.object().shape({
+  name: Yup.string().required("Required"),
+  phone: Yup.string().required("Required"),
+  org: Yup.string().required("Required")
+});
