@@ -3,10 +3,19 @@ const isAuthenticated = require("../middlewares/Authenticated");
 module.exports = (app, client) => {
   app.post("/api/item", isAuthenticated, async (req, res) => {
     const { name: UserName } = req.user;
-    const { name, remark } = req.body;
+    const { name, category, remark } = req.body;
     const text =
-      "INSERT INTO item_unit(name, remark, create_by, create_time, last_modify_by, last_modify_time) VALUES($1, $2, $3, $4, $5,$6)";
-    const values = [name, remark, UserName, new Date(), UserName, new Date()];
+      "INSERT INTO item(name, item_category_id, item_category_name ,remark, create_by, create_time, last_modify_by, last_modify_time) VALUES($1, $2, $3, $4, $5,$6, $7 , $8)";
+    const values = [
+      name,
+      category.id,
+      category.name,
+      remark,
+      UserName,
+      new Date(),
+      UserName,
+      new Date()
+    ];
 
     client.query(text, values, (err, value) => {
       if (err) {
@@ -19,7 +28,9 @@ module.exports = (app, client) => {
   });
 
   app.get("/api/item", isAuthenticated, async (req, res) => {
-    const data = await client.query("SELECT id , name, remark from item_unit");
+    const data = await client.query(
+      "SELECT id, name, item_category_id, item_category_name ,remark from item"
+    );
     res.send(data.rows);
   });
 
@@ -27,9 +38,11 @@ module.exports = (app, client) => {
     const { id } = req.params;
 
     if (!id) res.status(400).send("need id of item category");
-    await client.query(`DELETE from item_unit Where id = ${id}`);
+    await client.query(`DELETE from item Where id = ${id}`);
 
-    const data = await client.query("SELECT id, name, remark from item_unit");
+    const data = await client.query(
+      "SELECT id, name, item_category_id, item_category_name ,remark from item"
+    );
     res.send(data.rows);
   });
 };

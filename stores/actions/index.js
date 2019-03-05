@@ -5,7 +5,6 @@ axios.defaults.withCredentials = true;
 export const InsertItemCategory = value => async dispatch => {
   const { status, data } = await axios.post("/api/itemcate", value);
   if (status === 200) {
-    dispatch({ type: actionTypes.SAVE_ITEMCATE_SUCCESS, payload: data });
     return { status: true };
   }
 };
@@ -28,15 +27,14 @@ export const DeleteItemCategory = id => async dispatch => {
 };
 
 export const InsertItemUnit = value => async dispatch => {
-  const { status, data } = await axios.post("/api/item", value);
+  const { status, data } = await axios.post("/api/unit", value);
   if (status === 200) {
-    dispatch({ type: actionTypes.SAVE_ITEMUNIT_SUCCESS, payload: data });
     return { status: true };
   }
 };
 
 export const GetItemUnit = () => async dispatch => {
-  const res = await axios.get("/api/item").catch(e => null);
+  const res = await axios.get("/api/unit").catch(e => null);
   if (res) {
     const { data } = res;
     dispatch({ type: actionTypes.FETCH_ITEM_UNIT_SUCCESS, payload: data });
@@ -44,7 +42,7 @@ export const GetItemUnit = () => async dispatch => {
 };
 
 export const DeleteItemUnit = id => async dispatch => {
-  const res = await axios.delete(`/api/item/${id}`).catch(e => null);
+  const res = await axios.delete(`/api/unit/${id}`).catch(e => null);
   if (res) {
     const { data } = res;
     dispatch({ type: actionTypes.DELETE_ITEM_UNIT_SUCCESS, payload: data });
@@ -55,7 +53,6 @@ export const DeleteItemUnit = id => async dispatch => {
 export const InsertContact = value => async dispatch => {
   const { status, data } = await axios.post("/api/contact", value);
   if (status === 200) {
-    dispatch({ type: actionTypes.SAVE_CONTACT_SUCCESS, payload: data });
     return { status: true };
   }
 };
@@ -73,6 +70,30 @@ export const DeleteContact = id => async dispatch => {
   if (res) {
     const { data } = res;
     dispatch({ type: actionTypes.DELETE_CONTACT_SUCCESS, payload: data });
+    return { status: true };
+  }
+};
+
+export const InsertItem = value => async dispatch => {
+  const { status, data } = await axios.post("/api/item", value);
+  if (status === 200) {
+    return { status: true };
+  }
+};
+
+export const GetItem = () => async dispatch => {
+  const res = await axios.get("/api/item").catch(e => null);
+  if (res) {
+    const { data } = res;
+    dispatch({ type: actionTypes.FETCH_ITEM_SUCCESS, payload: data });
+  }
+};
+
+export const DeleteItem = id => async dispatch => {
+  const res = await axios.delete(`/api/item/${id}`).catch(e => null);
+  if (res) {
+    const { data } = res;
+    dispatch({ type: actionTypes.DELETE_ITEM_SUCCESS, payload: data });
     return { status: true };
   }
 };

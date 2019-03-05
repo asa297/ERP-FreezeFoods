@@ -7,5 +7,6 @@ export {
   default as InputTextAreaInline
 } from "./FormItems/InputTextAreaInline";
 export { default as InputTextArea } from "./FormItems/InputTextArea";
+export { default as SelectItem } from "./FormItems/SelectItem";
 export { default as MenuItem } from "./FormItems/MenuItem";
 export { default as PaginationList } from "./ListItems/PaginationList";
