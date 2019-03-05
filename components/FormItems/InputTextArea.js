@@ -1,7 +1,9 @@
 import styled from "styled-components";
 import { Input } from "antd";
 
-const InputItem = ({
+const { TextArea } = Input;
+
+const InputTextArea = ({
   label,
   requireStar,
   labelafter,
@@ -17,7 +19,7 @@ const InputItem = ({
           {requireStar === "true" ? <LabelRequire>*</LabelRequire> : null}
         </LabelContainer>
         <InputContainer>
-          <InputForm
+          <TextAreaForm
             type="text"
             {...field}
             {...props}
@@ -33,11 +35,10 @@ const InputItem = ({
   );
 };
 
-export default InputItem;
+export default InputTextArea;
 
 const FlexContainer = styled.div`
   display: flex;
-  justify-content: space-between;
 `;
 
 const LabelRequire = styled.div`
@@ -60,7 +61,7 @@ const InputContainer = styled.div`
   }
 `;
 
-const InputForm = styled(Input)`
+const TextAreaForm = styled(TextArea)`
   width: 100%;
   height: 35px;
   border: ${props => props.border || "1px solid #ccc"};

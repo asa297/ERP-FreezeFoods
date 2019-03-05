@@ -1,8 +1,8 @@
 import { connect } from "react-redux";
 import { authInitialProps, checkUserRole } from "<utils>/auth";
 import { GetItemCategory, DeleteItemCategory } from "<actions>";
-import { PaginationList, TableList } from "<components>";
-import { Checkbox, Table } from "antd";
+import { PaginationList } from "<components>";
+import { Table } from "antd";
 import styled from "styled-components";
 
 class List extends React.PureComponent {
@@ -35,10 +35,6 @@ class List extends React.PureComponent {
     }
   }
 
-  onSelectChange = selectedRows => {
-    this.setState({ selectedRows });
-  };
-
   render() {
     const columns = [
       {
@@ -68,7 +64,6 @@ class List extends React.PureComponent {
         }
       }
     ];
-    const { selectedRows } = this.state;
 
     return (
       <ListContainer>
@@ -99,7 +94,6 @@ class List extends React.PureComponent {
 
 List.getInitialProps = async ctx => {
   const { auth } = await authInitialProps(true)(ctx);
-  console.log(auth);
   if (auth) {
     await checkUserRole(auth)(ctx);
   }

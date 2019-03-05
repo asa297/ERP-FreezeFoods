@@ -39,7 +39,7 @@ class Form extends React.PureComponent {
               render={props => (
                 <form onSubmit={props.handleSubmit}>
                   <Field
-                    label="Item Category Name"
+                    label="Category Name"
                     type="text"
                     name="name"
                     component={InputItemInline}
