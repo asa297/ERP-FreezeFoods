@@ -99,11 +99,9 @@ class List extends React.PureComponent {
 
 List.getInitialProps = async ctx => {
   const { auth } = await authInitialProps(true)(ctx);
-
+  console.log(auth);
   if (auth) {
     await checkUserRole(auth)(ctx);
-
-    // ctx.reduxStore.dispatch(test(ctx));
   }
 
   return { auth };
