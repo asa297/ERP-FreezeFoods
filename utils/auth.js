@@ -87,9 +87,12 @@ export const checkUserRole = auth => async ({ req, res }) => {
       res.clearCookie("token");
       return redirectUser(res, "/");
     }
-    // console.log(req);
+
     const currentPath = req ? req.url : window.location.pathname;
-    const path = RoleMappingRoute.find(l => l.path === currentPath);
+    const regex = /\?.*$/g;
+    const req_path = currentPath.replace(regex, "");
+
+    const path = RoleMappingRoute.find(l => l.path === req_path);
     if (!path) return redirectUser(res, "/");
     const hasPermission = path.role.find(role => role === UserRole);
     if (!hasPermission) return redirectUser(res, "/");

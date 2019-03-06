@@ -14,6 +14,7 @@ module.exports = (req, res, next) => {
   //   cb(null, user, { message: "Logged In Successfully" });
   // });
   const auth = req.signedCookies;
+
   if (!auth) {
     res.status(401).send("User is not valid");
   } else {

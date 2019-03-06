@@ -4,6 +4,9 @@ import { GetItem, DeleteItem } from "<actions>";
 import { PaginationList } from "<components>";
 import { Table } from "antd";
 import styled from "styled-components";
+// import Link from "next/link";
+
+import { Link } from "../../routes";
 
 class List extends React.PureComponent {
   state = {
@@ -67,16 +70,20 @@ class List extends React.PureComponent {
         title: "",
         dataIndex: "",
         render: (text, record) => {
+          const form_href = `/item/form?id=${record.id}`;
           return (
             <div>
-              <a onClick={() => this._onEdit(record)}>Edit</a>/
-              <a onClick={() => this._onDelete(record)}>Delete</a>
+              <Link route="item" params={{ id: record.id }}>
+                <a>Edit</a>
+              </Link>
+              /<a onClick={() => this._onDelete(record)}>Delete</a>
             </div>
           );
         }
       }
     ];
 
+    console.log(this.props);
     return (
       <ListContainer>
         <Container>
@@ -84,7 +91,7 @@ class List extends React.PureComponent {
 
           <Table
             columns={columns}
-            dataSource={this.props.ItemReducer.slice(
+            dataSource={this.props.ItemReducer.List.slice(
               (this.state.page - 1) * 10,
               this.state.page * 10
             )}
@@ -94,7 +101,7 @@ class List extends React.PureComponent {
           <PaginationContainer>
             <PaginationList
               defaultPageSize={10}
-              total={this.props.ItemReducer.length}
+              total={this.props.ItemReducer.List.length}
               onChange={page => this._onChangePagination(page)}
             />
           </PaginationContainer>

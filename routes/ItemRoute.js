@@ -34,6 +34,16 @@ module.exports = (app, client) => {
     res.send(data.rows);
   });
 
+  app.get("/api/item/:id", isAuthenticated, async (req, res) => {
+    const { id } = req.params;
+
+    const data = await client.query(
+      `SELECT id, name, item_category_id, item_category_name ,remark from item WHERE id = ${id}`
+    );
+
+    res.send({ result: data.rows[0] });
+  });
+
   app.delete("/api/item/:id", isAuthenticated, async (req, res) => {
     const { id } = req.params;
 

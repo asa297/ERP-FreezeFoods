@@ -1,5 +1,6 @@
 import { actionTypes } from "../type";
 import axios from "axios";
+
 axios.defaults.withCredentials = true;
 
 export const InsertItemCategory = value => async dispatch => {
@@ -95,5 +96,14 @@ export const DeleteItem = id => async dispatch => {
     const { data } = res;
     dispatch({ type: actionTypes.DELETE_ITEM_SUCCESS, payload: data });
     return { status: true };
+  }
+};
+
+export const GetItemById = id => async dispatch => {
+  const res = await axios.get("/api/item/" + id).catch(e => null);
+
+  if (res) {
+    const { data } = res;
+    dispatch({ type: actionTypes.LOAD_ITEM, payload: data.result });
   }
 };

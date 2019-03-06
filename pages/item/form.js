@@ -2,7 +2,7 @@ import { connect } from "react-redux";
 import { authInitialProps, checkUserRole } from "<utils>/auth";
 import { ItemFormSchema } from "<utils>/validatior";
 import { InputItemInline, InputTextArea, SelectItem } from "<components>";
-import { InsertItem, GetItemCategory } from "<actions>";
+import { InsertItem, GetItemCategory, GetItemById } from "<actions>";
 import { Formik, Field } from "formik";
 import { Button } from "antd";
 import styled from "styled-components";
@@ -13,7 +13,9 @@ class Form extends React.PureComponent {
   };
 
   componentWillMount() {
+    const { formId } = this.props;
     this.props.GetItemCategory();
+    this.props.GetItemById(formId);
   }
 
   onChangeItemCategory(id, props) {
@@ -23,13 +25,34 @@ class Form extends React.PureComponent {
     props.setFieldValue("category", itemcategory);
   }
 
+  setInitialDataForm(formId, { Item }) {
+    if (!formId) {
+      return {
+        name: "",
+        remark: "",
+        category: ""
+      };
+    } else {
+      const au = {
+        name: Item.name,
+        remark: Item.remark
+      };
+      console.log(au);
+      return au;
+    }
+  }
+
   render() {
+    const { ItemCategoryReducer, ItemReducer, formId } = this.props;
+
     return (
       <MasterContanier>
         <Container>
           <H1TextCenter>Item Form</H1TextCenter>
           <FormContainer>
             <Formik
+              initialValues={this.setInitialDataForm(formId, ItemReducer)}
+              enableReinitialize={formId ? true : false}
               validationSchema={ItemFormSchema}
               onSubmit={async (values, actions) => {
                 this.setState({ loading: true });
@@ -73,7 +96,7 @@ class Form extends React.PureComponent {
                             : ""
                         }
                         requireStar="true"
-                        data={this.props.ItemCategoryReducer}
+                        data={ItemCategoryReducer}
                         onChange={e => this.onChangeItemCategory(e, props)}
                       />
                     </FieldContainer>
@@ -92,13 +115,33 @@ class Form extends React.PureComponent {
                   </RemarkContainer>
 
                   <FlexCenter>
-                    <Button
-                      type="primary"
-                      htmlType="submit"
-                      loading={this.state.loading}
-                    >
-                      Add
-                    </Button>
+                    {formId ? (
+                      <div>
+                        <ButtonSave
+                          type="primary"
+                          htmlType="submit"
+                          loading={this.state.loading}
+                        >
+                          Save
+                        </ButtonSave>
+
+                        <ButtonDelete
+                          type="primary"
+                          htmlType="submit"
+                          loading={this.state.loading}
+                        >
+                          Delete
+                        </ButtonDelete>
+                      </div>
+                    ) : (
+                      <ButtonSave
+                        type="primary"
+                        htmlType="submit"
+                        loading={this.state.loading}
+                      >
+                        Add
+                      </ButtonSave>
+                    )}
                   </FlexCenter>
                 </form>
               )}
@@ -111,17 +154,23 @@ class Form extends React.PureComponent {
 }
 
 Form.getInitialProps = async ctx => {
+  let formId;
+  const { query } = ctx;
+
   const { auth } = await authInitialProps(true)(ctx);
   if (auth) {
     await checkUserRole(auth)(ctx);
+    if (query.id) formId = query.id;
   }
-
-  return { auth };
+  return { auth, formId };
 };
 
 export default connect(
-  ({ ItemCategoryReducer }) => ({ ItemCategoryReducer }),
-  { InsertItem, GetItemCategory }
+  ({ ItemCategoryReducer, ItemReducer }) => ({
+    ItemCategoryReducer,
+    ItemReducer
+  }),
+  { InsertItem, GetItemCategory, GetItemById }
 )(Form);
 
 const MasterContanier = styled.div`
@@ -158,4 +207,19 @@ const FieldContainer = styled.div`
 
 const RemarkContainer = styled.div`
   padding-left: 15px;
+`;
+
+const ButtonDelete = styled(Button)`
+  background-color: #f5222d;
+  border-color: #f5222d;
+  margin: 0px 5px;
+
+  :hover {
+    background-color: #ee636a;
+    border-color: #ee636a;
+  }
+`;
+
+const ButtonSave = styled(Button)`
+  margin: 0px 5px;
 `;
