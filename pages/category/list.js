@@ -52,7 +52,11 @@ class List extends React.PureComponent {
         render: (text, record) => {
           return (
             <div>
-              <Link route="ItemCategoryForm" params={{ id: record.id }}>
+              <Link
+                route="ItemCategoryForm"
+                params={{ id: record.id }}
+                prefetch
+              >
                 <a>Edit</a>
               </Link>
               /<a onClick={() => this._onDelete(record)}>Delete</a>
