@@ -1,7 +1,7 @@
 import { connect } from "react-redux";
 import { authInitialProps, checkUserRole } from "<utils>/auth";
 import { ItemCategoryFormSchema } from "<utils>/validatior";
-import { InputItemInline } from "<components>";
+import { InputItemInline, ActionForm } from "<components>";
 import {
   InsertItemCategory,
   GetItemCategoryById,
@@ -9,7 +9,6 @@ import {
   DeleteItemCategory
 } from "<actions>";
 import { Formik, Field } from "formik";
-import { Button } from "antd";
 import styled from "styled-components";
 import { Router } from "<routes>";
 
@@ -88,36 +87,11 @@ class Form extends React.PureComponent {
                   />
 
                   <FlexCenter>
-                    {formId ? (
-                      <div>
-                        <ButtonSave
-                          type="primary"
-                          htmlType="submit"
-                          loading={this.state.loading}
-                          disabled={this.state.loading}
-                        >
-                          Save
-                        </ButtonSave>
-
-                        <ButtonDelete
-                          type="primary"
-                          loading={this.state.loading}
-                          disabled={this.state.loading}
-                          onClick={() => this.OnDelete()}
-                        >
-                          Delete
-                        </ButtonDelete>
-                      </div>
-                    ) : (
-                      <ButtonSave
-                        type="primary"
-                        htmlType="submit"
-                        loading={this.state.loading}
-                        disabled={this.state.loading}
-                      >
-                        Add
-                      </ButtonSave>
-                    )}
+                    <ActionForm
+                      formId={formId}
+                      loading={this.state.loading}
+                      OnDelete={() => this.OnDelete()}
+                    />
                   </FlexCenter>
                 </form>
               )}
@@ -174,25 +148,4 @@ const FlexCenter = styled.div`
   display: flex;
   justify-content: center;
   padding-top: 10px;
-`;
-
-const ButtonDelete = styled(Button)`
-  background-color: #f5222d;
-  border-color: #f5222d;
-  margin: 0px 5px;
-
-  :hover {
-    background-color: #ee636a;
-    border-color: #ee636a;
-  }
-
-  :active,
-  :focus {
-    background-color: #ee636a;
-    border-color: #ee636a;
-  }
-`;
-
-const ButtonSave = styled(Button)`
-  margin: 0px 5px;
 `;

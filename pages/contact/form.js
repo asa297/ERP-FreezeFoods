@@ -1,7 +1,7 @@
 import { connect } from "react-redux";
 import { authInitialProps, checkUserRole } from "<utils>/auth";
 import { ContactFormSchema } from "<utils>/validatior";
-import { InputItemInline, InputTextArea } from "<components>";
+import { InputItemInline, InputTextArea, ActionForm } from "<components>";
 import {
   InsertContact,
   GetContactById,
@@ -9,7 +9,6 @@ import {
   DeleteContact
 } from "<actions>";
 import { Formik, Field } from "formik";
-import { Button } from "antd";
 import styled from "styled-components";
 import { Router } from "<routes>";
 
@@ -133,36 +132,11 @@ class Form extends React.PureComponent {
                   </RemarkContainer>
 
                   <FlexCenter>
-                    {formId ? (
-                      <div>
-                        <ButtonSave
-                          type="primary"
-                          htmlType="submit"
-                          loading={this.state.loading}
-                          disabled={this.state.loading}
-                        >
-                          Save
-                        </ButtonSave>
-
-                        <ButtonDelete
-                          type="primary"
-                          loading={this.state.loading}
-                          disabled={this.state.loading}
-                          onClick={() => this.OnDelete()}
-                        >
-                          Delete
-                        </ButtonDelete>
-                      </div>
-                    ) : (
-                      <ButtonSave
-                        type="primary"
-                        htmlType="submit"
-                        loading={this.state.loading}
-                        disabled={this.state.loading}
-                      >
-                        Add
-                      </ButtonSave>
-                    )}
+                    <ActionForm
+                      formId={formId}
+                      loading={this.state.loading}
+                      OnDelete={() => this.OnDelete()}
+                    />
                   </FlexCenter>
                 </form>
               )}
@@ -226,25 +200,4 @@ const FieldContainer = styled.div`
 
 const RemarkContainer = styled.div`
   padding-left: 15px;
-`;
-
-const ButtonDelete = styled(Button)`
-  background-color: #f5222d;
-  border-color: #f5222d;
-  margin: 0px 5px;
-
-  :hover {
-    background-color: #ee636a;
-    border-color: #ee636a;
-  }
-
-  :active,
-  :focus {
-    background-color: #ee636a;
-    border-color: #ee636a;
-  }
-`;
-
-const ButtonSave = styled(Button)`
-  margin: 0px 5px;
 `;
