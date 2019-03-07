@@ -3,32 +3,6 @@ import axios from "axios";
 
 axios.defaults.withCredentials = true;
 
-// export const InsertItemCategory = value => async dispatch => {
-//   const { status, data } = await axios.post("/api/itemcate", value);
-//   if (status === 200) {
-//     return { status: true };
-//   }
-//   return { status: false };
-// };
-
-export const GetItemCategory = () => async dispatch => {
-  const res = await axios.get("/api/itemcategory").catch(e => null);
-  if (res) {
-    const { data } = res;
-    dispatch({ type: actionTypes.CATEGORY.FETCH_LIST, payload: data });
-  }
-};
-
-// export const DeleteItemCategory = id => async dispatch => {
-//   const res = await axios.delete(`/api/itemcategory/${id}`).catch(e => null);
-//   if (res) {
-//     const { data } = res;
-//     dispatch({ type: actionTypes.DELETE_ITEMCATEGORY_SUCCESS, payload: data });
-//     return { status: true };
-//   }
-//   return { status: false };
-// };
-
 // export const InsertItemUnit = value => async dispatch => {
 //   const { status, data } = await axios.post("/api/unit", value);
 //   if (status === 200) {
@@ -121,3 +95,46 @@ export const UpdateItem = (id, value) => async dispatch => {
 };
 
 //#endregion Item Action
+
+//#region Item Category Action
+export const InsertItemCategory = value => async dispatch => {
+  const res = await axios.post("/api/itemcategory", value);
+  if (!res) return { status: false };
+  return { status: res.status === 200, id: res.data.id };
+};
+
+export const GetItemCategory = () => async dispatch => {
+  const res = await axios.get("/api/itemcategory").catch(e => null);
+  if (!res) return { status: false };
+  const { data } = res;
+  dispatch({ type: actionTypes.CATEGORY.FETCH_LIST, payload: data });
+  return { status: res.status === 200 };
+};
+
+export const DeleteItemCategory = id => async (dispatch, currentState) => {
+  const res = await axios.delete(`/api/itemcategory/${id}`).catch(e => null);
+  if (!res) return { status: false };
+  const { ItemCategoryReducer } = currentState();
+  const newData = ItemCategoryReducer.List.filter(value => value.id !== id);
+  dispatch({ type: actionTypes.CATEGORY.DELETE, payload: newData });
+  return { status: res.status === 200 };
+};
+
+export const GetItemCategoryById = id => async dispatch => {
+  const res = await axios.get("/api/itemcategory/" + id).catch(e => null);
+  if (!res) return { status: false };
+  const { data } = res;
+  dispatch({ type: actionTypes.CATEGORY.FETCH, payload: data.result });
+  return { status: res.status === 200 };
+};
+
+export const UpdateItemCategory = (id, value) => async dispatch => {
+  const res = await axios
+    .put("/api/itemcategory/" + id, value)
+    .catch(e => null);
+  if (!res) return { status: false };
+  dispatch({ type: actionTypes.CATEGORY.UPDATE, payload: value });
+  return { status: res.status === 200 };
+};
+
+//#endregion Item Category Action

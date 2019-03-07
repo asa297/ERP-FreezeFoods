@@ -29,7 +29,7 @@ module.exports = (app, client) => {
 
   app.get("/api/item", isAuthenticated, async (req, res) => {
     const data = await client.query(
-      "SELECT id, name, item_category_id, item_category_name ,remark from item"
+      "SELECT id, name, item_category_id, item_category_name ,remark from item order by id"
     );
     res.send(data.rows);
   });
