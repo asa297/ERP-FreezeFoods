@@ -1,12 +1,22 @@
 import { actionTypes } from "../type";
 
-const initState = [];
+const initState = {
+  List: [],
+  Item: {}
+};
 
 export default function(state = initState, action) {
   switch (action.type) {
-    case actionTypes.FETCH_ITEM_UNIT_SUCCESS:
-    case actionTypes.DELETE_ITEM_UNIT_SUCCESS:
-      return [...action.payload];
+    case actionTypes.UNIT.FETCH_LIST:
+    case actionTypes.UNIT.DELETE:
+      return Object.assign({}, state, {
+        List: action.payload
+      });
+    case actionTypes.UNIT.FETCH:
+    case actionTypes.UNIT.UPDATE:
+      return Object.assign({}, state, {
+        Item: action.payload
+      });
     default:
       return state;
   }
