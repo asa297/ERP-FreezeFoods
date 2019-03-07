@@ -15,7 +15,7 @@ class Form extends React.PureComponent {
   componentWillMount() {
     const { formId } = this.props;
     this.props.GetItemCategory();
-    this.props.GetItemById(formId);
+    if (formId) this.props.GetItemById(formId);
   }
 
   onChangeItemCategory(id, props) {
@@ -156,10 +156,10 @@ class Form extends React.PureComponent {
 Form.getInitialProps = async ctx => {
   let formId;
   const { query } = ctx;
-
   const { auth } = await authInitialProps(true)(ctx);
   if (auth) {
     await checkUserRole(auth)(ctx);
+
     if (query.id) formId = query.id;
   }
   return { auth, formId };

@@ -70,10 +70,9 @@ class List extends React.PureComponent {
         title: "",
         dataIndex: "",
         render: (text, record) => {
-          const form_href = `/item/form?id=${record.id}`;
           return (
             <div>
-              <Link route="item" params={{ id: record.id }}>
+              <Link route="item" params={{ id: record.id }} prefetch >
                 <a>Edit</a>
               </Link>
               /<a onClick={() => this._onDelete(record)}>Delete</a>
