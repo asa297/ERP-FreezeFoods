@@ -2,36 +2,77 @@ import { connect } from "react-redux";
 import { authInitialProps, checkUserRole } from "<utils>/auth";
 import { ContactFormSchema } from "<utils>/validatior";
 import { InputItemInline, InputTextArea } from "<components>";
-import { InsertContact } from "<actions>";
+import {
+  InsertContact,
+  GetContactById,
+  UpdateContact,
+  DeleteContact
+} from "<actions>";
 import { Formik, Field } from "formik";
 import { Button } from "antd";
 import styled from "styled-components";
+import { Router } from "<routes>";
 
 class Form extends React.PureComponent {
   state = {
     loading: false
   };
 
+  componentWillMount() {
+    const { formId } = this.props;
+    if (formId) this.props.GetContactById(formId);
+  }
+
+  setInitialDataForm(formId, { Item }) {
+    if (!formId) return {};
+    return {
+      name: Item.name,
+      phone: Item.phone,
+      org: Item.org,
+      remark: Item.remark
+    };
+  }
+
+  async OnDelete() {
+    const { formId } = this.props;
+    const { status } = await this.props.DeleteContact(formId);
+    if (status) {
+      alert("Delete Done");
+      Router.pushRoute("ContactList");
+    } else {
+      alert("fail");
+    }
+  }
+
   render() {
+    const { ContactReducer, formId } = this.props;
+
     return (
       <MasterContanier>
         <Container>
           <H1TextCenter>Contact Form</H1TextCenter>
           <FormContainer>
             <Formik
+              initialValues={this.setInitialDataForm(formId, ContactReducer)}
+              enableReinitialize={formId ? true : false}
               validationSchema={ContactFormSchema}
               onSubmit={async (values, actions) => {
                 this.setState({ loading: true });
-                const { status } = await this.props.InsertContact(values);
 
-                if (status) {
-                  alert("done");
+                const { status, id } = formId
+                  ? await this.props.UpdateContact(formId, values)
+                  : await this.props.InsertContact(values);
+
+                if (formId) {
+                  alert(status ? "Save Done" : "fail");
                 } else {
-                  alert("fail");
+                  alert(status ? "Add Done" : "fail");
+                  if (status) {
+                    Router.pushRoute("ContactForm", { id });
+                  }
                 }
 
                 this.setState({ loading: false });
-                // console.log(values);
               }}
               render={props => (
                 <form onSubmit={props.handleSubmit}>
@@ -92,13 +133,36 @@ class Form extends React.PureComponent {
                   </RemarkContainer>
 
                   <FlexCenter>
-                    <Button
-                      type="primary"
-                      htmlType="submit"
-                      loading={this.state.loading}
-                    >
-                      Add
-                    </Button>
+                    {formId ? (
+                      <div>
+                        <ButtonSave
+                          type="primary"
+                          htmlType="submit"
+                          loading={this.state.loading}
+                          disabled={this.state.loading}
+                        >
+                          Save
+                        </ButtonSave>
+
+                        <ButtonDelete
+                          type="primary"
+                          loading={this.state.loading}
+                          disabled={this.state.loading}
+                          onClick={() => this.OnDelete()}
+                        >
+                          Delete
+                        </ButtonDelete>
+                      </div>
+                    ) : (
+                      <ButtonSave
+                        type="primary"
+                        htmlType="submit"
+                        loading={this.state.loading}
+                        disabled={this.state.loading}
+                      >
+                        Add
+                      </ButtonSave>
+                    )}
                   </FlexCenter>
                 </form>
               )}
@@ -111,17 +175,21 @@ class Form extends React.PureComponent {
 }
 
 Form.getInitialProps = async ctx => {
+  let formId;
+  const { query } = ctx;
   const { auth } = await authInitialProps(true)(ctx);
   if (auth) {
     await checkUserRole(auth)(ctx);
+
+    if (query.id) formId = query.id;
   }
 
-  return { auth };
+  return { auth, formId };
 };
 
 export default connect(
-  null,
-  { InsertContact }
+  ({ ContactReducer }) => ({ ContactReducer }),
+  { InsertContact, GetContactById, UpdateContact, DeleteContact }
 )(Form);
 
 const MasterContanier = styled.div`
@@ -158,4 +226,25 @@ const FieldContainer = styled.div`
 
 const RemarkContainer = styled.div`
   padding-left: 15px;
+`;
+
+const ButtonDelete = styled(Button)`
+  background-color: #f5222d;
+  border-color: #f5222d;
+  margin: 0px 5px;
+
+  :hover {
+    background-color: #ee636a;
+    border-color: #ee636a;
+  }
+
+  :active,
+  :focus {
+    background-color: #ee636a;
+    border-color: #ee636a;
+  }
+`;
+
+const ButtonSave = styled(Button)`
+  margin: 0px 5px;
 `;

@@ -12,7 +12,8 @@ module.exports = withCSS({
       "<components>": path.resolve(__dirname, "./components"),
       "<actions>": path.resolve(__dirname, "./stores/actions"),
       "<reducers>": path.resolve(__dirname, "./stores/reducers"),
-      "<utils>": path.resolve(__dirname, "./utils")
+      "<utils>": path.resolve(__dirname, "./utils"),
+      "<routes>": path.resolve(__dirname, "./routes")
     };
     new Dotenv({
       path: path.join(__dirname, ".env"),

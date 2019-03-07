@@ -36,6 +36,7 @@ export default InputTextAreaInline;
 
 const FlexContainer = styled.div`
   display: flex;
+  justify-content: space-between;
 `;
 
 const LabelRequire = styled.div`

@@ -64,7 +64,6 @@ module.exports = app => {
   });
 
   app.post("/api/logout", (req, res) => {
-    console.log("logout na");
     res.clearCookie("token", COOKIE_OPTIONS);
     res.sendStatus(204);
   });

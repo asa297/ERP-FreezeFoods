@@ -4,6 +4,7 @@ import { GetContact, DeleteContact } from "<actions>";
 import { PaginationList } from "<components>";
 import { Table } from "antd";
 import styled from "styled-components";
+import { Link } from "<routes>";
 
 class List extends React.PureComponent {
   state = {
@@ -18,12 +19,7 @@ class List extends React.PureComponent {
     this.setState({ page });
   }
 
-  _onEdit(item, status) {
-    alert("Next Phase Kub");
-    console.log(item);
-  }
-
-  async _onDelete(item, status) {
+  async _onDelete(item) {
     const { id } = item;
 
     const res = await this.props.DeleteContact(id);
@@ -40,33 +36,28 @@ class List extends React.PureComponent {
       {
         title: "Id",
         dataIndex: "id",
-        key: "id",
         width: 150,
         align: "center"
       },
       {
         title: "Name",
         dataIndex: "name",
-        width: "20%",
-        key: "name"
+        width: "20%"
       },
       {
         title: "phone",
         dataIndex: "phone",
-        width: "20%",
-        key: "phone"
+        width: "20%"
       },
       {
         title: "Organization",
         dataIndex: "org",
-        width: "20%",
-        key: "org"
+        width: "20%"
       },
       {
         title: "Remark",
         dataIndex: "remark",
-        width: "20%",
-        key: "remark"
+        width: "20%"
       },
       {
         title: "",
@@ -74,8 +65,10 @@ class List extends React.PureComponent {
         render: (text, record) => {
           return (
             <div>
-              <a onClick={() => this._onEdit(record)}>Edit</a>/
-              <a onClick={() => this._onDelete(record)}>Delete</a>
+              <Link route="ContactForm" params={{ id: record.id }} prefetch>
+                <a>Edit</a>
+              </Link>
+              /<a onClick={() => this._onDelete(record)}>Delete</a>
             </div>
           );
         }
@@ -89,17 +82,18 @@ class List extends React.PureComponent {
 
           <Table
             columns={columns}
-            dataSource={this.props.ContactReducer.slice(
+            dataSource={this.props.ContactReducer.List.slice(
               (this.state.page - 1) * 10,
               this.state.page * 10
             )}
             pagination={false}
+            rowKey={record => record.id}
           />
 
           <PaginationContainer>
             <PaginationList
               defaultPageSize={10}
-              total={this.props.ContactReducer.length}
+              total={this.props.ContactReducer.List.length}
               onChange={page => this._onChangePagination(page)}
             />
           </PaginationContainer>
