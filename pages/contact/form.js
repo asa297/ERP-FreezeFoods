@@ -238,7 +238,8 @@ const ButtonDelete = styled(Button)`
     border-color: #ee636a;
   }
 
-  :active :visited :link {
+  :active,
+  :focus {
     background-color: #ee636a;
     border-color: #ee636a;
   }
