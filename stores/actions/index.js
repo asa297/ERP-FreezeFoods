@@ -107,3 +107,12 @@ export const GetItemById = id => async dispatch => {
     dispatch({ type: actionTypes.LOAD_ITEM, payload: data.result });
   }
 };
+
+export const UpdateItem = id => async dispatch => {
+  const res = await axios.put("/api/item/" + id).catch(e => null);
+
+  if (res) {
+    const { data } = res;
+    dispatch({ type: actionTypes.LOAD_ITEM, payload: data.result });
+  }
+};

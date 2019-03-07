@@ -81,8 +81,6 @@ class List extends React.PureComponent {
         }
       }
     ];
-
-    console.log(this.props);
     return (
       <ListContainer>
         <Container>

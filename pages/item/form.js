@@ -2,7 +2,7 @@ import { connect } from "react-redux";
 import { authInitialProps, checkUserRole } from "<utils>/auth";
 import { ItemFormSchema } from "<utils>/validatior";
 import { InputItemInline, InputTextArea, SelectItem } from "<components>";
-import { InsertItem, GetItemCategory, GetItemById } from "<actions>";
+import { InsertItem, GetItemCategory, GetItemById, UpdateItem, DeleteItem } from "<actions>";
 import { Formik, Field } from "formik";
 import { Button } from "antd";
 import styled from "styled-components";
@@ -26,20 +26,16 @@ class Form extends React.PureComponent {
   }
 
   setInitialDataForm(formId, { Item }) {
-    if (!formId) {
-      return {
-        name: "",
-        remark: "",
-        category: ""
-      };
-    } else {
-      const au = {
-        name: Item.name,
-        remark: Item.remark
-      };
-      console.log(au);
-      return au;
-    }
+    if (!formId) return {};
+    return {
+      name: Item.name,
+      remark: Item.remark,
+      category : {
+        id : Item.item_category_id,
+        name : Item.item_category_name
+      }
+    };;
+  
   }
 
   render() {
@@ -51,6 +47,7 @@ class Form extends React.PureComponent {
           <H1TextCenter>Item Form</H1TextCenter>
           <FormContainer>
             <Formik
+
               initialValues={this.setInitialDataForm(formId, ItemReducer)}
               enableReinitialize={formId ? true : false}
               validationSchema={ItemFormSchema}
@@ -58,13 +55,13 @@ class Form extends React.PureComponent {
                 this.setState({ loading: true });
 
                 console.log(values);
-                const { status } = await this.props.InsertItem(values);
+                // const { status } = await this.props.InsertItem(values);
 
-                if (status) {
-                  alert("done");
-                } else {
-                  alert("fail");
-                }
+                // if (status) {
+                //   alert("done");
+                // } else {
+                //   alert("fail");
+                // }
 
                 this.setState({ loading: false });
               }}
@@ -215,6 +212,11 @@ const ButtonDelete = styled(Button)`
   margin: 0px 5px;
 
   :hover {
+    background-color: #ee636a;
+    border-color: #ee636a;
+  }
+
+  :active :visited :link {
     background-color: #ee636a;
     border-color: #ee636a;
   }
