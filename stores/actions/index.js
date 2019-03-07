@@ -138,3 +138,44 @@ export const UpdateItemCategory = (id, value) => async dispatch => {
 };
 
 //#endregion Item Category Action
+
+//#region Item Category Action
+export const InsertContact = value => async dispatch => {
+  const res = await axios.post("/api/contact", value);
+  if (!res) return { status: false };
+  return { status: res.status === 200, id: res.data.id };
+};
+
+export const GetContact = () => async dispatch => {
+  const res = await axios.get("/api/contact").catch(e => null);
+  if (!res) return { status: false };
+  const { data } = res;
+  dispatch({ type: actionTypes.CONTACT.FETCH_LIST, payload: data });
+  return { status: res.status === 200 };
+};
+
+export const DeleteContact = id => async (dispatch, currentState) => {
+  const res = await axios.delete(`/api/contact/${id}`).catch(e => null);
+  if (!res) return { status: false };
+  const { ContactReducer } = currentState();
+  const newData = ContactReducer.List.filter(value => value.id !== id);
+  dispatch({ type: actionTypes.CONTACT.DELETE, payload: newData });
+  return { status: res.status === 200 };
+};
+
+export const GetContactById = id => async dispatch => {
+  const res = await axios.get("/api/contact/" + id).catch(e => null);
+  if (!res) return { status: false };
+  const { data } = res;
+  dispatch({ type: actionTypes.CONTACT.FETCH, payload: data.result });
+  return { status: res.status === 200 };
+};
+
+export const UpdateContact = (id, value) => async dispatch => {
+  const res = await axios.put("/api/contact/" + id, value).catch(e => null);
+  if (!res) return { status: false };
+  dispatch({ type: actionTypes.CONTACT.UPDATE, payload: value });
+  return { status: res.status === 200 };
+};
+
+//#endregion Item Category Action
