@@ -1,5 +1,4 @@
 const express = require("express");
-const routes = require("./routes");
 const app = express();
 const server = require("http").createServer(app);
 const cookieParser = require("cookie-parser");
@@ -11,8 +10,6 @@ const next = require("next");
 const dev = process.env.NODE_ENV !== "production";
 const nextApp = next({ dev });
 const handle = nextApp.getRequestHandler();
-const handler = routes.getRequestHandler(nextApp);
-
 const mongoose = require("mongoose");
 const { Client } = require("pg");
 
@@ -35,7 +32,11 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
 nextApp
   .prepare()
   .then(() => {
-    express().use(handler);
+    app.get("/contact/form/:id", (req, res) => {
+      const actualPage = "/contact/form";
+      const queryParams = { id: req.params.id };
+      nextApp.render(req, res, actualPage, queryParams);
+    });
 
     require("./routes/AuthRoute")(app);
     require("./routes/ItemCategoryRoute")(app, client);
