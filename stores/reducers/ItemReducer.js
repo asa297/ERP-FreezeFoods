@@ -7,13 +7,13 @@ const initState = {
 
 export default function(state = initState, action) {
   switch (action.type) {
-    case actionTypes.FETCH_ITEM_SUCCESS:
-    case actionTypes.DELETE_ITEM_SUCCESS:
+    case actionTypes.ITEM.FETCH_LIST:
+    case actionTypes.ITEM.DELETE:
       return Object.assign({}, state, {
         List: action.payload
       });
-
-    case actionTypes.LOAD_ITEM:
+    case actionTypes.ITEM.FETCH:
+    case actionTypes.ITEM.UPDATE:
       return Object.assign({}, state, {
         Item: action.payload
       });

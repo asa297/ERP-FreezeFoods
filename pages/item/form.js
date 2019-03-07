@@ -2,10 +2,17 @@ import { connect } from "react-redux";
 import { authInitialProps, checkUserRole } from "<utils>/auth";
 import { ItemFormSchema } from "<utils>/validatior";
 import { InputItemInline, InputTextArea, SelectItem } from "<components>";
-import { InsertItem, GetItemCategory, GetItemById, UpdateItem, DeleteItem } from "<actions>";
+import {
+  InsertItem,
+  GetItemCategory,
+  GetItemById,
+  UpdateItem,
+  DeleteItem
+} from "<actions>";
 import { Formik, Field } from "formik";
 import { Button } from "antd";
 import styled from "styled-components";
+import { Router } from "<routes>";
 
 class Form extends React.PureComponent {
   state = {
@@ -30,12 +37,22 @@ class Form extends React.PureComponent {
     return {
       name: Item.name,
       remark: Item.remark,
-      category : {
-        id : Item.item_category_id,
-        name : Item.item_category_name
+      category: {
+        id: Item.item_category_id,
+        name: Item.item_category_name
       }
-    };;
-  
+    };
+  }
+
+  async OnDelete() {
+    const { formId } = this.props;
+    const { status } = await this.props.DeleteItem(formId);
+    if (status) {
+      alert("Delete Done");
+      Router.pushRoute("ItemList");
+    } else {
+      alert("fail");
+    }
   }
 
   render() {
@@ -47,21 +64,24 @@ class Form extends React.PureComponent {
           <H1TextCenter>Item Form</H1TextCenter>
           <FormContainer>
             <Formik
-
               initialValues={this.setInitialDataForm(formId, ItemReducer)}
               enableReinitialize={formId ? true : false}
               validationSchema={ItemFormSchema}
               onSubmit={async (values, actions) => {
                 this.setState({ loading: true });
 
-                console.log(values);
-                // const { status } = await this.props.InsertItem(values);
+                const { status, id } = formId
+                  ? await this.props.UpdateItem(formId, values)
+                  : await this.props.InsertItem(values);
 
-                // if (status) {
-                //   alert("done");
-                // } else {
-                //   alert("fail");
-                // }
+                if (formId) {
+                  alert(status ? "Save Done" : "fail");
+                } else {
+                  alert(status ? "Add Done" : "fail");
+                  if (status) {
+                    Router.pushRoute("ItemForm", { id });
+                  }
+                }
 
                 this.setState({ loading: false });
               }}
@@ -118,14 +138,16 @@ class Form extends React.PureComponent {
                           type="primary"
                           htmlType="submit"
                           loading={this.state.loading}
+                          disabled={this.state.loading}
                         >
                           Save
                         </ButtonSave>
 
                         <ButtonDelete
                           type="primary"
-                          htmlType="submit"
                           loading={this.state.loading}
+                          disabled={this.state.loading}
+                          onClick={() => this.OnDelete()}
                         >
                           Delete
                         </ButtonDelete>
@@ -135,6 +157,7 @@ class Form extends React.PureComponent {
                         type="primary"
                         htmlType="submit"
                         loading={this.state.loading}
+                        disabled={this.state.loading}
                       >
                         Add
                       </ButtonSave>
@@ -167,7 +190,7 @@ export default connect(
     ItemCategoryReducer,
     ItemReducer
   }),
-  { InsertItem, GetItemCategory, GetItemById }
+  { InsertItem, GetItemCategory, GetItemById, UpdateItem, DeleteItem }
 )(Form);
 
 const MasterContanier = styled.div`
