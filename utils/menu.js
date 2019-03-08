@@ -37,7 +37,7 @@ export const MenuManage = ({ UserRole }) => {
       route.page === "Contact" && route.role.find(role => role === UserRole)
   );
   return (
-    <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
+    <Menu theme="dark" mode="inline">
       <Menu.Item key="1" onClick={() => Router.push("/")}>
         <Icon type="home" />
         <span>Home</span>

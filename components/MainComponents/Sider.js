@@ -20,7 +20,7 @@ const SiderComponent = ({ auth }) => {
         <TextInLogo>{auth ? auth.user.name : "Guest"}</TextInLogo>
       </div>
       {!auth ? (
-        <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
+        <Menu theme="dark" mode="inline">
           <Menu.Item key="1" onClick={() => Router.push("/")}>
             <Icon type="home" />
             <span>Home</span>

@@ -7,7 +7,7 @@ const SelectItem = ({
   label,
   requireStar,
   labelafter,
-  data,
+  data = [],
   field, // { name, value, onChange, onBlur }
   form: { touched, errors }, // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
   ...props
