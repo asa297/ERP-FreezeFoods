@@ -10,7 +10,8 @@ import {
 } from "<actions>";
 import { Formik, Field } from "formik";
 import styled from "styled-components";
-import { Router } from "<routes>";
+// import { Router } from "<routes>";
+import Router from "next/router";
 
 class Form extends React.PureComponent {
   state = {
@@ -35,7 +36,7 @@ class Form extends React.PureComponent {
     const { status } = await this.props.DeleteItemUnit(formId);
     if (status) {
       alert("Delete Done");
-      Router.pushRoute("ItemUnitList");
+      Router.push(`/unit/list`);
     } else {
       alert("fail");
     }
@@ -65,7 +66,7 @@ class Form extends React.PureComponent {
                 } else {
                   alert(status ? "Add Done" : "fail");
                   if (status) {
-                    Router.pushRoute("ItemUnitForm", { id });
+                    window.location.href = `/unit/form?id=${id}`;
                   }
                 }
 

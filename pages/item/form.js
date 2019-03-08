@@ -53,7 +53,7 @@ class Form extends React.PureComponent {
     const { status } = await this.props.DeleteItem(formId);
     if (status) {
       alert("Delete Done");
-      Router.pushRoute("ItemList");
+      Router.push(`/item/list`);
     } else {
       alert("fail");
     }
@@ -83,7 +83,7 @@ class Form extends React.PureComponent {
                 } else {
                   alert(status ? "Add Done" : "fail");
                   if (status) {
-                    Router.pushRoute("ItemForm", { id });
+                    window.location.href = `/item/form?id=${id}`;
                   }
                 }
 
