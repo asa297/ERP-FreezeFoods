@@ -53,11 +53,6 @@ class List extends React.PureComponent {
         render: (text, record) => {
           return (
             <div>
-              {/* <Link
-                route="ItemCategoryForm"
-                params={{ id: record.id }}
-                prefetch
-              > */}
               <Link
                 href={{ pathname: "/category/form", query: { id: record.id } }}
                 prefetch

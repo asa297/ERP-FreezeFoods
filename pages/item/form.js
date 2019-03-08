@@ -17,6 +17,7 @@ import {
 import { Formik, Field } from "formik";
 import styled from "styled-components";
 import { Router } from "<routes>";
+import { actionTypes } from "<action_types>";
 
 class Form extends React.PureComponent {
   state = {
@@ -53,7 +54,7 @@ class Form extends React.PureComponent {
     const { status } = await this.props.DeleteItem(formId);
     if (status) {
       alert("Delete Done");
-      Router.pushRoute("ItemList");
+      Router.push(`/item/list`);
     } else {
       alert("fail");
     }
@@ -83,7 +84,7 @@ class Form extends React.PureComponent {
                 } else {
                   alert(status ? "Add Done" : "fail");
                   if (status) {
-                    Router.pushRoute("ItemForm", { id });
+                    window.location.href = `/item/form?id=${id}`;
                   }
                 }
 
@@ -158,9 +159,10 @@ Form.getInitialProps = async ctx => {
   const { auth } = await authInitialProps(true)(ctx);
   if (auth) {
     await checkUserRole(auth)(ctx);
-
     if (query.id) formId = query.id;
   }
+
+  await ctx.reduxStore.dispatch({ type: actionTypes.ITEM.RESET });
   return { auth, formId };
 };
 

@@ -4,7 +4,8 @@ import { GetContact, DeleteContact } from "<actions>";
 import { PaginationList } from "<components>";
 import { Table } from "antd";
 import styled from "styled-components";
-import { Link } from "<routes>";
+// import { Link } from "<routes>";
+import Link from "next/link";
 
 class List extends React.PureComponent {
   state = {
@@ -65,7 +66,10 @@ class List extends React.PureComponent {
         render: (text, record) => {
           return (
             <div>
-              <Link route="ContactForm" params={{ id: record.id }} prefetch>
+              <Link
+                href={{ pathname: "/contact/form", query: { id: record.id } }}
+                prefetch
+              >
                 <a>Edit</a>
               </Link>
               /<a onClick={() => this._onDelete(record)}>Delete</a>

@@ -17,6 +17,10 @@ export default function(state = initState, action) {
       return Object.assign({}, state, {
         Item: action.payload
       });
+
+    case actionTypes.UNIT.RESET:
+      return { ...initState };
+
     default:
       return state;
   }

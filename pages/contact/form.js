@@ -10,7 +10,9 @@ import {
 } from "<actions>";
 import { Formik, Field } from "formik";
 import styled from "styled-components";
-import { Router } from "<routes>";
+// import { Router } from "<routes>";
+import Router from "next/router";
+import { actionTypes } from "<action_types>";
 
 class Form extends React.PureComponent {
   state = {
@@ -37,7 +39,7 @@ class Form extends React.PureComponent {
     const { status } = await this.props.DeleteContact(formId);
     if (status) {
       alert("Delete Done");
-      Router.pushRoute("ContactList");
+      Router.push(`/contact/list`);
     } else {
       alert("fail");
     }
@@ -67,7 +69,7 @@ class Form extends React.PureComponent {
                 } else {
                   alert(status ? "Add Done" : "fail");
                   if (status) {
-                    Router.pushRoute("ContactForm", { id });
+                    window.location.href = `/contact/form?id=${id}`;
                   }
                 }
 
@@ -157,7 +159,7 @@ Form.getInitialProps = async ctx => {
 
     if (query.id) formId = query.id;
   }
-
+  await ctx.reduxStore.dispatch({ type: actionTypes.CONTACT.RESET });
   return { auth, formId };
 };
 
