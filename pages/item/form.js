@@ -17,6 +17,7 @@ import {
 import { Formik, Field } from "formik";
 import styled from "styled-components";
 import { Router } from "<routes>";
+import { actionTypes } from "<action_types>";
 
 class Form extends React.PureComponent {
   state = {
@@ -158,9 +159,10 @@ Form.getInitialProps = async ctx => {
   const { auth } = await authInitialProps(true)(ctx);
   if (auth) {
     await checkUserRole(auth)(ctx);
-
     if (query.id) formId = query.id;
   }
+
+  await ctx.reduxStore.dispatch({ type: actionTypes.ITEM.RESET });
   return { auth, formId };
 };
 
