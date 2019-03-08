@@ -10,7 +10,7 @@ import {
 } from "<actions>";
 import { Formik, Field } from "formik";
 import styled from "styled-components";
-import { Router } from "<routes>";
+import { Router } from "../../routes";
 
 class Form extends React.PureComponent {
   state = {
