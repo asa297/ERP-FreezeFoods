@@ -10,7 +10,8 @@ import {
 } from "<actions>";
 import { Formik, Field } from "formik";
 import styled from "styled-components";
-import { Router } from "../../routes";
+// import { Router } from "<routes>";
+import Router from "next/router";
 
 class Form extends React.PureComponent {
   state = {
@@ -19,6 +20,7 @@ class Form extends React.PureComponent {
 
   componentWillMount() {
     const { formId } = this.props;
+
     if (formId) this.props.GetItemCategoryById(formId);
   }
 
@@ -34,7 +36,7 @@ class Form extends React.PureComponent {
     const { status } = await this.props.DeleteItemCategory(formId);
     if (status) {
       alert("Delete Done");
-      Router.pushRoute("ItemCategoryList");
+      Router.push(`/category/list`);
     } else {
       alert("fail");
     }
@@ -42,6 +44,7 @@ class Form extends React.PureComponent {
 
   render() {
     const { ItemCategoryReducer, formId } = this.props;
+    console.log("formId", formId);
     return (
       <MasterContanier>
         <Container>
@@ -66,7 +69,7 @@ class Form extends React.PureComponent {
                 } else {
                   alert(status ? "Add Done" : "fail");
                   if (status) {
-                    Router.pushRoute("ItemCategoryForm", { id });
+                    Router.push(`/category/form?id=${id}`);
                   }
                 }
 
@@ -106,9 +109,9 @@ Form.getInitialProps = async ctx => {
   let formId;
   const { query } = ctx;
   const { auth } = await authInitialProps(true)(ctx);
+
   if (auth) {
     await checkUserRole(auth)(ctx);
-
     if (query.id) formId = query.id;
   }
 

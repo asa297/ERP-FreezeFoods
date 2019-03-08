@@ -4,7 +4,8 @@ import { GetItemCategory, DeleteItemCategory } from "<actions>";
 import { PaginationList } from "<components>";
 import { Table } from "antd";
 import styled from "styled-components";
-import { Link } from "../../routes";
+import { Link } from "<routes>";
+// import Link from "next/link";
 
 class List extends React.PureComponent {
   state = {
@@ -52,9 +53,13 @@ class List extends React.PureComponent {
         render: (text, record) => {
           return (
             <div>
-              <Link
+              {/* <Link
                 route="ItemCategoryForm"
                 params={{ id: record.id }}
+                prefetch
+              > */}
+              <Link
+                href={{ pathname: "/category/form", query: { id: record.id } }}
                 prefetch
               >
                 <a>Edit</a>
