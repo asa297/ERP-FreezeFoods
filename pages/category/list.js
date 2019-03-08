@@ -4,8 +4,8 @@ import { GetItemCategory, DeleteItemCategory } from "<actions>";
 import { PaginationList } from "<components>";
 import { Table } from "antd";
 import styled from "styled-components";
-import { Link } from "<routes>";
-// import Link from "next/link";
+// import { Link } from "<routes>";
+import Link from "next/link";
 
 class List extends React.PureComponent {
   state = {

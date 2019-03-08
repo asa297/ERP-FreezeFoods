@@ -20,7 +20,6 @@ class Form extends React.PureComponent {
 
   componentWillMount() {
     const { formId } = this.props;
-
     if (formId) this.props.GetItemCategoryById(formId);
   }
 
@@ -44,7 +43,6 @@ class Form extends React.PureComponent {
 
   render() {
     const { ItemCategoryReducer, formId } = this.props;
-    console.log("formId", formId);
     return (
       <MasterContanier>
         <Container>
@@ -69,7 +67,7 @@ class Form extends React.PureComponent {
                 } else {
                   alert(status ? "Add Done" : "fail");
                   if (status) {
-                    Router.push(`/category/form?id=${id}`);
+                    window.location.href = `/category/form?id=${id}`;
                   }
                 }
 

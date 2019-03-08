@@ -117,7 +117,7 @@ class Form extends React.PureComponent {
                             : ""
                         }
                         requireStar="true"
-                        data={ItemCategoryReducer}
+                        data={ItemCategoryReducer.List}
                         onChange={e => this.onChangeItemCategory(e, props)}
                       />
                     </FieldContainer>
