@@ -13,10 +13,11 @@ export default function(state = initState, action) {
         List: [...state.List, ...action.payload.data],
         HasMore: action.payload.HasMore
       });
-    // case actionTypes.CATEGORY.DELETE:
-    //   return Object.assign({}, state, {
-    //     List: action.payload
-    //   });
+
+    case actionTypes.CATEGORY.FETCH_LIST_ALL:
+      return Object.assign({}, state, {
+        List: action.payload
+      });
     case actionTypes.CATEGORY.FETCH:
     case actionTypes.CATEGORY.UPDATE:
       return Object.assign({}, state, {

@@ -1,19 +1,20 @@
 import { connect } from "react-redux";
 import { authInitialProps, checkUserRole } from "<utils>/auth";
-import { GetContact, DeleteContact } from "<actions>";
-import { PaginationList } from "<components>";
+import { GetContact } from "<actions>";
 import { Table } from "antd";
 import styled from "styled-components";
 // import { Link } from "<routes>";
 import Link from "next/link";
+import InfiniteScroll from "react-infinite-scroller";
 
 class List extends React.PureComponent {
   state = {
-    page: 1
+    page: 1,
+    loading: false
   };
 
   componentWillMount() {
-    this.props.GetContact();
+    this.props.GetContact(this.state.page);
   }
 
   _onChangePagination(page) {
@@ -29,6 +30,17 @@ class List extends React.PureComponent {
       alert("done");
     } else {
       alert("fail");
+    }
+  }
+
+  async LoadListMore(page) {
+    const { loading } = this.state;
+    const { HasMore } = this.props.ContactReducer;
+    if (HasMore && page !== 1 && !loading) {
+      this.setState({ page, loading: true });
+      await this.props.GetContact(page);
+
+      this.setState({ loading: false });
     }
   }
 
@@ -65,15 +77,12 @@ class List extends React.PureComponent {
         dataIndex: "",
         render: (text, record) => {
           return (
-            <div>
-              <Link
-                href={{ pathname: "/contact/form", query: { id: record.id } }}
-                prefetch
-              >
-                <a>View</a>
-              </Link>
-              /<a onClick={() => this._onDelete(record)}>Delete</a>
-            </div>
+            <Link
+              href={{ pathname: "/contact/form", query: { id: record.id } }}
+              prefetch
+            >
+              <a onClick={() => this.setState({ loading: true })}>View</a>
+            </Link>
           );
         }
       }
@@ -84,23 +93,22 @@ class List extends React.PureComponent {
         <Container>
           <H1TextCenter>Contact List</H1TextCenter>
 
-          <Table
-            columns={columns}
-            dataSource={this.props.ContactReducer.List.slice(
-              (this.state.page - 1) * 10,
-              this.state.page * 10
-            )}
-            pagination={false}
-            rowKey={record => record.id}
-          />
-
-          <PaginationContainer>
-            <PaginationList
-              defaultPageSize={10}
-              total={this.props.ContactReducer.List.length}
-              onChange={page => this._onChangePagination(page)}
-            />
-          </PaginationContainer>
+          <Loading className="loader" loading={this.state.loading} />
+          <ListTable loading={this.state.loading}>
+            <InfiniteScroll
+              pageStart={0}
+              loadMore={page => this.LoadListMore(page)}
+              useWindow={false}
+              threshold={250}
+            >
+              <Table
+                columns={columns}
+                dataSource={this.props.ContactReducer.List}
+                pagination={false}
+                rowKey={record => record.id}
+              />
+            </InfiniteScroll>
+          </ListTable>
         </Container>
       </ListContainer>
     );
@@ -118,7 +126,7 @@ List.getInitialProps = async ctx => {
 
 export default connect(
   ({ ContactReducer }) => ({ ContactReducer }),
-  { GetContact, DeleteContact }
+  { GetContact }
 )(List);
 
 const Container = styled.div`
@@ -131,11 +139,13 @@ const ListContainer = styled.div`
   width: 100%;
 `;
 
-const PaginationContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  padding-top: 10px;
+const ListTable = styled.div`
+  height: calc(90vh - ${props => (props.loading ? "5px" : "0px")});
+  overflow-y: auto;
+`;
+
+const Loading = styled.div`
+  display: ${props => (props.loading ? "block" : "none")};
 `;
 
 const H1TextCenter = styled.h1`

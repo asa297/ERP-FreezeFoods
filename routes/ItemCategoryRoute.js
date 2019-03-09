@@ -18,6 +18,14 @@ module.exports = (app, client) => {
     });
   });
 
+  app.get("/api/itemcategory/list", isAuthenticated, async (req, res) => {
+    const data = await client.query(
+      `SELECT id , name from item_category order by id`
+    );
+
+    res.send(data.rows);
+  });
+
   app.get("/api/itemcategory/list/:page", isAuthenticated, async (req, res) => {
     const { page } = req.params;
 

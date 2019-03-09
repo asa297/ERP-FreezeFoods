@@ -27,14 +27,24 @@ module.exports = (app, client) => {
     });
   });
 
-  app.get("/api/contact", isAuthenticated, async (req, res) => {
+  app.get("/api/contact/list/:page", isAuthenticated, async (req, res) => {
+    const { page } = req.params;
+
     const data = await client.query(
-      "SELECT id, name, phone, org, remark from contact order by id"
+      `SELECT id, name, phone, org, remark from contact order by id OFFSET ${(page -
+        1) *
+        30} ROWS FETCH NEXT 30 ROWS ONLY;`
     );
-    res.send(data.rows);
+
+    const result = {
+      data: data.rows,
+      HasMore: data.rows.length === 30
+    };
+
+    res.send(result);
   });
 
-  app.get("/api/contact/:id", isAuthenticated, async (req, res) => {
+  app.get("/api/contact/form/:id", isAuthenticated, async (req, res) => {
     const { id } = req.params;
 
     const data = await client.query(

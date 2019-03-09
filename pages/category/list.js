@@ -1,7 +1,6 @@
 import { connect } from "react-redux";
 import { authInitialProps, checkUserRole } from "<utils>/auth";
-import { GetItemCategory, DeleteItemCategory } from "<actions>";
-import { PaginationList } from "<components>";
+import { GetItemCategory } from "<actions>";
 import { Table } from "antd";
 import styled from "styled-components";
 // import { Link } from "<routes>";
@@ -37,13 +36,13 @@ class List extends React.PureComponent {
   async LoadListMore(page) {
     const { loading } = this.state;
     const { HasMore } = this.props.ItemCategoryReducer;
+
     if (HasMore && page !== 1 && !loading) {
       this.setState({ page, loading: true });
       await this.props.GetItemCategory(page);
 
       this.setState({ loading: false });
     }
-    // console.log("test", a);
   }
 
   render() {
@@ -70,7 +69,7 @@ class List extends React.PureComponent {
               href={{ pathname: "/category/form", query: { id: record.id } }}
               prefetch
             >
-              <a>View</a>
+              <a onClick={() => this.setState({ loading: true })}>View</a>
             </Link>
           );
         }
@@ -98,14 +97,6 @@ class List extends React.PureComponent {
               />
             </InfiniteScroll>
           </ListTable>
-
-          {/* <PaginationContainer>
-            <PaginationList
-              defaultPageSize={10}
-              total={this.props.ItemCategoryReducer.List.length}
-              onChange={page => this._onChangePagination(page)}
-            />
-          </PaginationContainer> */}
         </Container>
       </ListContainer>
     );
@@ -123,7 +114,7 @@ List.getInitialProps = async ctx => {
 
 export default connect(
   ({ ItemCategoryReducer }) => ({ ItemCategoryReducer }),
-  { GetItemCategory, DeleteItemCategory }
+  { GetItemCategory }
 )(List);
 
 const Container = styled.div`
@@ -134,13 +125,6 @@ const ListContainer = styled.div`
   display: flex;
   justify-content: center;
   width: 100%;
-`;
-
-const PaginationContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  padding-top: 10px;
 `;
 
 const ListTable = styled.div`

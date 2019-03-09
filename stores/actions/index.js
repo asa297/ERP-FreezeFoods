@@ -9,8 +9,8 @@ export const InsertItem = value => async dispatch => {
   return { status: res.status === 200, id: res.data.id };
 };
 
-export const GetItem = () => async dispatch => {
-  const res = await axios.get("/api/item").catch(e => null);
+export const GetItem = page => async dispatch => {
+  const res = await axios.get("/api/item/list/" + page).catch(e => null);
   if (!res) return { status: false };
   const { data } = res;
   dispatch({ type: actionTypes.ITEM.FETCH_LIST, payload: data });
@@ -27,7 +27,7 @@ export const DeleteItem = id => async (dispatch, currentState) => {
 };
 
 export const GetItemById = id => async dispatch => {
-  const res = await axios.get("/api/item/" + id).catch(e => null);
+  const res = await axios.get("/api/item/form/" + id).catch(e => null);
   if (!res) return { status: false };
   const { data } = res;
   dispatch({ type: actionTypes.ITEM.FETCH, payload: data.result });
@@ -48,6 +48,14 @@ export const InsertItemCategory = value => async dispatch => {
   const res = await axios.post("/api/itemcategory", value);
   if (!res) return { status: false };
   return { status: res.status === 200, id: res.data.id };
+};
+
+export const GetItemCategoryAll = () => async dispatch => {
+  const res = await axios.get("/api/itemcategory/list").catch(e => null);
+  if (!res) return { status: false };
+  const { data } = res;
+  dispatch({ type: actionTypes.CATEGORY.FETCH_LIST_ALL, payload: data });
+  return { status: res.status === 200 };
 };
 
 export const GetItemCategory = page => async dispatch => {
@@ -95,8 +103,8 @@ export const InsertContact = value => async dispatch => {
   return { status: res.status === 200, id: res.data.id };
 };
 
-export const GetContact = () => async dispatch => {
-  const res = await axios.get("/api/contact").catch(e => null);
+export const GetContact = page => async dispatch => {
+  const res = await axios.get("/api/contact/list/" + page).catch(e => null);
   if (!res) return { status: false };
   const { data } = res;
   dispatch({ type: actionTypes.CONTACT.FETCH_LIST, payload: data });
@@ -113,7 +121,7 @@ export const DeleteContact = id => async (dispatch, currentState) => {
 };
 
 export const GetContactById = id => async dispatch => {
-  const res = await axios.get("/api/contact/" + id).catch(e => null);
+  const res = await axios.get("/api/contact/form/" + id).catch(e => null);
   if (!res) return { status: false };
   const { data } = res;
   dispatch({ type: actionTypes.CONTACT.FETCH, payload: data.result });
