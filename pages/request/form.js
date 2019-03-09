@@ -1,12 +1,12 @@
 import { connect } from "react-redux";
 import { authInitialProps, checkUserRole } from "<utils>/auth";
-import { ItemUnitFormSchema } from "<utils>/validatior";
-import { InputItemInline, InputTextAreaInline, ActionForm } from "<components>";
+import { ContactFormSchema } from "<utils>/validatior";
+import { InputItemInline, InputTextArea, ActionForm } from "<components>";
 import {
-  InsertItemUnit,
-  GetItemUnitById,
-  UpdateItemUnit,
-  DeleteItemUnit
+  InsertContact,
+  GetContactById,
+  UpdateContact,
+  DeleteContact
 } from "<actions>";
 import { Formik, Field } from "formik";
 import styled from "styled-components";
@@ -21,53 +21,55 @@ class Form extends React.PureComponent {
 
   componentWillMount() {
     const { formId } = this.props;
-    if (formId) this.props.GetItemUnitById(formId);
+    if (formId) this.props.GetContactById(formId);
   }
 
   setInitialDataForm(formId, { Item }) {
     if (!formId) return {};
     return {
       name: Item.name,
+      phone: Item.phone,
+      org: Item.org,
       remark: Item.remark
     };
   }
 
   async OnDelete() {
     const { formId } = this.props;
-    const { status } = await this.props.DeleteItemUnit(formId);
+    const { status } = await this.props.DeleteContact(formId);
     if (status) {
       alert("Delete Done");
-      Router.push(`/unit/list`);
+      Router.push(`/contact/list`);
     } else {
       alert("fail");
     }
   }
 
   render() {
-    const { ItemUnitReducer, formId } = this.props;
+    const { ContactReducer, formId } = this.props;
 
     return (
       <MasterContanier>
         <Container>
-          <H1TextCenter>Item Unit Form</H1TextCenter>
+          <H1TextCenter>Contact Form</H1TextCenter>
           <FormContainer>
             <Formik
-              initialValues={this.setInitialDataForm(formId, ItemUnitReducer)}
+              initialValues={this.setInitialDataForm(formId, ContactReducer)}
               enableReinitialize={formId ? true : false}
-              validationSchema={ItemUnitFormSchema}
+              validationSchema={ContactFormSchema}
               onSubmit={async (values, actions) => {
                 this.setState({ loading: true });
 
                 const { status, id } = formId
-                  ? await this.props.UpdateItemUnit(formId, values)
-                  : await this.props.InsertItemUnit(values);
+                  ? await this.props.UpdateContact(formId, values)
+                  : await this.props.InsertContact(values);
 
                 if (formId) {
                   alert(status ? "Save Done" : "fail");
                 } else {
                   alert(status ? "Add Done" : "fail");
                   if (status) {
-                    window.location.href = `/unit/form?id=${id}`;
+                    window.location.href = `/contact/form?id=${id}`;
                   }
                 }
 
@@ -75,28 +77,61 @@ class Form extends React.PureComponent {
               }}
               render={props => (
                 <form onSubmit={props.handleSubmit}>
-                  <Field
-                    label="Item Unit"
-                    type="text"
-                    name="name"
-                    component={InputItemInline}
-                    inline="true"
-                    value={props.values.name}
-                    requireStar="true"
-                    onChange={e => props.setFieldValue("name", e.target.value)}
-                  />
+                  <FlexContainer>
+                    <FieldContainer width="100%">
+                      <Field
+                        label="Name"
+                        type="text"
+                        name="name"
+                        component={InputItemInline}
+                        value={props.values.name}
+                        requireStar="true"
+                        onChange={e =>
+                          props.setFieldValue("name", e.target.value)
+                        }
+                      />
+                    </FieldContainer>
 
-                  <FormContainer />
+                    <FieldContainer width="100%">
+                      <Field
+                        label="Phone"
+                        type="text"
+                        name="phone"
+                        component={InputItemInline}
+                        value={props.values.phone}
+                        requireStar="true"
+                        onChange={e =>
+                          props.setFieldValue("phone", e.target.value)
+                        }
+                      />
+                    </FieldContainer>
 
-                  <Field
-                    label="Remark Unit"
-                    name="remark"
-                    component={InputTextAreaInline}
-                    value={props.values.remark}
-                    onChange={e =>
-                      props.setFieldValue("remark", e.target.value)
-                    }
-                  />
+                    <FieldContainer width="100%">
+                      <Field
+                        label="Org"
+                        type="text"
+                        name="org"
+                        component={InputItemInline}
+                        value={props.values.org}
+                        requireStar="true"
+                        onChange={e =>
+                          props.setFieldValue("org", e.target.value)
+                        }
+                      />
+                    </FieldContainer>
+                  </FlexContainer>
+
+                  <RemarkContainer>
+                    <Field
+                      label="Remark"
+                      name="remark"
+                      component={InputTextArea}
+                      value={props.values.remark}
+                      onChange={e =>
+                        props.setFieldValue("remark", e.target.value)
+                      }
+                    />
+                  </RemarkContainer>
 
                   <FlexCenter>
                     <ActionForm
@@ -124,13 +159,13 @@ Form.getInitialProps = async ctx => {
 
     if (query.id) formId = query.id;
   }
-  await ctx.reduxStore.dispatch({ type: actionTypes.UNIT.RESET });
+  await ctx.reduxStore.dispatch({ type: actionTypes.CONTACT.RESET });
   return { auth, formId };
 };
 
 export default connect(
-  ({ ItemUnitReducer }) => ({ ItemUnitReducer }),
-  { InsertItemUnit, GetItemUnitById, UpdateItemUnit, DeleteItemUnit }
+  ({ ContactReducer }) => ({ ContactReducer }),
+  { InsertContact, GetContactById, UpdateContact, DeleteContact }
 )(Form);
 
 const MasterContanier = styled.div`
@@ -140,7 +175,7 @@ const MasterContanier = styled.div`
   margin-top: 5%;
 `;
 const Container = styled.div`
-  width: 60%;
+  width: 80%;
 `;
 
 const FormContainer = styled.div`
@@ -155,4 +190,16 @@ const FlexCenter = styled.div`
   display: flex;
   justify-content: center;
   padding-top: 10px;
+`;
+
+const FlexContainer = styled.div`
+  display: flex;
+`;
+
+const FieldContainer = styled.div`
+  width: ${props => ` ${props.width}` || ""};
+`;
+
+const RemarkContainer = styled.div`
+  padding-left: 15px;
 `;

@@ -20,9 +20,6 @@ export const GetItem = page => async dispatch => {
 export const DeleteItem = id => async (dispatch, currentState) => {
   const res = await axios.delete(`/api/item/${id}`).catch(e => null);
   if (!res) return { status: false };
-  const { ItemReducer } = currentState();
-  const newData = ItemReducer.List.filter(value => value.id !== id);
-  dispatch({ type: actionTypes.ITEM.DELETE, payload: newData });
   return { status: res.status === 200 };
 };
 
@@ -71,9 +68,6 @@ export const GetItemCategory = page => async dispatch => {
 export const DeleteItemCategory = id => async (dispatch, currentState) => {
   const res = await axios.delete(`/api/itemcategory/${id}`).catch(e => null);
   if (!res) return { status: false };
-  const { ItemCategoryReducer } = currentState();
-  const newData = ItemCategoryReducer.List.filter(value => value.id !== id);
-  dispatch({ type: actionTypes.CATEGORY.DELETE, payload: newData });
   return { status: res.status === 200 };
 };
 
@@ -114,9 +108,6 @@ export const GetContact = page => async dispatch => {
 export const DeleteContact = id => async (dispatch, currentState) => {
   const res = await axios.delete(`/api/contact/${id}`).catch(e => null);
   if (!res) return { status: false };
-  const { ContactReducer } = currentState();
-  const newData = ContactReducer.List.filter(value => value.id !== id);
-  dispatch({ type: actionTypes.CONTACT.DELETE, payload: newData });
   return { status: res.status === 200 };
 };
 
@@ -155,9 +146,6 @@ export const GetItemUnit = page => async dispatch => {
 export const DeleteItemUnit = id => async (dispatch, currentState) => {
   const res = await axios.delete(`/api/unit/${id}`).catch(e => null);
   if (!res) return { status: false };
-  const { ItemUnitReducer } = currentState();
-  const newData = ItemUnitReducer.List.filter(value => value.id !== id);
-  dispatch({ type: actionTypes.UNIT.DELETE, payload: newData });
   return { status: res.status === 200 };
 };
 
@@ -173,6 +161,44 @@ export const UpdateItemUnit = (id, value) => async dispatch => {
   const res = await axios.put("/api/unit/" + id, value).catch(e => null);
   if (!res) return { status: false };
   dispatch({ type: actionTypes.UNIT.UPDATE, payload: value });
+  return { status: res.status === 200 };
+};
+
+//#endregion Item Unit Action
+
+//#region Request Action
+export const InsertRequest = value => async dispatch => {
+  const res = await axios.post("/api/request", value);
+  if (!res) return { status: false };
+  return { status: res.status === 200, id: res.data.id };
+};
+
+export const GetRequest = page => async dispatch => {
+  const res = await axios.get("/api/request/list/" + page).catch(e => null);
+  if (!res) return { status: false };
+  const { data } = res;
+  dispatch({ type: actionTypes.REQUEST.FETCH_LIST, payload: data });
+  return { status: res.status === 200 };
+};
+
+export const DeleteRequest = id => async (dispatch, currentState) => {
+  const res = await axios.delete(`/api/request/${id}`).catch(e => null);
+  if (!res) return { status: false };
+  return { status: res.status === 200 };
+};
+
+export const GetRequestById = id => async dispatch => {
+  const res = await axios.get("/api/request/form/" + id).catch(e => null);
+  if (!res) return { status: false };
+  const { data } = res;
+  dispatch({ type: actionTypes.REQUEST.FETCH, payload: data.result });
+  return { status: res.status === 200 };
+};
+
+export const UpdateRequest = (id, value) => async dispatch => {
+  const res = await axios.put("/api/request/" + id, value).catch(e => null);
+  if (!res) return { status: false };
+  dispatch({ type: actionTypes.REQUEST.UPDATE, payload: value });
   return { status: res.status === 200 };
 };
 
