@@ -6,14 +6,16 @@ import { Table } from "antd";
 import styled from "styled-components";
 // import { Link } from "<routes>";
 import Link from "next/link";
+import InfiniteScroll from "react-infinite-scroller";
 
 class List extends React.PureComponent {
   state = {
-    page: 1
+    page: 1,
+    loading: false
   };
 
   componentWillMount() {
-    this.props.GetItemCategory();
+    this.props.GetItemCategory(this.state.page);
   }
 
   _onChangePagination(page) {
@@ -30,6 +32,18 @@ class List extends React.PureComponent {
     } else {
       alert("fail");
     }
+  }
+
+  async LoadListMore(page) {
+    const { loading } = this.state;
+    const { HasMore } = this.props.ItemCategoryReducer;
+    if (HasMore && page !== 1 && !loading) {
+      this.setState({ page, loading: true });
+      await this.props.GetItemCategory(page);
+
+      this.setState({ loading: false });
+    }
+    // console.log("test", a);
   }
 
   render() {
@@ -52,15 +66,12 @@ class List extends React.PureComponent {
         dataIndex: "",
         render: (text, record) => {
           return (
-            <div>
-              <Link
-                href={{ pathname: "/category/form", query: { id: record.id } }}
-                prefetch
-              >
-                <a>View</a>
-              </Link>
-              /<a onClick={() => this._onDelete(record)}>Delete</a>
-            </div>
+            <Link
+              href={{ pathname: "/category/form", query: { id: record.id } }}
+              prefetch
+            >
+              <a>View</a>
+            </Link>
           );
         }
       }
@@ -70,24 +81,31 @@ class List extends React.PureComponent {
       <ListContainer>
         <Container>
           <H1TextCenter>Item Category List</H1TextCenter>
+          <Loading className="loader" loading={this.state.loading} />
+          <ListTable loading={this.state.loading}>
+            <InfiniteScroll
+              pageStart={0}
+              loadMore={page => this.LoadListMore(page)}
+              hasMore={true}
+              useWindow={false}
+              threshold={250}
+            >
+              <Table
+                columns={columns}
+                dataSource={this.props.ItemCategoryReducer.List}
+                pagination={false}
+                rowKey={record => record.id}
+              />
+            </InfiniteScroll>
+          </ListTable>
 
-          <Table
-            columns={columns}
-            dataSource={this.props.ItemCategoryReducer.List.slice(
-              (this.state.page - 1) * 10,
-              this.state.page * 10
-            )}
-            pagination={false}
-            rowKey={record => record.id}
-          />
-
-          <PaginationContainer>
+          {/* <PaginationContainer>
             <PaginationList
               defaultPageSize={10}
               total={this.props.ItemCategoryReducer.List.length}
               onChange={page => this._onChangePagination(page)}
             />
-          </PaginationContainer>
+          </PaginationContainer> */}
         </Container>
       </ListContainer>
     );
@@ -125,7 +143,18 @@ const PaginationContainer = styled.div`
   padding-top: 10px;
 `;
 
+const ListTable = styled.div`
+  height: calc(90vh - ${props => (props.loading ? "5px" : "0px")});
+  overflow-y: auto;
+`;
+
+const Loading = styled.div`
+  display: ${props => (props.loading ? "block" : "none")};
+`;
+
 const H1TextCenter = styled.h1`
+  height: 10vh;
+  margin: 0px;
   padding: 10px 0px;
   text-align: center;
 `;

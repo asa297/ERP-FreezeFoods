@@ -2,16 +2,21 @@ import { actionTypes } from "../type";
 
 const initState = {
   List: [],
-  Item: {}
+  Item: {},
+  HasMore: true
 };
 
 export default function(state = initState, action) {
   switch (action.type) {
     case actionTypes.CATEGORY.FETCH_LIST:
-    case actionTypes.CATEGORY.DELETE:
       return Object.assign({}, state, {
-        List: action.payload
+        List: [...state.List, ...action.payload.data],
+        HasMore: action.payload.HasMore
       });
+    // case actionTypes.CATEGORY.DELETE:
+    //   return Object.assign({}, state, {
+    //     List: action.payload
+    //   });
     case actionTypes.CATEGORY.FETCH:
     case actionTypes.CATEGORY.UPDATE:
       return Object.assign({}, state, {

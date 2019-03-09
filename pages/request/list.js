@@ -35,16 +35,17 @@ class List extends React.PureComponent {
   render() {
     const columns = [
       {
-        title: "Id",
+        title: "Code",
         dataIndex: "id",
         width: 150,
         align: "center"
       },
       {
-        title: "Name",
-        dataIndex: "name",
+        title: "Status",
+        dataIndex: "status",
         width: "30%"
       },
+
       {
         title: "Remark",
         dataIndex: "remark",
@@ -60,7 +61,7 @@ class List extends React.PureComponent {
                 href={{ pathname: "/unit/form", query: { id: record.id } }}
                 prefetch
               >
-                <a>Edit</a>
+                <a>View</a>
               </Link>
               /<a onClick={() => this._onDelete(record)}>Delete</a>
             </div>

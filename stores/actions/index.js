@@ -50,8 +50,10 @@ export const InsertItemCategory = value => async dispatch => {
   return { status: res.status === 200, id: res.data.id };
 };
 
-export const GetItemCategory = () => async dispatch => {
-  const res = await axios.get("/api/itemcategory").catch(e => null);
+export const GetItemCategory = page => async dispatch => {
+  const res = await axios
+    .get("/api/itemcategory/list/" + page)
+    .catch(e => null);
   if (!res) return { status: false };
   const { data } = res;
   dispatch({ type: actionTypes.CATEGORY.FETCH_LIST, payload: data });
@@ -68,7 +70,7 @@ export const DeleteItemCategory = id => async (dispatch, currentState) => {
 };
 
 export const GetItemCategoryById = id => async dispatch => {
-  const res = await axios.get("/api/itemcategory/" + id).catch(e => null);
+  const res = await axios.get("/api/itemcategory/form/" + id).catch(e => null);
   if (!res) return { status: false };
   const { data } = res;
   dispatch({ type: actionTypes.CATEGORY.FETCH, payload: data.result });

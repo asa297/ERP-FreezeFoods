@@ -31,6 +31,7 @@
     "pg": "^7.8.1",
     "react": "^16.7.0",
     "react-dom": "^16.4.2",
+    "react-infinite-scroller": "^1.2.4",
     "react-redux": "^5.0.1",
     "redux": "^3.6.0",
     "redux-devtools-extension": "^2.13.2",
