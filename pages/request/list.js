@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
 import { authInitialProps, checkUserRole } from "<utils>/auth";
-import { GetContact, DeleteContact } from "<actions>";
+import { GetItemUnit, DeleteItemUnit } from "<actions>";
 import { PaginationList } from "<components>";
 import { Table } from "antd";
 import styled from "styled-components";
@@ -13,7 +13,7 @@ class List extends React.PureComponent {
   };
 
   componentWillMount() {
-    this.props.GetContact();
+    this.props.GetItemUnit();
   }
 
   _onChangePagination(page) {
@@ -23,7 +23,7 @@ class List extends React.PureComponent {
   async _onDelete(item) {
     const { id } = item;
 
-    const res = await this.props.DeleteContact(id);
+    const res = await this.props.DeleteItemUnit(id);
 
     if (res.status) {
       alert("done");
@@ -43,22 +43,12 @@ class List extends React.PureComponent {
       {
         title: "Name",
         dataIndex: "name",
-        width: "20%"
-      },
-      {
-        title: "phone",
-        dataIndex: "phone",
-        width: "20%"
-      },
-      {
-        title: "Organization",
-        dataIndex: "org",
-        width: "20%"
+        width: "30%"
       },
       {
         title: "Remark",
         dataIndex: "remark",
-        width: "20%"
+        width: "30%"
       },
       {
         title: "",
@@ -67,10 +57,10 @@ class List extends React.PureComponent {
           return (
             <div>
               <Link
-                href={{ pathname: "/contact/form", query: { id: record.id } }}
+                href={{ pathname: "/unit/form", query: { id: record.id } }}
                 prefetch
               >
-                <a>View</a>
+                <a>Edit</a>
               </Link>
               /<a onClick={() => this._onDelete(record)}>Delete</a>
             </div>
@@ -82,11 +72,11 @@ class List extends React.PureComponent {
     return (
       <ListContainer>
         <Container>
-          <H1TextCenter>Contact List</H1TextCenter>
+          <H1TextCenter>Request List</H1TextCenter>
 
           <Table
             columns={columns}
-            dataSource={this.props.ContactReducer.List.slice(
+            dataSource={this.props.ItemUnitReducer.List.slice(
               (this.state.page - 1) * 10,
               this.state.page * 10
             )}
@@ -97,7 +87,7 @@ class List extends React.PureComponent {
           <PaginationContainer>
             <PaginationList
               defaultPageSize={10}
-              total={this.props.ContactReducer.List.length}
+              total={this.props.ItemUnitReducer.List.length}
               onChange={page => this._onChangePagination(page)}
             />
           </PaginationContainer>
@@ -117,8 +107,8 @@ List.getInitialProps = async ctx => {
 };
 
 export default connect(
-  ({ ContactReducer }) => ({ ContactReducer }),
-  { GetContact, DeleteContact }
+  ({ ItemUnitReducer }) => ({ ItemUnitReducer }),
+  { GetItemUnit, DeleteItemUnit }
 )(List);
 
 const Container = styled.div`

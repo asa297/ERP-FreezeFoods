@@ -66,7 +66,7 @@ class List extends React.PureComponent {
                 href={{ pathname: "/item/form", query: { id: record.id } }}
                 prefetch
               >
-                <a>Edit</a>
+                <a>View</a>
               </Link>
               /<a onClick={() => this._onDelete(record)}>Delete</a>
             </div>
