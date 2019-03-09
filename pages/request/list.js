@@ -1,20 +1,19 @@
 import { connect } from "react-redux";
 import { authInitialProps, checkUserRole } from "<utils>/auth";
 import { GetItemUnit, DeleteItemUnit } from "<actions>";
+import { PaginationList } from "<components>";
 import { Table } from "antd";
 import styled from "styled-components";
 // import { Link } from "<routes>";
 import Link from "next/link";
-import InfiniteScroll from "react-infinite-scroller";
 
 class List extends React.PureComponent {
   state = {
-    page: 1,
-    loading: false
+    page: 1
   };
 
   componentWillMount() {
-    this.props.GetItemUnit(this.state.page);
+    this.props.GetItemUnit();
   }
 
   _onChangePagination(page) {
@@ -33,30 +32,20 @@ class List extends React.PureComponent {
     }
   }
 
-  async LoadListMore(page) {
-    const { loading } = this.state;
-    const { HasMore } = this.props.ItemUnitReducer;
-    if (HasMore && page !== 1 && !loading) {
-      this.setState({ page, loading: true });
-      await this.props.GetItemUnit(page);
-
-      this.setState({ loading: false });
-    }
-  }
-
   render() {
     const columns = [
       {
-        title: "Id",
+        title: "Code",
         dataIndex: "id",
         width: 150,
         align: "center"
       },
       {
-        title: "Name",
-        dataIndex: "name",
+        title: "Status",
+        dataIndex: "status",
         width: "30%"
       },
+
       {
         title: "Remark",
         dataIndex: "remark",
@@ -67,12 +56,15 @@ class List extends React.PureComponent {
         dataIndex: "",
         render: (text, record) => {
           return (
-            <Link
-              href={{ pathname: "/unit/form", query: { id: record.id } }}
-              prefetch
-            >
-              <a onClick={() => this.setState({ loading: true })}>View</a>
-            </Link>
+            <div>
+              <Link
+                href={{ pathname: "/unit/form", query: { id: record.id } }}
+                prefetch
+              >
+                <a>View</a>
+              </Link>
+              /<a onClick={() => this._onDelete(record)}>Delete</a>
+            </div>
           );
         }
       }
@@ -81,24 +73,25 @@ class List extends React.PureComponent {
     return (
       <ListContainer>
         <Container>
-          <H1TextCenter>Item Unit List</H1TextCenter>
+          <H1TextCenter>Request List</H1TextCenter>
 
-          <Loading className="loader" loading={this.state.loading} />
-          <ListTable loading={this.state.loading}>
-            <InfiniteScroll
-              pageStart={0}
-              loadMore={page => this.LoadListMore(page)}
-              useWindow={false}
-              threshold={250}
-            >
-              <Table
-                columns={columns}
-                dataSource={this.props.ItemUnitReducer.List}
-                pagination={false}
-                rowKey={record => record.id}
-              />
-            </InfiniteScroll>
-          </ListTable>
+          <Table
+            columns={columns}
+            dataSource={this.props.ItemUnitReducer.List.slice(
+              (this.state.page - 1) * 10,
+              this.state.page * 10
+            )}
+            pagination={false}
+            rowKey={record => record.id}
+          />
+
+          <PaginationContainer>
+            <PaginationList
+              defaultPageSize={10}
+              total={this.props.ItemUnitReducer.List.length}
+              onChange={page => this._onChangePagination(page)}
+            />
+          </PaginationContainer>
         </Container>
       </ListContainer>
     );
@@ -129,13 +122,11 @@ const ListContainer = styled.div`
   width: 100%;
 `;
 
-const ListTable = styled.div`
-  height: calc(90vh - ${props => (props.loading ? "5px" : "0px")});
-  overflow-y: auto;
-`;
-
-const Loading = styled.div`
-  display: ${props => (props.loading ? "block" : "none")};
+const PaginationContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding-top: 10px;
 `;
 
 const H1TextCenter = styled.h1`

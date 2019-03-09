@@ -20,11 +20,11 @@ export const MenuManage = ({ UserRole }) => {
     route =>
       route.sub === "manage" && route.role.find(role => role === UserRole)
   );
+
   const CategoryPage = RoleMappingRoute.filter(
     route =>
       route.page === "Category" && route.role.find(role => role === UserRole)
   );
-
   const ItemPage = RoleMappingRoute.filter(
     route => route.page === "Item" && route.role.find(role => role === UserRole)
   );
@@ -36,6 +36,17 @@ export const MenuManage = ({ UserRole }) => {
     route =>
       route.page === "Contact" && route.role.find(role => role === UserRole)
   );
+
+  const DocumentModule = RoleMappingRoute.filter(
+    route =>
+      route.sub === "document" && route.role.find(role => role === UserRole)
+  );
+
+  const RequestPage = RoleMappingRoute.filter(
+    route =>
+      route.page === "Request" && route.role.find(role => role === UserRole)
+  );
+
   return (
     <Menu theme="dark" mode="inline">
       <Menu.Item key="1" onClick={() => Router.push("/")}>
@@ -95,6 +106,30 @@ export const MenuManage = ({ UserRole }) => {
               }
             >
               Contact
+            </span>
+          </MenuItem>
+        </SubMenu>
+      ) : null}
+
+      {DocumentModule.length !== 0 ? (
+        <SubMenu
+          key="sub2"
+          title={
+            <span>
+              <Icon type="form" />
+              <span>Document</span>
+            </span>
+          }
+        >
+          <MenuItem routeform={GetFormPath(RequestPage)}>
+            <span
+              onClick={
+                GetListPath(RequestPage)
+                  ? () => Router.push(GetListPath(RequestPage))
+                  : null
+              }
+            >
+              RFQ
             </span>
           </MenuItem>
         </SubMenu>

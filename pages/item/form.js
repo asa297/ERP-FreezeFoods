@@ -9,7 +9,7 @@ import {
 } from "<components>";
 import {
   InsertItem,
-  GetItemCategory,
+  GetItemCategoryAll,
   GetItemById,
   UpdateItem,
   DeleteItem
@@ -26,7 +26,7 @@ class Form extends React.PureComponent {
 
   componentWillMount() {
     const { formId } = this.props;
-    this.props.GetItemCategory();
+    this.props.GetItemCategoryAll();
     if (formId) this.props.GetItemById(formId);
   }
 
@@ -171,7 +171,7 @@ export default connect(
     ItemCategoryReducer,
     ItemReducer
   }),
-  { InsertItem, GetItemCategory, GetItemById, UpdateItem, DeleteItem }
+  { InsertItem, GetItemCategoryAll, GetItemById, UpdateItem, DeleteItem }
 )(Form);
 
 const MasterContanier = styled.div`

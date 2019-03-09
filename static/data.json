@@ -1,76 +1,80 @@
 {
   "RoleMappingRoute": [
     {
-      "key": 1,
       "path": "/category/list",
-      "value": "Category",
       "sub": "manage",
       "type": "List",
       "page": "Category",
       "role": [1]
     },
     {
-      "key": 2,
       "path": "/item/list",
-      "value": "Item",
       "sub": "manage",
       "type": "List",
       "page": "Item",
       "role": [1]
     },
     {
-      "key": 3,
       "path": "/unit/list",
-      "value": "Item Unit",
       "sub": "manage",
       "type": "List",
       "page": "Unit",
       "role": [1]
     },
     {
-      "key": 4,
       "path": "/contact/list",
-      "value": "Item Unit",
       "sub": "manage",
       "type": "List",
       "page": "Contact",
       "role": [1]
     },
     {
-      "key": 1,
       "path": "/category/form",
-      "value": "New Category",
       "sub": "manage",
       "type": "Form",
       "page": "Category",
       "role": [1]
     },
     {
-      "key": 2,
       "path": "/item/form",
-      "value": "New Item",
       "sub": "manage",
       "type": "Form",
       "page": "Item",
-
       "role": [1]
     },
     {
-      "key": 3,
       "path": "/unit/form",
-      "value": "New Item Unit",
       "sub": "manage",
       "type": "Form",
       "page": "Unit",
       "role": [1]
     },
     {
-      "key": 4,
       "path": "/contact/form",
-      "value": "New Item Unit",
       "sub": "manage",
       "type": "Form",
       "page": "Contact",
+      "role": [1]
+    },
+    {
+      "path": "/request/list",
+      "sub": "document",
+      "type": "List",
+      "page": "Request",
+      "role": [1]
+    },
+    {
+      "path": "/request/list",
+      "sub": "document",
+      "type": "List",
+      "page": "Request",
+      "role": [1]
+    },
+    {
+      "path": "/request/form",
+      "sub": "document",
+      "type": "Form",
+      "page": "Request",
       "role": [1]
     }
   ]

@@ -18,14 +18,30 @@ module.exports = (app, client) => {
     });
   });
 
-  app.get("/api/itemcategory", isAuthenticated, async (req, res) => {
+  app.get("/api/itemcategory/list", isAuthenticated, async (req, res) => {
     const data = await client.query(
-      "SELECT id , name from item_category order by id"
+      `SELECT id , name from item_category order by id`
     );
+
     res.send(data.rows);
   });
 
-  app.get("/api/itemcategory/:id", isAuthenticated, async (req, res) => {
+  app.get("/api/itemcategory/list/:page", isAuthenticated, async (req, res) => {
+    const { page } = req.params;
+
+    const data = await client.query(
+      `SELECT id , name from item_category order by id OFFSET ${(page - 1) *
+        30} ROWS FETCH NEXT 30 ROWS ONLY;`
+    );
+
+    const result = {
+      data: data.rows,
+      HasMore: data.rows.length === 30
+    };
+    res.send(result);
+  });
+
+  app.get("/api/itemcategory/form/:id", isAuthenticated, async (req, res) => {
     const { id } = req.params;
 
     const data = await client.query(

@@ -27,14 +27,23 @@ module.exports = (app, client) => {
     });
   });
 
-  app.get("/api/item", isAuthenticated, async (req, res) => {
+  app.get("/api/item/list/:page", isAuthenticated, async (req, res) => {
+    const { page } = req.params;
+
     const data = await client.query(
-      "SELECT id, name, item_category_id, item_category_name ,remark from item order by id"
+      `SELECT id, name, item_category_id, item_category_name ,remark from item order by id OFFSET ${(page -
+        1) *
+        30} ROWS FETCH NEXT 30 ROWS ONLY;`
     );
-    res.send(data.rows);
+
+    const result = {
+      data: data.rows,
+      HasMore: data.rows.length === 30
+    };
+    res.send(result);
   });
 
-  app.get("/api/item/:id", isAuthenticated, async (req, res) => {
+  app.get("/api/item/form/:id", isAuthenticated, async (req, res) => {
     const { id } = req.params;
 
     const data = await client.query(
