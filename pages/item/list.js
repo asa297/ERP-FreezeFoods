@@ -6,6 +6,7 @@ import styled from "styled-components";
 // import { Link } from "<routes>";
 import Link from "next/link";
 import InfiniteScroll from "react-infinite-scroller";
+import { actionTypes } from "<action_types>";
 
 class List extends React.PureComponent {
   state = {
@@ -115,7 +116,7 @@ List.getInitialProps = async ctx => {
   if (auth) {
     await checkUserRole(auth)(ctx);
   }
-
+  await ctx.reduxStore.dispatch({ type: actionTypes.CATEGORY.RESET });
   return { auth };
 };
 
