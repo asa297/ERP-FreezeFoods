@@ -144,8 +144,8 @@ export const InsertItemUnit = value => async dispatch => {
   return { status: res.status === 200, id: res.data.id };
 };
 
-export const GetItemUnit = () => async dispatch => {
-  const res = await axios.get("/api/unit").catch(e => null);
+export const GetItemUnit = page => async dispatch => {
+  const res = await axios.get("/api/unit/list/" + page).catch(e => null);
   if (!res) return { status: false };
   const { data } = res;
   dispatch({ type: actionTypes.UNIT.FETCH_LIST, payload: data });
@@ -162,7 +162,7 @@ export const DeleteItemUnit = id => async (dispatch, currentState) => {
 };
 
 export const GetItemUnitById = id => async dispatch => {
-  const res = await axios.get("/api/unit/" + id).catch(e => null);
+  const res = await axios.get("/api/unit/form/" + id).catch(e => null);
   if (!res) return { status: false };
   const { data } = res;
   dispatch({ type: actionTypes.UNIT.FETCH, payload: data.result });

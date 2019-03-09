@@ -18,14 +18,22 @@ module.exports = (app, client) => {
     });
   });
 
-  app.get("/api/unit", isAuthenticated, async (req, res) => {
+  app.get("/api/unit/list/:page", isAuthenticated, async (req, res) => {
+    const { page } = req.params;
+
     const data = await client.query(
-      "SELECT id , name, remark from item_unit order by id"
+      `SELECT id , name, remark from item_unit order by id OFFSET ${(page - 1) *
+        30} ROWS FETCH NEXT 30 ROWS ONLY;`
     );
-    res.send(data.rows);
+
+    const result = {
+      data: data.rows,
+      HasMore: data.rows.length === 30
+    };
+    res.send(result);
   });
 
-  app.get("/api/unit/:id", isAuthenticated, async (req, res) => {
+  app.get("/api/unit/form/:id", isAuthenticated, async (req, res) => {
     const { id } = req.params;
 
     const data = await client.query(
