@@ -1,7 +1,7 @@
 import { connect } from "react-redux";
 import { authInitialProps, checkUserRole } from "<utils>/auth";
 import { GetItemUnit, DeleteItemUnit } from "<actions>";
-import { PaginationList } from "<components>";
+// import { PaginationList } from "<components>";
 import { Table } from "antd";
 import styled from "styled-components";
 // import { Link } from "<routes>";
@@ -84,14 +84,6 @@ class List extends React.PureComponent {
             pagination={false}
             rowKey={record => record.id}
           />
-
-          <PaginationContainer>
-            <PaginationList
-              defaultPageSize={10}
-              total={this.props.ItemUnitReducer.List.length}
-              onChange={page => this._onChangePagination(page)}
-            />
-          </PaginationContainer>
         </Container>
       </ListContainer>
     );
