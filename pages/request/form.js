@@ -1,7 +1,12 @@
 import { connect } from "react-redux";
 import { authInitialProps, checkUserRole } from "<utils>/auth";
-import { ContactFormSchema } from "<utils>/validatior";
-import { InputItemInline, InputTextArea, ActionForm } from "<components>";
+import { RequestFormSchema } from "<utils>/validatior";
+import {
+  InputItemInline,
+  InputTextArea,
+  ActionForm,
+  InputDateItem
+} from "<components>";
 import {
   InsertContact,
   GetContactById,
@@ -10,9 +15,9 @@ import {
 } from "<actions>";
 import { Formik, Field } from "formik";
 import styled from "styled-components";
-// import { Router } from "<routes>";
 import Router from "next/router";
 import { actionTypes } from "<action_types>";
+import moment from "moment";
 
 class Form extends React.PureComponent {
   state = {
@@ -25,7 +30,12 @@ class Form extends React.PureComponent {
   }
 
   setInitialDataForm(formId, { Item }) {
-    if (!formId) return {};
+    const { auth } = this.props;
+    if (!formId)
+      return {
+        date: moment(),
+        by: auth.user.name
+      };
     return {
       name: Item.name,
       phone: Item.phone,
@@ -51,12 +61,12 @@ class Form extends React.PureComponent {
     return (
       <MasterContanier>
         <Container>
-          <H1TextCenter>Contact Form</H1TextCenter>
+          <H1TextCenter>Request Form</H1TextCenter>
           <FormContainer>
             <Formik
               initialValues={this.setInitialDataForm(formId, ContactReducer)}
               enableReinitialize={formId ? true : false}
-              validationSchema={ContactFormSchema}
+              validationSchema={RequestFormSchema}
               onSubmit={async (values, actions) => {
                 this.setState({ loading: true });
 
@@ -78,45 +88,29 @@ class Form extends React.PureComponent {
               render={props => (
                 <form onSubmit={props.handleSubmit}>
                   <FlexContainer>
-                    <FieldContainer width="100%">
+                    <FieldContainer width="50%">
                       <Field
-                        label="Name"
-                        type="text"
-                        name="name"
-                        component={InputItemInline}
-                        value={props.values.name}
+                        label="Doc Date"
+                        name="date"
+                        component={InputDateItem}
+                        value={props.values.date}
                         requireStar="true"
-                        onChange={e =>
-                          props.setFieldValue("name", e.target.value)
-                        }
+                        onChange={e => props.setFieldValue("date", e)}
                       />
                     </FieldContainer>
 
-                    <FieldContainer width="100%">
+                    <FieldContainer width="50%">
                       <Field
-                        label="Phone"
+                        label="By"
                         type="text"
-                        name="phone"
+                        name="by"
                         component={InputItemInline}
-                        value={props.values.phone}
+                        value={props.values.by}
                         requireStar="true"
                         onChange={e =>
-                          props.setFieldValue("phone", e.target.value)
+                          props.setFieldValue("by", e.target.value)
                         }
-                      />
-                    </FieldContainer>
-
-                    <FieldContainer width="100%">
-                      <Field
-                        label="Org"
-                        type="text"
-                        name="org"
-                        component={InputItemInline}
-                        value={props.values.org}
-                        requireStar="true"
-                        onChange={e =>
-                          props.setFieldValue("org", e.target.value)
-                        }
+                        disabled={true}
                       />
                     </FieldContainer>
                   </FlexContainer>

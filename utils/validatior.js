@@ -17,3 +17,8 @@ export const ItemFormSchema = Yup.object().shape({
   name: Yup.string().required("Required"),
   category: Yup.object().required("Required")
 });
+
+export const RequestFormSchema = Yup.object().shape({
+  date: Yup.date().required("Required"),
+  by: Yup.string().required("Required")
+});
