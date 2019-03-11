@@ -11,3 +11,5 @@ export { default as InputTextArea } from "./FormItems/InputTextArea";
 export { default as SelectItem } from "./FormItems/SelectItem";
 export { default as InputDateItem } from "./FormItems/InputDateItem";
 export { default as MenuItem } from "./FormItems/MenuItem";
+export { default as EditableCell } from "./FormItems/EditableCell";
+export { default as EditableFormRow } from "./FormItems/EditableFormRow";
