@@ -37,6 +37,7 @@ nextApp
     require("./routes/ItemUnitRoute")(app, client);
     require("./routes/ContactRoute")(app, client);
     require("./routes/ItemRoute")(app, client);
+    require("./routes/RequestRoute")(app, client);
 
     app.get("*", (req, res) => {
       return handle(req, res);

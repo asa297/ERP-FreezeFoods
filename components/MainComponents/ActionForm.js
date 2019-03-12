@@ -9,6 +9,7 @@ const ActionForm = ({ formId, loading = false, OnDelete }) => {
           <ButtonSave
             type="primary"
             htmlType="submit"
+            icon="save"
             loading={loading}
             disabled={loading}
           >
@@ -17,6 +18,7 @@ const ActionForm = ({ formId, loading = false, OnDelete }) => {
 
           <ButtonDelete
             type="primary"
+            icon="delete"
             loading={loading}
             disabled={loading}
             onClick={() => OnDelete()}
@@ -28,10 +30,11 @@ const ActionForm = ({ formId, loading = false, OnDelete }) => {
         <ButtonSave
           type="primary"
           htmlType="submit"
+          icon="snippets"
           loading={loading}
           disabled={loading}
         >
-          Add
+          Create
         </ButtonSave>
       )}
     </div>

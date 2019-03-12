@@ -6,193 +6,338 @@ import {
   InputTextArea,
   ActionForm,
   InputDateItem,
-  EditableCell,
-  EditableFormRow
+  SelectOption
 } from "<components>";
 import {
-  InsertContact,
-  GetContactById,
-  UpdateContact,
-  DeleteContact
+  GetAllItem,
+  GetAllItemUnit,
+  InsertRequest,
+  GetRequestById
 } from "<actions>";
 import { Formik, Field } from "formik";
 import styled from "styled-components";
 import Router from "next/router";
 import { actionTypes } from "<action_types>";
 import moment from "moment";
+import { Table, Button, Input, Icon, InputNumber } from "antd";
 
 class Form extends React.PureComponent {
   constructor(props) {
     super(props);
-    this.columns = [
+    const columns = [
       {
-        title: "name",
-        dataIndex: "name",
-        width: "30%",
-        editable: true
+        title: (filters, sortOrder) => (
+          <FlexContainer>
+            Item<LabelRequire>*</LabelRequire>
+          </FlexContainer>
+        ),
+        dataIndex: "item_id",
+        width: "15%",
+        align: "center",
+        render: (text, record, index) => {
+          return (
+            <SelectOption
+              data={this.props.ItemReducer.List}
+              value={record.item_id}
+              onChange={value => this.ChangeItemCode(value, index)}
+            />
+          );
+        }
       },
       {
-        title: "age",
-        dataIndex: "age"
+        title: "Item Name",
+        dataIndex: "item_name",
+        width: "20%"
       },
       {
-        title: "address",
-        dataIndex: "address"
+        title: (filters, sortOrder) => (
+          <FlexContainer>
+            QTY<LabelRequire>*</LabelRequire>
+          </FlexContainer>
+        ),
+        dataIndex: "qty",
+        width: "10%",
+        render: (text, record, index) => {
+          return (
+            <Input
+              type="number"
+              value={record.qty}
+              onChange={value => this.ChangeQTY(value, index)}
+            />
+          );
+        }
       },
       {
-        title: "operation",
-        dataIndex: "operation",
-        render: (text, record) =>
-          this.state.dataSource.length >= 1 ? (
-            <Popconfirm
-              title="Sure to delete?"
-              onConfirm={() => this.handleDelete(record.key)}
-            >
-              <a href="javascript:;">Delete</a>
-            </Popconfirm>
-          ) : null
+        title: "Unit Price",
+        dataIndex: "unit_price",
+        width: "10%",
+        render: (text, record, index) => {
+          return (
+            <Input
+              type="number"
+              value={record.unit_price}
+              onChange={value => this.ChangeUnitPrice(value, index)}
+            />
+          );
+        }
+      },
+      {
+        title: (filters, sortOrder) => (
+          <FlexContainer>
+            Unit<LabelRequire>*</LabelRequire>
+          </FlexContainer>
+        ),
+        dataIndex: "unit_name",
+        width: "15%",
+        render: (text, record, index) => {
+          return (
+            <SelectOption
+              data={this.props.ItemUnitReducer.List}
+              value={record.unit_name}
+              onChange={value => this.ChangeItemUnit(value, index)}
+            />
+          );
+        }
+      },
+      {
+        title: "Remark",
+        dataIndex: "remark",
+        width: "20%",
+        render: (text, record, index) => {
+          return (
+            <Input
+              type="text"
+              value={record.remark}
+              onChange={value => this.ChangeRemark(value, index)}
+            />
+          );
+        }
+      },
+      {
+        title: "",
+        dataIndex: "",
+        width: "10%",
+        render: (text, record, index) => {
+          return (
+            <div>
+              <a href="#" onClick={() => this.DeleteRow(index)}>
+                <Icon type="minus" />
+              </a>
+              <a
+                href="#"
+                onClick={() => this.AddNewRow()}
+                style={{ paddingLeft: "5px" }}
+              >
+                <Icon type="plus" />
+              </a>
+            </div>
+          );
+        }
       }
     ];
 
     this.state = {
-      dataSource: [
+      loading: false,
+      columns,
+      data: [
         {
-          key: "0",
-          name: "Edward King 0",
-          age: "32",
-          address: "London, Park Lane no. 0"
-        },
-        {
-          key: "1",
-          name: "Edward King 1",
-          age: "32",
-          address: "London, Park Lane no. 1"
+          id: 0,
+          item_id: null,
+          item_name: null,
+          qty: 0,
+          unit_price: 0,
+          unit_id: null,
+          unit_name: null,
+          remark: null
         }
-      ],
-      count: 2
+      ]
     };
   }
 
-  state = {
-    loading: false
-  };
-
   componentWillMount() {
     const { formId } = this.props;
-    if (formId) this.props.GetContactById(formId);
+    this.props.GetAllItem();
+    this.props.GetAllItemUnit();
+    if (formId) this.props.GetRequestById(formId);
+  }
+
+  componentWillReceiveProps({ RequestReducer }) {
+    const {
+      Item: { lines = [] }
+    } = RequestReducer;
+    if (lines.length !== 0) {
+      this.setState({ data: lines });
+    }
   }
 
   setInitialDataForm(formId, { Item }) {
     const { auth } = this.props;
     if (!formId)
       return {
+        code: "####",
         date: moment(),
         by: auth.user.name
       };
+
+    const { document = {} } = Item;
     return {
-      name: Item.name,
-      phone: Item.phone,
-      org: Item.org,
-      remark: Item.remark
+      code: document.code,
+      date: moment(document.date),
+      by: document.create_by,
+      remarl: document.remark
     };
   }
 
-  async OnDelete() {
-    const { formId } = this.props;
-    const { status } = await this.props.DeleteContact(formId);
-    if (status) {
-      alert("Delete Done");
-      Router.push(`/contact/list`);
-    } else {
-      alert("fail");
-    }
+  // async OnDelete() {
+  //   const { formId } = this.props;
+  //   const { status } = await this.props.DeleteContact(formId);
+  //   if (status) {
+  //     alert("Delete Done");
+  //     Router.push(`/contact/list`);
+  //   } else {
+  //     alert("fail");
+  //   }
+  // }
+
+  AddNewRow() {
+    const { data } = this.state;
+
+    const newRow = {
+      id: data.length,
+      item_id: null,
+      item_name: null,
+      qty: 0,
+      unit_price: 0,
+      unit_id: null,
+      unit_name: null,
+      remark: null
+    };
+    this.setState({ data: [...data, ...[newRow]] });
   }
 
-  handleDelete = key => {
-    const dataSource = [...this.state.dataSource];
-    this.setState({ dataSource: dataSource.filter(item => item.key !== key) });
-  };
+  DeleteRow(index) {
+    let data = [...this.state.data];
+    data.splice(index, 1);
+    this.setState({ data });
+  }
 
-  handleAdd = () => {
-    const { count, dataSource } = this.state;
-    const newData = {
-      key: count,
-      name: `Edward King ${count}`,
-      age: 32,
-      address: `London, Park Lane no. ${count}`
-    };
-    this.setState({
-      dataSource: [...dataSource, newData],
-      count: count + 1
-    });
-  };
+  ChangeItemCode(id, index) {
+    const { ItemReducer } = this.props;
+    const item = ItemReducer.List.find(item => item.id === id);
 
-  handleSave = row => {
-    const newData = [...this.state.dataSource];
-    const index = newData.findIndex(item => row.key === item.key);
-    const item = newData[index];
-    newData.splice(index, 1, {
-      ...item,
-      ...row
-    });
-    this.setState({ dataSource: newData });
-  };
+    let data = [...this.state.data];
+    data[index].item_id = item.id;
+    data[index].item_name = item.name;
+    this.setState({ data });
+  }
 
+  ChangeQTY(e, index) {
+    let data = [...this.state.data];
+    data[index].qty = Math.floor(e.target.value);
+    this.setState({ data });
+  }
+
+  ChangeUnitPrice(e, index) {
+    let data = [...this.state.data];
+    data[index].unit_price = e.target.value;
+    this.setState({ data });
+  }
+
+  ChangeItemUnit(id, index) {
+    const { ItemUnitReducer } = this.props;
+    const unit = ItemUnitReducer.List.find(unit => unit.id === id);
+
+    let data = [...this.state.data];
+    data[index].unit_id = unit.id;
+    data[index].unit_name = unit.name;
+    this.setState({ data });
+  }
+
+  ChangeRemark(e, index) {
+    let data = [...this.state.data];
+    data[index].remark = e.target.value;
+    this.setState({ data });
+  }
   render() {
-    const { ContactReducer, formId } = this.props;
-    const { dataSource } = this.state;
-    const components = {
-      body: {
-        row: EditableFormRow,
-        cell: EditableCell
-      }
-    };
-    const columns = this.columns.map(col => {
-      if (!col.editable) {
-        return col;
-      }
-      return {
-        ...col,
-        onCell: record => ({
-          record,
-          editable: col.editable,
-          dataIndex: col.dataIndex,
-          title: col.title,
-          handleSave: this.handleSave
-        })
-      };
-    });
+    const { RequestReducer, formId } = this.props;
+
     return (
       <MasterContanier>
         <Container>
           <H1TextCenter>Request Form</H1TextCenter>
           <FormContainer>
             <Formik
-              initialValues={this.setInitialDataForm(formId, ContactReducer)}
+              initialValues={this.setInitialDataForm(formId, RequestReducer)}
               enableReinitialize={formId ? true : false}
               validationSchema={RequestFormSchema}
               onSubmit={async (values, actions) => {
+                const { data } = this.state;
+
+                const item_code_empty = data.find(
+                  line => line.item_id === null
+                );
+                const qty_empty = data.find(line => line.qty === 0);
+                const unit_empty = data.find(line => line.unit_name === null);
+                const line_empty = data.length === 0;
+
+                if (item_code_empty) {
+                  alert("item code cannot empty");
+                  return;
+                }
+                if (qty_empty) {
+                  alert("qty cannot empty");
+                  return;
+                }
+                if (line_empty) {
+                  alert("lines cannot empty");
+                  return;
+                }
+                if (unit_empty) {
+                  alert("unit cannot empty");
+                  return;
+                }
+
                 this.setState({ loading: true });
 
-                const { status, id } = formId
-                  ? await this.props.UpdateContact(formId, values)
-                  : await this.props.InsertContact(values);
+                const saveData = {
+                  document: values,
+                  lines: data
+                };
+                const { status, id } = await this.props.InsertRequest(saveData);
 
-                if (formId) {
-                  alert(status ? "Save Done" : "fail");
-                } else {
-                  alert(status ? "Add Done" : "fail");
-                  if (status) {
-                    window.location.href = `/contact/form?id=${id}`;
-                  }
-                }
+                window.location.href = `/request/form?id=${id}`;
+
+                // const { status, id } = formId
+
+                //   ? await this.props.UpdateContact(formId, values)
+                //   : await this.props.InsertContact(values);
+
+                // if (formId) {
+                //   alert(status ? "Save Done" : "fail");
+                // } else {
+                //   alert(status ? "Add Done" : "fail");
+                //   if (status) {
+                //     window.location.href = `/contact/form?id=${id}`;
+                //   }
+                // }
 
                 this.setState({ loading: false });
               }}
               render={props => (
                 <form onSubmit={props.handleSubmit}>
                   <FlexContainer>
-                    <FieldContainer width="50%">
+                    <FieldContainer width="40%">
+                      <Field
+                        label="Code"
+                        type="text"
+                        name="code"
+                        component={InputItemInline}
+                        value={props.values.code}
+                        requireStar="true"
+                        disabled={true}
+                      />
+                    </FieldContainer>
+                    <FieldContainer width="30%">
                       <Field
                         label="Date"
                         name="date"
@@ -200,10 +345,12 @@ class Form extends React.PureComponent {
                         value={props.values.date}
                         requireStar="true"
                         onChange={e => props.setFieldValue("date", e)}
+                        allowClear={false}
+                        disabled={formId ? true : false}
                       />
                     </FieldContainer>
 
-                    <FieldContainer width="50%">
+                    <FieldContainer width="30%">
                       <Field
                         label="By"
                         type="text"
@@ -231,16 +378,12 @@ class Form extends React.PureComponent {
                     />
                   </RemarkContainer>
 
-                  <div>
-                    <Button onClick={this.handleAdd} type="primary">
-                      Add a row
-                    </Button>
+                  <div style={{ paddingLeft: "15px", paddingTop: "10px" }}>
                     <Table
-                      components={components}
-                      rowClassName={() => "editable-row"}
-                      bordered
-                      dataSource={dataSource}
-                      columns={columns}
+                      columns={this.state.columns}
+                      dataSource={this.state.data}
+                      pagination={false}
+                      rowKey={record => record.id}
                     />
                   </div>
 
@@ -270,13 +413,17 @@ Form.getInitialProps = async ctx => {
 
     if (query.id) formId = query.id;
   }
-  await ctx.reduxStore.dispatch({ type: actionTypes.CONTACT.RESET });
+  await ctx.reduxStore.dispatch({ type: actionTypes.REQUEST.RESET });
   return { auth, formId };
 };
 
 export default connect(
-  ({ ContactReducer }) => ({ ContactReducer }),
-  { InsertContact, GetContactById, UpdateContact, DeleteContact }
+  ({ ItemReducer, ItemUnitReducer, RequestReducer }) => ({
+    ItemReducer,
+    ItemUnitReducer,
+    RequestReducer
+  }),
+  { GetAllItem, GetAllItemUnit, InsertRequest, GetRequestById }
 )(Form);
 
 const MasterContanier = styled.div`
@@ -313,4 +460,8 @@ const FieldContainer = styled.div`
 
 const RemarkContainer = styled.div`
   padding-left: 15px;
+`;
+
+const LabelRequire = styled.div`
+  color: red;
 `;
