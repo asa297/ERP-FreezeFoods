@@ -1,20 +1,27 @@
 import { Button } from "antd";
 import styled from "styled-components";
 
-const ActionForm = ({ formId, loading = false, OnDelete }) => {
+const ActionForm = ({
+  formId,
+  loading = false,
+  OnDelete,
+  DisabledSave = false
+}) => {
   return (
     <div>
       {formId ? (
         <div>
-          <ButtonSave
-            type="primary"
-            htmlType="submit"
-            icon="save"
-            loading={loading}
-            disabled={loading}
-          >
-            Save
-          </ButtonSave>
+          {!DisabledSave ? (
+            <ButtonSave
+              type="primary"
+              htmlType="submit"
+              icon="save"
+              loading={loading}
+              disabled={loading}
+            >
+              Save
+            </ButtonSave>
+          ) : null}
 
           <ButtonDelete
             type="primary"

@@ -214,7 +214,7 @@ export const GetRequestById = id => async dispatch => {
 export const UpdateRequest = (id, value) => async dispatch => {
   const res = await axios.put("/api/request/" + id, value).catch(e => null);
   if (!res) return { status: false };
-  dispatch({ type: actionTypes.REQUEST.UPDATE, payload: value });
+  // dispatch({ type: actionTypes.REQUEST.UPDATE, payload: value });
   return { status: res.status === 200 };
 };
 

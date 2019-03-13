@@ -13,3 +13,5 @@ export { default as InputDateItem } from "./FormItems/InputDateItem";
 export { default as MenuItem } from "./FormItems/MenuItem";
 
 export { default as SelectOption } from "./Items/SelectOption";
+
+export { default as DocStatus } from "./MainComponents/DocStatus";

@@ -6,20 +6,24 @@ import {
   InputTextArea,
   ActionForm,
   InputDateItem,
-  SelectOption
+  SelectOption,
+  DocStatus
 } from "<components>";
 import {
   GetAllItem,
   GetAllItemUnit,
   InsertRequest,
-  GetRequestById
+  GetRequestById,
+  DeleteRequest,
+  UpdateRequest
 } from "<actions>";
 import { Formik, Field } from "formik";
 import styled from "styled-components";
 import Router from "next/router";
 import { actionTypes } from "<action_types>";
 import moment from "moment";
-import { Table, Button, Input, Icon, InputNumber } from "antd";
+import { Table, Input, Icon } from "antd";
+import uuidv4 from "uuid";
 
 class Form extends React.PureComponent {
   constructor(props) {
@@ -40,6 +44,7 @@ class Form extends React.PureComponent {
               data={this.props.ItemReducer.List}
               value={record.item_id}
               onChange={value => this.ChangeItemCode(value, index)}
+              disabled={this.state.status === 2 ? true : false}
             />
           );
         }
@@ -63,6 +68,7 @@ class Form extends React.PureComponent {
               type="number"
               value={record.qty}
               onChange={value => this.ChangeQTY(value, index)}
+              disabled={this.state.status === 2 ? true : false}
             />
           );
         }
@@ -77,6 +83,7 @@ class Form extends React.PureComponent {
               type="number"
               value={record.unit_price}
               onChange={value => this.ChangeUnitPrice(value, index)}
+              disabled={this.state.status === 2 ? true : false}
             />
           );
         }
@@ -95,6 +102,7 @@ class Form extends React.PureComponent {
               data={this.props.ItemUnitReducer.List}
               value={record.unit_name}
               onChange={value => this.ChangeItemUnit(value, index)}
+              disabled={this.state.status === 2 ? true : false}
             />
           );
         }
@@ -109,6 +117,7 @@ class Form extends React.PureComponent {
               type="text"
               value={record.remark}
               onChange={value => this.ChangeRemark(value, index)}
+              disabled={this.state.status === 2 ? true : false}
             />
           );
         }
@@ -118,6 +127,7 @@ class Form extends React.PureComponent {
         dataIndex: "",
         width: "10%",
         render: (text, record, index) => {
+          if (this.state.status === 2) return;
           return (
             <div>
               <a href="#" onClick={() => this.DeleteRow(index)}>
@@ -139,6 +149,7 @@ class Form extends React.PureComponent {
     this.state = {
       loading: false,
       columns,
+      status: 0,
       data: [
         {
           id: 0,
@@ -148,9 +159,11 @@ class Form extends React.PureComponent {
           unit_price: 0,
           unit_id: null,
           unit_name: null,
-          remark: null
+          remark: null,
+          uuid: uuidv4()
         }
-      ]
+      ],
+      deleted_data: []
     };
   }
 
@@ -161,12 +174,31 @@ class Form extends React.PureComponent {
     if (formId) this.props.GetRequestById(formId);
   }
 
-  componentWillReceiveProps({ RequestReducer }) {
+  componentWillReceiveProps({ RequestReducer, formId }) {
     const {
-      Item: { lines = [] }
+      Item: { document = {}, lines = [] }
     } = RequestReducer;
+    const { status } = this.state;
     if (lines.length !== 0) {
-      this.setState({ data: lines });
+      this.setState({ data: lines, status: document.status });
+    }
+    if (!formId && status !== 0) {
+      let [data, deleted_data] = [...this.state.data, this.state.deleted_data];
+      data = [
+        {
+          id: 0,
+          item_id: null,
+          item_name: null,
+          qty: 0,
+          unit_price: 0,
+          unit_id: null,
+          unit_name: null,
+          remark: null,
+          uuid: uuidv4()
+        }
+      ];
+      deleted_data = [];
+      this.setState({ data, deleted_data, status: 0 });
     }
   }
 
@@ -184,40 +216,50 @@ class Form extends React.PureComponent {
       code: document.code,
       date: moment(document.date),
       by: document.create_by,
-      remarl: document.remark
+      remark: document.remark
     };
   }
 
-  // async OnDelete() {
-  //   const { formId } = this.props;
-  //   const { status } = await this.props.DeleteContact(formId);
-  //   if (status) {
-  //     alert("Delete Done");
-  //     Router.push(`/contact/list`);
-  //   } else {
-  //     alert("fail");
-  //   }
-  // }
+  async OnDelete() {
+    const { formId } = this.props;
+    const { status } = await this.props.DeleteRequest(formId);
+    if (status) {
+      alert("Delete Done");
+      Router.push(`/request/list`);
+    } else {
+      alert("fail");
+    }
+  }
 
   AddNewRow() {
     const { data } = this.state;
 
     const newRow = {
-      id: data.length,
+      id: 0,
       item_id: null,
       item_name: null,
       qty: 0,
       unit_price: 0,
       unit_id: null,
       unit_name: null,
-      remark: null
+      remark: null,
+      uuid: uuidv4()
     };
     this.setState({ data: [...data, ...[newRow]] });
   }
 
   DeleteRow(index) {
     let data = [...this.state.data];
+    const deleted_data = data[index];
+
     data.splice(index, 1);
+
+    if (deleted_data.id !== 0) {
+      let deleted_data_state = [...this.state.deleted_data];
+      deleted_data_state.push(deleted_data);
+      this.setState({ deleted_data: deleted_data_state });
+    }
+
     this.setState({ data });
   }
 
@@ -260,18 +302,21 @@ class Form extends React.PureComponent {
   }
   render() {
     const { RequestReducer, formId } = this.props;
-
     return (
       <MasterContanier>
         <Container>
-          <H1TextCenter>Request Form</H1TextCenter>
+          <HeaderForm>
+            <H1Text>Request Form</H1Text>
+            <DocStatus status={this.state.status} />
+          </HeaderForm>
+
           <FormContainer>
             <Formik
               initialValues={this.setInitialDataForm(formId, RequestReducer)}
               enableReinitialize={formId ? true : false}
               validationSchema={RequestFormSchema}
               onSubmit={async (values, actions) => {
-                const { data } = this.state;
+                const { data, deleted_data } = this.state;
 
                 const item_code_empty = data.find(
                   line => line.item_id === null
@@ -301,25 +346,21 @@ class Form extends React.PureComponent {
 
                 const saveData = {
                   document: values,
-                  lines: data
+                  lines: data,
+                  deleted_data
                 };
-                const { status, id } = await this.props.InsertRequest(saveData);
+                const { status, id } = formId
+                  ? await this.props.UpdateRequest(formId, saveData)
+                  : await this.props.InsertRequest(saveData);
 
-                window.location.href = `/request/form?id=${id}`;
-
-                // const { status, id } = formId
-
-                //   ? await this.props.UpdateContact(formId, values)
-                //   : await this.props.InsertContact(values);
-
-                // if (formId) {
-                //   alert(status ? "Save Done" : "fail");
-                // } else {
-                //   alert(status ? "Add Done" : "fail");
-                //   if (status) {
-                //     window.location.href = `/contact/form?id=${id}`;
-                //   }
-                // }
+                if (formId) {
+                  alert(status ? "Save Done" : "fail");
+                } else {
+                  alert(status ? "Add Done" : "fail");
+                  if (status) {
+                    window.location.href = `/request/form?id=${id}`;
+                  }
+                }
 
                 this.setState({ loading: false });
               }}
@@ -383,7 +424,7 @@ class Form extends React.PureComponent {
                       columns={this.state.columns}
                       dataSource={this.state.data}
                       pagination={false}
-                      rowKey={record => record.id}
+                      rowKey={record => record.uuid}
                     />
                   </div>
 
@@ -392,6 +433,7 @@ class Form extends React.PureComponent {
                       formId={formId}
                       loading={this.state.loading}
                       OnDelete={() => this.OnDelete()}
+                      DisabledSave={this.state.status === 2 ? true : false}
                     />
                   </FlexCenter>
                 </form>
@@ -423,7 +465,14 @@ export default connect(
     ItemUnitReducer,
     RequestReducer
   }),
-  { GetAllItem, GetAllItemUnit, InsertRequest, GetRequestById }
+  {
+    GetAllItem,
+    GetAllItemUnit,
+    InsertRequest,
+    GetRequestById,
+    DeleteRequest,
+    UpdateRequest
+  }
 )(Form);
 
 const MasterContanier = styled.div`
@@ -440,8 +489,8 @@ const FormContainer = styled.div`
   padding-top: 10px;
 `;
 
-const H1TextCenter = styled.h1`
-  text-align: center;
+const H1Text = styled.h1`
+  margin: 0px;
 `;
 
 const FlexCenter = styled.div`
@@ -464,4 +513,11 @@ const RemarkContainer = styled.div`
 
 const LabelRequire = styled.div`
   color: red;
+`;
+
+const HeaderForm = styled.div`
+  display: flex;
+  justify-content: center;
+  padding-top: 10px;
+  align-items: center;
 `;
