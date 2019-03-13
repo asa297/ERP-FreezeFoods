@@ -7,7 +7,7 @@ const DocStatus = ({ status, nomargin = false }) => {
     <div>
       {status === 1 ? (
         <Status color="blue" nomargin={nomargin.toString()}>
-          บันทึกเอกสาร
+          เอกสารถูกบันทึก
         </Status>
       ) : (
         <Status color="red" nomargin={nomargin.toString()}>

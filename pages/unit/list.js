@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
 import { authInitialProps, checkUserRole } from "<utils>/auth";
-import { GetItemUnit, DeleteItemUnit } from "<actions>";
+import { GetItemUnit, ClearItemUnit } from "<actions>";
 import { Table } from "antd";
 import styled from "styled-components";
 // import { Link } from "<routes>";
@@ -15,23 +15,8 @@ class List extends React.PureComponent {
   };
 
   componentWillMount() {
+    this.props.ClearItemUnit();
     this.props.GetItemUnit(this.state.page);
-  }
-
-  _onChangePagination(page) {
-    this.setState({ page });
-  }
-
-  async _onDelete(item) {
-    const { id } = item;
-
-    const res = await this.props.DeleteItemUnit(id);
-
-    if (res.status) {
-      alert("done");
-    } else {
-      alert("fail");
-    }
   }
 
   async LoadListMore(page) {
@@ -117,7 +102,7 @@ List.getInitialProps = async ctx => {
 
 export default connect(
   ({ ItemUnitReducer }) => ({ ItemUnitReducer }),
-  { GetItemUnit, DeleteItemUnit }
+  { GetItemUnit }
 )(List);
 
 const Container = styled.div`
