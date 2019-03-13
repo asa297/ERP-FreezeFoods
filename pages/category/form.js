@@ -13,6 +13,9 @@ import styled from "styled-components";
 // import { Router } from "<routes>";
 import Router from "next/router";
 import { actionTypes } from "<action_types>";
+import { Modal } from "antd";
+
+const confirm = Modal.confirm;
 
 class Form extends React.PureComponent {
   state = {
@@ -42,6 +45,27 @@ class Form extends React.PureComponent {
     }
   }
 
+  async onSubmit(values) {
+    const { formId } = this.props;
+
+    this.setState({ loading: true });
+
+    const { status, id } = formId
+      ? await this.props.UpdateItemCategory(formId, values)
+      : await this.props.InsertItemCategory(values);
+
+    if (formId) {
+      alert(status ? "Save Done" : "fail");
+    } else {
+      alert(status ? "Add Done" : "fail");
+      if (status) {
+        window.location.href = `/category/form?id=${id}`;
+      }
+    }
+
+    this.setState({ loading: false });
+  }
+
   render() {
     const { ItemCategoryReducer, formId } = this.props;
 
@@ -58,25 +82,20 @@ class Form extends React.PureComponent {
               enableReinitialize={formId ? true : false}
               validationSchema={ItemCategoryFormSchema}
               onSubmit={async (values, actions) => {
-                this.setState({ loading: true });
-
-                const { status, id } = formId
-                  ? await this.props.UpdateItemCategory(formId, values)
-                  : await this.props.InsertItemCategory(values);
-
-                if (formId) {
-                  alert(status ? "Save Done" : "fail");
-                } else {
-                  alert(status ? "Add Done" : "fail");
-                  if (status) {
-                    window.location.href = `/category/form?id=${id}`;
+                const binding_this = this;
+                confirm({
+                  title: "ยืนยันการบันทึก",
+                  content: "",
+                  onOk() {
+                    binding_this.onSubmit(values);
+                  },
+                  onCancel() {
+                    return false;
                   }
-                }
-
-                this.setState({ loading: false });
+                });
               }}
               render={props => (
-                <form onSubmit={props.handleSubmit}>
+                <form>
                   <Field
                     label="หมวดสินค้า"
                     type="text"
@@ -93,6 +112,7 @@ class Form extends React.PureComponent {
                       formId={formId}
                       loading={this.state.loading}
                       OnDelete={() => this.OnDelete()}
+                      onSubmit={props.handleSubmit}
                     />
                   </FlexCenter>
                 </form>

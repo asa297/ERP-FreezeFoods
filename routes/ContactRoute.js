@@ -3,9 +3,10 @@ const isAuthenticated = require("../middlewares/Authenticated");
 module.exports = (app, client) => {
   app.post("/api/contact", isAuthenticated, async (req, res) => {
     const { name: UserName } = req.user;
-    const { name, phone, org, remark } = req.body;
-    const text =
-      "INSERT INTO contact(name, phone, org, remark, create_by, create_time, last_modify_by, last_modify_time) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id";
+    const { name, phone, org, remark, address } = req.body;
+    const text = `INSERT INTO contact(name, phone, org, remark, create_by, 
+        create_time, last_modify_by, last_modify_time, address) 
+        VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id`;
     const values = [
       name,
       phone,
@@ -14,7 +15,8 @@ module.exports = (app, client) => {
       UserName,
       new Date(),
       UserName,
-      new Date()
+      new Date(),
+      address
     ];
 
     client.query(text, values, (err, value) => {
@@ -31,7 +33,7 @@ module.exports = (app, client) => {
     const { page } = req.params;
 
     const data = await client.query(
-      `SELECT id, name, phone, org, remark from contact order by id OFFSET ${(page -
+      `SELECT id, name, phone, org, remark, address from contact order by id OFFSET ${(page -
         1) *
         30} ROWS FETCH NEXT 30 ROWS ONLY;`
     );
@@ -48,7 +50,7 @@ module.exports = (app, client) => {
     const { id } = req.params;
 
     const data = await client.query(
-      `SELECT id, name, phone, org, remark from contact WHERE id = ${id}`
+      `SELECT id, name, phone, org, remark, address from contact WHERE id = ${id}`
     );
 
     res.send({ result: data.rows[0] });
@@ -66,9 +68,10 @@ module.exports = (app, client) => {
   app.put("/api/contact/:id", isAuthenticated, async (req, res) => {
     const { id } = req.params;
     const { name: UserName } = req.user;
-    const { name, phone, org, remark } = req.body;
-    const text = `UPDATE contact SET name = $1, phone = $2, org = $3, remark = $4, last_modify_by = $5, last_modify_time = $6 Where id = ${id}`;
-    const values = [name, phone, org, remark, UserName, new Date()];
+    const { name, phone, org, remark, address } = req.body;
+    const text = `UPDATE contact SET name = $1, phone = $2, org = $3, 
+    remark = $4, last_modify_by = $5, last_modify_time = $6, address = $7 Where id = ${id}`;
+    const values = [name, phone, org, remark, UserName, new Date(), address];
 
     client.query(text, values, (err, value) => {
       if (err) {

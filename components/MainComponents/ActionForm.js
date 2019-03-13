@@ -1,12 +1,33 @@
-import { Button } from "antd";
+import { Button, Modal } from "antd";
+import React, { useState } from "react";
 import styled from "styled-components";
 
+const confirm = Modal.confirm;
+
 const ActionForm = ({
+  onSubmit,
   formId,
   loading = false,
   OnDelete,
   DisabledSave = false
 }) => {
+  const submit = async () => {
+    onSubmit();
+  };
+
+  const Delete = async () => {
+    confirm({
+      title: "ยืนยันการลบ",
+      content: "",
+      onOk() {
+        OnDelete();
+      },
+      onCancel() {
+        return false;
+      }
+    });
+  };
+
   return (
     <div>
       {formId ? (
@@ -14,7 +35,6 @@ const ActionForm = ({
           {!DisabledSave ? (
             <ButtonSave
               type="primary"
-              htmlType="submit"
               icon="save"
               loading={loading}
               disabled={loading}
@@ -28,7 +48,7 @@ const ActionForm = ({
             icon="delete"
             loading={loading}
             disabled={loading}
-            onClick={() => OnDelete()}
+            onClick={() => Delete()}
           >
             ลบ
           </ButtonDelete>
@@ -36,10 +56,10 @@ const ActionForm = ({
       ) : (
         <ButtonSave
           type="primary"
-          htmlType="submit"
           icon="snippets"
           loading={loading}
           disabled={loading}
+          onClick={() => submit()}
         >
           สร้าง
         </ButtonSave>

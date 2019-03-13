@@ -13,6 +13,9 @@ import styled from "styled-components";
 // import { Router } from "<routes>";
 import Router from "next/router";
 import { actionTypes } from "<action_types>";
+import { Modal } from "antd";
+
+const confirm = Modal.confirm;
 
 class Form extends React.PureComponent {
   state = {
@@ -30,7 +33,8 @@ class Form extends React.PureComponent {
       name: Item.name,
       phone: Item.phone,
       org: Item.org,
-      remark: Item.remark
+      remark: Item.remark,
+      address: Item.address
     };
   }
 
@@ -43,6 +47,27 @@ class Form extends React.PureComponent {
     } else {
       alert("fail");
     }
+  }
+
+  async onSubmit(values) {
+    const { formId } = this.props;
+
+    this.setState({ loading: true });
+
+    const { status, id } = formId
+      ? await this.props.UpdateContact(formId, values)
+      : await this.props.InsertContact(values);
+
+    if (formId) {
+      alert(status ? "Save Done" : "fail");
+    } else {
+      alert(status ? "Add Done" : "fail");
+      if (status) {
+        window.location.href = `/contact/form?id=${id}`;
+      }
+    }
+
+    this.setState({ loading: false });
   }
 
   render() {
@@ -58,25 +83,20 @@ class Form extends React.PureComponent {
               enableReinitialize={formId ? true : false}
               validationSchema={ContactFormSchema}
               onSubmit={async (values, actions) => {
-                this.setState({ loading: true });
-
-                const { status, id } = formId
-                  ? await this.props.UpdateContact(formId, values)
-                  : await this.props.InsertContact(values);
-
-                if (formId) {
-                  alert(status ? "Save Done" : "fail");
-                } else {
-                  alert(status ? "Add Done" : "fail");
-                  if (status) {
-                    window.location.href = `/contact/form?id=${id}`;
+                const binding_this = this;
+                confirm({
+                  title: "ยืนยันการบันทึก",
+                  content: "",
+                  onOk() {
+                    binding_this.onSubmit(values);
+                  },
+                  onCancel() {
+                    return false;
                   }
-                }
-
-                this.setState({ loading: false });
+                });
               }}
               render={props => (
-                <form onSubmit={props.handleSubmit}>
+                <form>
                   <FlexContainer>
                     <FieldContainer width="100%">
                       <Field
@@ -123,6 +143,18 @@ class Form extends React.PureComponent {
 
                   <RemarkContainer>
                     <Field
+                      label="ที่อยู่"
+                      name="address"
+                      component={InputTextArea}
+                      value={props.values.address}
+                      onChange={e =>
+                        props.setFieldValue("address", e.target.value)
+                      }
+                    />
+                  </RemarkContainer>
+
+                  <RemarkContainer>
+                    <Field
                       label="หมายเหตุ"
                       name="remark"
                       component={InputTextArea}
@@ -138,6 +170,7 @@ class Form extends React.PureComponent {
                       formId={formId}
                       loading={this.state.loading}
                       OnDelete={() => this.OnDelete()}
+                      onSubmit={props.handleSubmit}
                     />
                   </FlexCenter>
                 </form>
