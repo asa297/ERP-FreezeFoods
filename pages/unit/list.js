@@ -48,18 +48,18 @@ class List extends React.PureComponent {
   render() {
     const columns = [
       {
-        title: "Id",
+        title: "รหัส",
         dataIndex: "id",
         width: 150,
         align: "center"
       },
       {
-        title: "Name",
+        title: "หน่วย",
         dataIndex: "name",
         width: "30%"
       },
       {
-        title: "Remark",
+        title: "หมายเหตุ",
         dataIndex: "remark",
         width: "30%"
       },
@@ -72,7 +72,7 @@ class List extends React.PureComponent {
               href={{ pathname: "/unit/form", query: { id: record.id } }}
               prefetch
             >
-              <a onClick={() => this.setState({ loading: true })}>View</a>
+              <a onClick={() => this.setState({ loading: true })}>เปิดเอกสาร</a>
             </Link>
           );
         }
@@ -82,7 +82,7 @@ class List extends React.PureComponent {
     return (
       <ListContainer>
         <Container>
-          <H1TextCenter>Item Unit List</H1TextCenter>
+          <H1TextCenter>รายการหน่วยสินค้า</H1TextCenter>
 
           <Loading className="loader" loading={this.state.loading} />
           <ListTable loading={this.state.loading}>
@@ -111,7 +111,7 @@ List.getInitialProps = async ctx => {
   if (auth) {
     await checkUserRole(auth)(ctx);
   }
-  await ctx.reduxStore.dispatch({ type: actionTypes.CATEGORY.RESET });
+  await ctx.reduxStore.dispatch({ type: actionTypes.UNIT.RESET });
   return { auth };
 };
 

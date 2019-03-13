@@ -51,7 +51,7 @@ class Form extends React.PureComponent {
     return (
       <MasterContanier>
         <Container>
-          <H1TextCenter>Contact Form</H1TextCenter>
+          <H1TextCenter>ฟอร์มบริษัท</H1TextCenter>
           <FormContainer>
             <Formik
               initialValues={this.setInitialDataForm(formId, ContactReducer)}
@@ -80,7 +80,7 @@ class Form extends React.PureComponent {
                   <FlexContainer>
                     <FieldContainer width="100%">
                       <Field
-                        label="Name"
+                        label="ชื่อ"
                         type="text"
                         name="name"
                         component={InputItemInline}
@@ -94,7 +94,7 @@ class Form extends React.PureComponent {
 
                     <FieldContainer width="100%">
                       <Field
-                        label="Phone"
+                        label="เบอร์โทร"
                         type="text"
                         name="phone"
                         component={InputItemInline}
@@ -108,7 +108,7 @@ class Form extends React.PureComponent {
 
                     <FieldContainer width="100%">
                       <Field
-                        label="Org"
+                        label="บริษัท"
                         type="text"
                         name="org"
                         component={InputItemInline}
@@ -123,7 +123,7 @@ class Form extends React.PureComponent {
 
                   <RemarkContainer>
                     <Field
-                      label="Remark"
+                      label="หมายเหตุ"
                       name="remark"
                       component={InputTextArea}
                       value={props.values.remark}

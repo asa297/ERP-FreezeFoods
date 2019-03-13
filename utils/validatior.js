@@ -19,6 +19,7 @@ export const ItemFormSchema = Yup.object().shape({
 });
 
 export const RequestFormSchema = Yup.object().shape({
+  code: Yup.string().required("Required"),
   date: Yup.date().required("Required"),
-  by: Yup.string().required("Required")
+  create_by: Yup.string().required("Required")
 });

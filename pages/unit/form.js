@@ -49,7 +49,7 @@ class Form extends React.PureComponent {
     return (
       <MasterContanier>
         <Container>
-          <H1TextCenter>Item Unit Form</H1TextCenter>
+          <H1TextCenter>ฟอร์มหน่วยสินค้า</H1TextCenter>
           <FormContainer>
             <Formik
               initialValues={this.setInitialDataForm(formId, ItemUnitReducer)}
@@ -76,7 +76,7 @@ class Form extends React.PureComponent {
               render={props => (
                 <form onSubmit={props.handleSubmit}>
                   <Field
-                    label="Item Unit"
+                    label="หน่วย"
                     type="text"
                     name="name"
                     component={InputItemInline}
@@ -89,7 +89,7 @@ class Form extends React.PureComponent {
                   <FormContainer />
 
                   <Field
-                    label="Remark Unit"
+                    label="หมายเหตุ"
                     name="remark"
                     component={InputTextAreaInline}
                     value={props.values.remark}

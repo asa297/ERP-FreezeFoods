@@ -76,7 +76,6 @@ module.exports = (app, client) => {
       HasMore: data.rows.length === 30
     };
 
-    console.log(result);
     res.send(result);
   });
 

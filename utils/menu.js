@@ -51,7 +51,7 @@ export const MenuManage = ({ UserRole }) => {
     <Menu theme="dark" mode="inline">
       <Menu.Item key="1" onClick={() => Router.push("/")}>
         <Icon type="home" />
-        <span>Home</span>
+        <span>หน้าหลัก</span>
       </Menu.Item>
       {ManageModule.length > 0 ? (
         <SubMenu
@@ -59,7 +59,7 @@ export const MenuManage = ({ UserRole }) => {
           title={
             <span>
               <Icon type="book" />
-              <span>User</span>
+              <span>การจัดการ</span>
             </span>
           }
         >
@@ -71,7 +71,7 @@ export const MenuManage = ({ UserRole }) => {
                   : null
               }
             >
-              Category
+              หมวดสินค้า
             </span>
           </MenuItem>
           <MenuItem routeform={GetFormPath(ItemPage)}>
@@ -82,7 +82,7 @@ export const MenuManage = ({ UserRole }) => {
                   : null
               }
             >
-              Item
+              สินค้า
             </span>
           </MenuItem>
 
@@ -94,7 +94,7 @@ export const MenuManage = ({ UserRole }) => {
                   : null
               }
             >
-              Unit
+              หน่วยสินค้า
             </span>
           </MenuItem>
           <MenuItem routeform={GetFormPath(ContactPage)}>
@@ -105,7 +105,7 @@ export const MenuManage = ({ UserRole }) => {
                   : null
               }
             >
-              Contact
+              บริษัท
             </span>
           </MenuItem>
         </SubMenu>
@@ -117,7 +117,7 @@ export const MenuManage = ({ UserRole }) => {
           title={
             <span>
               <Icon type="form" />
-              <span>Document</span>
+              <span>เอกสาร</span>
             </span>
           }
         >
@@ -129,7 +129,7 @@ export const MenuManage = ({ UserRole }) => {
                   : null
               }
             >
-              RFQ
+              ใบเสนอราคา
             </span>
           </MenuItem>
         </SubMenu>
@@ -142,7 +142,7 @@ export const MenuManage = ({ UserRole }) => {
         }}
       >
         <Icon type="unlock" />
-        <span>Logout</span>
+        <span>ออกจากระบบ</span>
       </Menu.Item>
     </Menu>
   );

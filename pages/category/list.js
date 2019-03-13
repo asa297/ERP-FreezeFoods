@@ -49,14 +49,14 @@ class List extends React.PureComponent {
   render() {
     const columns = [
       {
-        title: "Id",
+        title: "รหัส",
         dataIndex: "id",
 
         width: 150,
         align: "center"
       },
       {
-        title: "Name",
+        title: "หมวดสินค้า",
         dataIndex: "name",
         width: "60%"
       },
@@ -70,7 +70,7 @@ class List extends React.PureComponent {
               href={{ pathname: "/category/form", query: { id: record.id } }}
               prefetch
             >
-              <a onClick={() => this.setState({ loading: true })}>View</a>
+              <a onClick={() => this.setState({ loading: true })}>เปิดเอกสาร</a>
             </Link>
           );
         }
@@ -80,7 +80,7 @@ class List extends React.PureComponent {
     return (
       <ListContainer>
         <Container>
-          <H1TextCenter>Item Category List</H1TextCenter>
+          <H1TextCenter>รายการหมวดสินค้า</H1TextCenter>
           <Loading className="loader" loading={this.state.loading} />
           <ListTable loading={this.state.loading}>
             <InfiniteScroll

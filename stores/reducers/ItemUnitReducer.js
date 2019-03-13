@@ -14,6 +14,11 @@ export default function(state = initState, action) {
         HasMore: action.payload.HasMore
       });
 
+    case actionTypes.UNIT.FETCH_LIST_ALL:
+      return Object.assign({}, state, {
+        List: [...action.payload.data],
+        HasMore: action.payload.HasMore
+      });
     case actionTypes.UNIT.FETCH:
     case actionTypes.UNIT.UPDATE:
       return Object.assign({}, state, {

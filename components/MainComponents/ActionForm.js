@@ -19,7 +19,7 @@ const ActionForm = ({
               loading={loading}
               disabled={loading}
             >
-              Save
+              บันทึก
             </ButtonSave>
           ) : null}
 
@@ -30,7 +30,7 @@ const ActionForm = ({
             disabled={loading}
             onClick={() => OnDelete()}
           >
-            Delete
+            ลบ
           </ButtonDelete>
         </div>
       ) : (
@@ -41,7 +41,7 @@ const ActionForm = ({
           loading={loading}
           disabled={loading}
         >
-          Create
+          สร้าง
         </ButtonSave>
       )}
     </div>

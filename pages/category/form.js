@@ -48,7 +48,7 @@ class Form extends React.PureComponent {
     return (
       <MasterContanier>
         <Container>
-          <H1TextCenter>Item Category Form</H1TextCenter>
+          <H1TextCenter>ฟอร์มหมวดสินค้า</H1TextCenter>
           <FormContainer>
             <Formik
               initialValues={this.setInitialDataForm(
@@ -78,7 +78,7 @@ class Form extends React.PureComponent {
               render={props => (
                 <form onSubmit={props.handleSubmit}>
                   <Field
-                    label="Category Name"
+                    label="หมวดสินค้า"
                     type="text"
                     name="name"
                     component={InputItemInline}

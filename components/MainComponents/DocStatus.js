@@ -6,13 +6,13 @@ const DocStatus = ({ status, nomargin = false }) => {
   return (
     <div>
       {status === 1 ? (
-        <Au color="blue" nomargin={nomargin}>
-          Save
-        </Au>
+        <Status color="blue" nomargin={nomargin.toString()}>
+          บันทึกเอกสาร
+        </Status>
       ) : (
-        <Au color="red" nomargin={nomargin}>
-          Close
-        </Au>
+        <Status color="red" nomargin={nomargin.toString()}>
+          เอกสารถูกปิด
+        </Status>
       )}
     </div>
   );
@@ -20,6 +20,6 @@ const DocStatus = ({ status, nomargin = false }) => {
 
 export default DocStatus;
 
-const Au = styled(Tag)`
-  margin: ${props => (!props.nomargin ? "0px 5px;" : "0px")};
+const Status = styled(Tag)`
+  margin: ${props => (props.nomargin === "true" ? "0px" : "0px 5px;")};
 `;
