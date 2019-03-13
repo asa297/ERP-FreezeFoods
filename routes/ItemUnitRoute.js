@@ -33,6 +33,18 @@ module.exports = (app, client) => {
     res.send(result);
   });
 
+  app.get("/api/unit/list", isAuthenticated, async (req, res) => {
+    const data = await client.query(
+      `SELECT id , name, remark from item_unit order by id`
+    );
+
+    const result = {
+      data: data.rows,
+      HasMore: false
+    };
+    res.send(result);
+  });
+
   app.get("/api/unit/form/:id", isAuthenticated, async (req, res) => {
     const { id } = req.params;
 

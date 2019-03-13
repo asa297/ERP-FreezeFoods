@@ -9,6 +9,14 @@ export const InsertItem = value => async dispatch => {
   return { status: res.status === 200, id: res.data.id };
 };
 
+export const GetAllItem = () => async dispatch => {
+  const res = await axios.get("/api/item/list").catch(e => null);
+  if (!res) return { status: false };
+  const { data } = res;
+  dispatch({ type: actionTypes.ITEM.FETCH_LIST, payload: data });
+  return { status: res.status === 200 };
+};
+
 export const GetItem = page => async dispatch => {
   const res = await axios.get("/api/item/list/" + page).catch(e => null);
   if (!res) return { status: false };
@@ -135,6 +143,14 @@ export const InsertItemUnit = value => async dispatch => {
   return { status: res.status === 200, id: res.data.id };
 };
 
+export const GetAllItemUnit = page => async dispatch => {
+  const res = await axios.get("/api/unit/list").catch(e => null);
+  if (!res) return { status: false };
+  const { data } = res;
+  dispatch({ type: actionTypes.UNIT.FETCH_LIST, payload: data });
+  return { status: res.status === 200 };
+};
+
 export const GetItemUnit = page => async dispatch => {
   const res = await axios.get("/api/unit/list/" + page).catch(e => null);
   if (!res) return { status: false };
@@ -191,14 +207,14 @@ export const GetRequestById = id => async dispatch => {
   const res = await axios.get("/api/request/form/" + id).catch(e => null);
   if (!res) return { status: false };
   const { data } = res;
-  dispatch({ type: actionTypes.REQUEST.FETCH, payload: data.result });
+  dispatch({ type: actionTypes.REQUEST.FETCH, payload: data });
   return { status: res.status === 200 };
 };
 
 export const UpdateRequest = (id, value) => async dispatch => {
   const res = await axios.put("/api/request/" + id, value).catch(e => null);
   if (!res) return { status: false };
-  dispatch({ type: actionTypes.REQUEST.UPDATE, payload: value });
+  // dispatch({ type: actionTypes.REQUEST.UPDATE, payload: value });
   return { status: res.status === 200 };
 };
 

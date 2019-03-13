@@ -1,12 +1,13 @@
 import { connect } from "react-redux";
 import { authInitialProps, checkUserRole } from "<utils>/auth";
-import { GetContact } from "<actions>";
+import { GetRequest } from "<actions>";
 import { Table } from "antd";
 import styled from "styled-components";
 // import { Link } from "<routes>";
 import Link from "next/link";
 import InfiniteScroll from "react-infinite-scroller";
 import { actionTypes } from "<action_types>";
+import { DocStatus } from "<components>";
 
 class List extends React.PureComponent {
   state = {
@@ -15,28 +16,12 @@ class List extends React.PureComponent {
   };
 
   componentWillMount() {
-    this.props.GetContact(this.state.page);
-  }
-
-  _onChangePagination(page) {
-    this.setState({ page });
-  }
-
-  async _onDelete(item) {
-    const { id } = item;
-
-    const res = await this.props.DeleteContact(id);
-
-    if (res.status) {
-      alert("done");
-    } else {
-      alert("fail");
-    }
+    this.props.GetRequest(this.state.page);
   }
 
   async LoadListMore(page) {
     const { loading } = this.state;
-    const { HasMore } = this.props.ContactReducer;
+    const { HasMore } = this.props.RequestReducer;
     if (HasMore && page !== 1 && !loading) {
       this.setState({ page, loading: true });
       await this.props.GetContact(page);
@@ -48,25 +33,24 @@ class List extends React.PureComponent {
   render() {
     const columns = [
       {
-        title: "Id",
-        dataIndex: "id",
+        title: "Code",
+        dataIndex: "code",
         width: 150,
         align: "center"
       },
       {
-        title: "Name",
-        dataIndex: "name",
+        title: "Date",
+        dataIndex: "date",
         width: "20%"
       },
+
       {
-        title: "phone",
-        dataIndex: "phone",
-        width: "20%"
-      },
-      {
-        title: "Organization",
-        dataIndex: "org",
-        width: "20%"
+        title: "Status",
+        dataIndex: "status",
+        width: "20%",
+        render: (text, record, index) => {
+          return <DocStatus status={record.status} nomargin={true} />;
+        }
       },
       {
         title: "Remark",
@@ -74,12 +58,18 @@ class List extends React.PureComponent {
         width: "20%"
       },
       {
+        title: "Create By",
+        dataIndex: "create_by",
+        width: "20%"
+      },
+
+      {
         title: "",
         dataIndex: "",
         render: (text, record) => {
           return (
             <Link
-              href={{ pathname: "/contact/form", query: { id: record.id } }}
+              href={{ pathname: "/request/form", query: { id: record.id } }}
               prefetch
             >
               <a onClick={() => this.setState({ loading: true })}>View</a>
@@ -92,7 +82,7 @@ class List extends React.PureComponent {
     return (
       <ListContainer>
         <Container>
-          <H1TextCenter>Contact List</H1TextCenter>
+          <H1TextCenter>Request List</H1TextCenter>
 
           <Loading className="loader" loading={this.state.loading} />
           <ListTable loading={this.state.loading}>
@@ -104,7 +94,7 @@ class List extends React.PureComponent {
             >
               <Table
                 columns={columns}
-                dataSource={this.props.ContactReducer.List}
+                dataSource={this.props.RequestReducer.List}
                 pagination={false}
                 rowKey={record => record.id}
               />
@@ -126,8 +116,8 @@ List.getInitialProps = async ctx => {
 };
 
 export default connect(
-  ({ ContactReducer }) => ({ ContactReducer }),
-  { GetContact }
+  ({ RequestReducer }) => ({ RequestReducer }),
+  { GetRequest }
 )(List);
 
 const Container = styled.div`

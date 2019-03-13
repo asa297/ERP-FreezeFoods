@@ -1,44 +1,51 @@
 import styled from "styled-components";
-import { Input } from "antd";
+import { DatePicker } from "antd";
 
-const InputItem = ({
+const InputDateItem = ({
   label,
   requireStar,
-  labelafter,
   field, // { name, value, onChange, onBlur }
   form: { touched, errors }, // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
   ...props
 }) => {
   return (
-    <FlexContainer>
-      <LabelContainer>
-        <label>{label}</label>
-        {requireStar === "true" ? <LabelRequire>*</LabelRequire> : null}
-      </LabelContainer>
-      <InputContainer>
-        <InputForm
-          {...field}
-          {...props}
-          border={errors[field.name] ? "1px solid red" : null}
-        />
-
-        <div className="error">
-          {(touched[field.name] && errors[field.name]) || errors[field.name]}
-        </div>
-      </InputContainer>
-    </FlexContainer>
+    <div>
+      <FlexContainer>
+        <LabelContainer>
+          <label>{label}</label>
+          {requireStar === "true" ? <LabelRequire>*</LabelRequire> : null}
+        </LabelContainer>
+        <InputContainer>
+          <DatePickerForm
+            {...field}
+            {...props}
+            // border={errors[field.name] ? "1px solid red" : null}
+            border={errors[field.name] ? true : false}
+          />
+          <div className="error">
+            {(touched[field.name] && errors[field.name]) || errors[field.name]}
+          </div>
+        </InputContainer>
+      </FlexContainer>
+    </div>
   );
 };
 
-export default InputItem;
+export default InputDateItem;
 
 const FlexContainer = styled.div`
   display: flex;
-  justify-content: space-between;
 `;
 
 const LabelRequire = styled.div`
   color: red;
+`;
+
+const DatePickerForm = styled(DatePicker)`
+  width: 100%;
+  input.ant-input {
+    border-color: ${props => (props.border ? "red" : "#ccc")};
+  }
 `;
 
 const InputContainer = styled.div`
@@ -55,14 +62,6 @@ const InputContainer = styled.div`
   @media (min-width: 1600px) {
     width: 90%;
   }
-`;
-
-const InputForm = styled(Input)`
-  width: 100%;
-  height: 35px;
-  border: ${props => props.border || "1px solid #ccc"};
-
-  padding: 5px 15px;
 `;
 
 const LabelContainer = styled.label`

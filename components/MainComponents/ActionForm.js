@@ -1,22 +1,31 @@
 import { Button } from "antd";
 import styled from "styled-components";
 
-const ActionForm = ({ formId, loading = false, OnDelete }) => {
+const ActionForm = ({
+  formId,
+  loading = false,
+  OnDelete,
+  DisabledSave = false
+}) => {
   return (
     <div>
       {formId ? (
         <div>
-          <ButtonSave
-            type="primary"
-            htmlType="submit"
-            loading={loading}
-            disabled={loading}
-          >
-            Save
-          </ButtonSave>
+          {!DisabledSave ? (
+            <ButtonSave
+              type="primary"
+              htmlType="submit"
+              icon="save"
+              loading={loading}
+              disabled={loading}
+            >
+              Save
+            </ButtonSave>
+          ) : null}
 
           <ButtonDelete
             type="primary"
+            icon="delete"
             loading={loading}
             disabled={loading}
             onClick={() => OnDelete()}
@@ -28,10 +37,11 @@ const ActionForm = ({ formId, loading = false, OnDelete }) => {
         <ButtonSave
           type="primary"
           htmlType="submit"
+          icon="snippets"
           loading={loading}
           disabled={loading}
         >
-          Add
+          Create
         </ButtonSave>
       )}
     </div>
