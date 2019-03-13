@@ -15,7 +15,9 @@ import {
   DeleteRequest,
   UpdateRequest,
   GetAllItem,
-  GetAllItemUnit
+  GetAllItemUnit,
+  ClearItem,
+  ClearItemUnit
 } from "<actions>";
 import { Formik, Field } from "formik";
 import styled from "styled-components";
@@ -223,6 +225,10 @@ class Form extends React.PureComponent {
         status: document.status
       });
     }
+  }
+  componentWillUnmount() {
+    this.props.ClearItem();
+    this.props.ClearItemUnit();
   }
 
   async OnDelete() {
@@ -501,7 +507,9 @@ export default connect(
     DeleteRequest,
     UpdateRequest,
     GetAllItem,
-    GetAllItemUnit
+    GetAllItemUnit,
+    ClearItem,
+    ClearItemUnit
   }
 )(Form);
 

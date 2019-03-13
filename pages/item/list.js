@@ -116,7 +116,7 @@ List.getInitialProps = async ctx => {
   if (auth) {
     await checkUserRole(auth)(ctx);
   }
-  await ctx.reduxStore.dispatch({ type: actionTypes.ITEM.RESET });
+  // await ctx.reduxStore.dispatch({ type: actionTypes.ITEM.RESET });
   return { auth };
 };
 

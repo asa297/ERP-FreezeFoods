@@ -144,7 +144,7 @@ Form.getInitialProps = async ctx => {
 
     if (query.id) formId = query.id;
   }
-  await ctx.reduxStore.dispatch({ type: actionTypes.UNIT.RESET });
+  // await ctx.reduxStore.dispatch({ type: actionTypes.UNIT.RESET });
   return { auth, formId };
 };
 
