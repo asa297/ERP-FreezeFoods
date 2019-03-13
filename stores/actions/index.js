@@ -13,7 +13,7 @@ export const GetAllItem = () => async dispatch => {
   const res = await axios.get("/api/item/list").catch(e => null);
   if (!res) return { status: false };
   const { data } = res;
-  dispatch({ type: actionTypes.ITEM.FETCH_LIST, payload: data });
+  dispatch({ type: actionTypes.ITEM.FETCH_LIST_ALL, payload: data });
   return { status: res.status === 200 };
 };
 
@@ -143,11 +143,11 @@ export const InsertItemUnit = value => async dispatch => {
   return { status: res.status === 200, id: res.data.id };
 };
 
-export const GetAllItemUnit = page => async dispatch => {
+export const GetAllItemUnit = () => async dispatch => {
   const res = await axios.get("/api/unit/list").catch(e => null);
   if (!res) return { status: false };
   const { data } = res;
-  dispatch({ type: actionTypes.UNIT.FETCH_LIST, payload: data });
+  dispatch({ type: actionTypes.UNIT.FETCH_LIST_ALL, payload: data });
   return { status: res.status === 200 };
 };
 
@@ -203,12 +203,20 @@ export const DeleteRequest = id => async (dispatch, currentState) => {
   return { status: res.status === 200 };
 };
 
-export const GetRequestById = id => async dispatch => {
-  const res = await axios.get("/api/request/form/" + id).catch(e => null);
+export const GetRequestById = (id, { req }) => async dispatch => {
+  // const res = await axios.get("/api/request/form/" + id).catch(e => null);
+  const baseUrl = req ? `${req.protocol}://${req.get("Host")}` : "";
+
+  const res = await axios
+    .get(baseUrl + "/api/request/form/" + id)
+    .catch(e => null);
+
   if (!res) return { status: false };
   const { data } = res;
-  dispatch({ type: actionTypes.REQUEST.FETCH, payload: data });
-  return { status: res.status === 200 };
+
+  // dispatch({ type: actionTypes.REQUEST.FETCH, payload: data });
+  // console.log("dispatch" , );
+  return data;
 };
 
 export const UpdateRequest = (id, value) => async dispatch => {

@@ -10,12 +10,12 @@ import {
   DocStatus
 } from "<components>";
 import {
-  GetAllItem,
-  GetAllItemUnit,
   InsertRequest,
   GetRequestById,
   DeleteRequest,
-  UpdateRequest
+  UpdateRequest,
+  GetAllItem,
+  GetAllItemUnit
 } from "<actions>";
 import { Formik, Field } from "formik";
 import styled from "styled-components";
@@ -32,7 +32,7 @@ class Form extends React.PureComponent {
       {
         title: (filters, sortOrder) => (
           <FlexContainer>
-            Item<LabelRequire>*</LabelRequire>
+            รหัสสินค้า<LabelRequire>*</LabelRequire>
           </FlexContainer>
         ),
         dataIndex: "item_id",
@@ -50,14 +50,14 @@ class Form extends React.PureComponent {
         }
       },
       {
-        title: "Item Name",
+        title: "ชื่อสินค้า",
         dataIndex: "item_name",
         width: "20%"
       },
       {
         title: (filters, sortOrder) => (
           <FlexContainer>
-            QTY<LabelRequire>*</LabelRequire>
+            จำนวน<LabelRequire>*</LabelRequire>
           </FlexContainer>
         ),
         dataIndex: "qty",
@@ -74,7 +74,7 @@ class Form extends React.PureComponent {
         }
       },
       {
-        title: "Unit Price",
+        title: "ราคาต่อหน่วย",
         dataIndex: "unit_price",
         width: "10%",
         render: (text, record, index) => {
@@ -91,7 +91,7 @@ class Form extends React.PureComponent {
       {
         title: (filters, sortOrder) => (
           <FlexContainer>
-            Unit<LabelRequire>*</LabelRequire>
+            หน่วยสินค้า<LabelRequire>*</LabelRequire>
           </FlexContainer>
         ),
         dataIndex: "unit_name",
@@ -108,7 +108,7 @@ class Form extends React.PureComponent {
         }
       },
       {
-        title: "Remark",
+        title: "หมายเหตุ",
         dataIndex: "remark",
         width: "20%",
         render: (text, record, index) => {
@@ -150,6 +150,12 @@ class Form extends React.PureComponent {
       loading: false,
       columns,
       status: 0,
+      document: {
+        code: "####",
+        date: moment(),
+        create_by: this.props.auth.user.name
+      },
+
       data: [
         {
           id: 0,
@@ -171,18 +177,15 @@ class Form extends React.PureComponent {
     const { formId } = this.props;
     this.props.GetAllItem();
     this.props.GetAllItemUnit();
-    if (formId) this.props.GetRequestById(formId);
+    if (formId) {
+      const { document, lines } = this.props.request;
+      this.setState({ document, data: lines, status: document.status });
+    }
   }
 
-  componentWillReceiveProps({ RequestReducer, formId }) {
-    const {
-      Item: { document = {}, lines = [] }
-    } = RequestReducer;
-    const { status } = this.state;
-    if (lines.length !== 0) {
-      this.setState({ data: lines, status: document.status });
-    }
-    if (!formId && status !== 0) {
+  componentWillReceiveProps({ formId, request, auth }) {
+    console.log(formId, request);
+    if (!formId) {
       let [data, deleted_data] = [...this.state.data, this.state.deleted_data];
       data = [
         {
@@ -198,26 +201,52 @@ class Form extends React.PureComponent {
         }
       ];
       deleted_data = [];
-      this.setState({ data, deleted_data, status: 0 });
+
+      this.setState({
+        document: {
+          code: "####",
+          date: moment(),
+          create_by: auth.user.name,
+          remark: null
+        },
+        data,
+        deleted_data,
+        status: 0
+      });
+    } else {
+      const { document, lines } = request;
+      this.setState({
+        document,
+        data: lines,
+        deleted_data: [],
+        status: document.status
+      });
     }
   }
 
-  setInitialDataForm(formId, { Item }) {
+  setInitialDataForm(formId, Item) {
     const { auth } = this.props;
-    if (!formId)
-      return {
-        code: "####",
-        date: moment(),
-        by: auth.user.name
-      };
+    if (!formId) {
+      // return {
+      //   code: "####",
+      //   date: moment(),
+      //   by: auth.user.name
+      // };
 
-    const { document = {} } = Item;
-    return {
-      code: document.code,
-      date: moment(document.date),
-      by: document.create_by,
-      remark: document.remark
-    };
+      return {
+        code: this.state.code,
+        date: this.state.date,
+        by: this.state.by
+      };
+    } else {
+      const { document } = Item;
+      return {
+        code: document.code,
+        date: moment(document.date),
+        by: document.create_by,
+        remark: document.remark
+      };
+    }
   }
 
   async OnDelete() {
@@ -301,19 +330,25 @@ class Form extends React.PureComponent {
     this.setState({ data });
   }
   render() {
-    const { RequestReducer, formId } = this.props;
+    const { request, formId } = this.props;
+
     return (
       <MasterContanier>
         <Container>
           <HeaderForm>
-            <H1Text>Request Form</H1Text>
+            <H1Text>ฟอร์มใบเสนอราคา</H1Text>
             <DocStatus status={this.state.status} />
           </HeaderForm>
 
           <FormContainer>
             <Formik
-              initialValues={this.setInitialDataForm(formId, RequestReducer)}
-              enableReinitialize={formId ? true : false}
+              initialValues={{
+                code: this.state.document.code,
+                date: this.state.document.date,
+                create_by: this.state.document.create_by,
+                remark: this.state.document.remark
+              }}
+              enableReinitialize={true}
               validationSchema={RequestFormSchema}
               onSubmit={async (values, actions) => {
                 const { data, deleted_data } = this.state;
@@ -383,7 +418,7 @@ class Form extends React.PureComponent {
                         label="Date"
                         name="date"
                         component={InputDateItem}
-                        value={props.values.date}
+                        value={moment(props.values.date)}
                         requireStar="true"
                         onChange={e => props.setFieldValue("date", e)}
                         allowClear={false}
@@ -395,13 +430,10 @@ class Form extends React.PureComponent {
                       <Field
                         label="By"
                         type="text"
-                        name="by"
+                        name="create_by"
                         component={InputItemInline}
-                        value={props.values.by}
+                        value={props.values.create_by}
                         requireStar="true"
-                        onChange={e =>
-                          props.setFieldValue("by", e.target.value)
-                        }
                         disabled={true}
                       />
                     </FieldContainer>
@@ -448,30 +480,37 @@ class Form extends React.PureComponent {
 
 Form.getInitialProps = async ctx => {
   let formId;
+  let request = {
+    document: {},
+    lines: []
+  };
   const { query } = ctx;
   const { auth } = await authInitialProps(true)(ctx);
   if (auth) {
     await checkUserRole(auth)(ctx);
 
-    if (query.id) formId = query.id;
+    if (query.id) {
+      formId = query.id;
+      request = await ctx.reduxStore.dispatch(GetRequestById(formId, ctx));
+    } else {
+      await ctx.reduxStore.dispatch({ type: actionTypes.REQUEST.RESET });
+    }
   }
-  await ctx.reduxStore.dispatch({ type: actionTypes.REQUEST.RESET });
-  return { auth, formId };
+
+  return { auth, formId, request };
 };
 
 export default connect(
-  ({ ItemReducer, ItemUnitReducer, RequestReducer }) => ({
+  ({ ItemReducer, ItemUnitReducer }) => ({
     ItemReducer,
-    ItemUnitReducer,
-    RequestReducer
+    ItemUnitReducer
   }),
   {
-    GetAllItem,
-    GetAllItemUnit,
     InsertRequest,
-    GetRequestById,
     DeleteRequest,
-    UpdateRequest
+    UpdateRequest,
+    GetAllItem,
+    GetAllItemUnit
   }
 )(Form);
 

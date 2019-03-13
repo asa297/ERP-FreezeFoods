@@ -48,28 +48,28 @@ class List extends React.PureComponent {
   render() {
     const columns = [
       {
-        title: "Id",
+        title: "รหัส",
         dataIndex: "id",
         width: 150,
         align: "center"
       },
       {
-        title: "Name",
+        title: "ชื่อ",
         dataIndex: "name",
         width: "20%"
       },
       {
-        title: "phone",
+        title: "เบอร์โทร",
         dataIndex: "phone",
         width: "20%"
       },
       {
-        title: "Organization",
+        title: "บริษัท",
         dataIndex: "org",
         width: "20%"
       },
       {
-        title: "Remark",
+        title: "หมายเหตุ",
         dataIndex: "remark",
         width: "20%"
       },
@@ -82,7 +82,7 @@ class List extends React.PureComponent {
               href={{ pathname: "/contact/form", query: { id: record.id } }}
               prefetch
             >
-              <a onClick={() => this.setState({ loading: true })}>View</a>
+              <a onClick={() => this.setState({ loading: true })}>เปิดเอกสาร</a>
             </Link>
           );
         }
@@ -92,7 +92,7 @@ class List extends React.PureComponent {
     return (
       <ListContainer>
         <Container>
-          <H1TextCenter>Contact List</H1TextCenter>
+          <H1TextCenter>รายการบริษัท</H1TextCenter>
 
           <Loading className="loader" loading={this.state.loading} />
           <ListTable loading={this.state.loading}>
@@ -121,7 +121,7 @@ List.getInitialProps = async ctx => {
   if (auth) {
     await checkUserRole(auth)(ctx);
   }
-  await ctx.reduxStore.dispatch({ type: actionTypes.CATEGORY.RESET });
+  await ctx.reduxStore.dispatch({ type: actionTypes.CONTACT.RESET });
   return { auth };
 };
 

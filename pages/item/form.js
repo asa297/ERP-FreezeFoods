@@ -66,7 +66,7 @@ class Form extends React.PureComponent {
     return (
       <MasterContanier>
         <Container>
-          <H1TextCenter>Item Form</H1TextCenter>
+          <H1TextCenter>ฟอร์มสินค้า</H1TextCenter>
           <FormContainer>
             <Formik
               initialValues={this.setInitialDataForm(formId, ItemReducer)}
@@ -95,7 +95,7 @@ class Form extends React.PureComponent {
                   <FlexContainer>
                     <FieldContainer width="100%">
                       <Field
-                        label="Name"
+                        label="ชื่อ"
                         type="text"
                         name="name"
                         component={InputItemInline}
@@ -109,7 +109,7 @@ class Form extends React.PureComponent {
 
                     <FieldContainer width="100%">
                       <Field
-                        label="Category"
+                        label="หมวดสินค้า"
                         name="category"
                         component={SelectItem}
                         value={
@@ -126,7 +126,7 @@ class Form extends React.PureComponent {
 
                   <RemarkContainer>
                     <Field
-                      label="Remark"
+                      label="หมายเหตุ"
                       name="remark"
                       component={InputTextArea}
                       value={props.values.remark}

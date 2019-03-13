@@ -23,11 +23,11 @@ const SiderComponent = ({ auth }) => {
         <Menu theme="dark" mode="inline">
           <Menu.Item key="1" onClick={() => Router.push("/")}>
             <Icon type="home" />
-            <span>Home</span>
+            <span>หน้าหลัก</span>
           </Menu.Item>
           <Menu.Item key="2" onClick={() => Router.push("/login")}>
             <Icon type="lock" />
-            <span>Login</span>
+            <span>เข้าสู่ระบบ</span>
           </Menu.Item>
         </Menu>
       ) : (

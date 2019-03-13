@@ -8,6 +8,7 @@ import Link from "next/link";
 import InfiniteScroll from "react-infinite-scroller";
 import { actionTypes } from "<action_types>";
 import { DocStatus } from "<components>";
+import moment from "moment";
 
 class List extends React.PureComponent {
   state = {
@@ -33,19 +34,22 @@ class List extends React.PureComponent {
   render() {
     const columns = [
       {
-        title: "Code",
+        title: "รหัสเอกสาร",
         dataIndex: "code",
         width: 150,
         align: "center"
       },
       {
-        title: "Date",
+        title: "วันที่",
         dataIndex: "date",
-        width: "20%"
+        width: "20%",
+        render: (text, record, index) => {
+          return <div> {moment(record.date).format("DD/MM/YYYY")}</div>;
+        }
       },
 
       {
-        title: "Status",
+        title: "สถานะเอกสาร",
         dataIndex: "status",
         width: "20%",
         render: (text, record, index) => {
@@ -53,12 +57,12 @@ class List extends React.PureComponent {
         }
       },
       {
-        title: "Remark",
+        title: "หมายเหตุ",
         dataIndex: "remark",
         width: "20%"
       },
       {
-        title: "Create By",
+        title: "ผู้สร้าง",
         dataIndex: "create_by",
         width: "20%"
       },
@@ -72,7 +76,7 @@ class List extends React.PureComponent {
               href={{ pathname: "/request/form", query: { id: record.id } }}
               prefetch
             >
-              <a onClick={() => this.setState({ loading: true })}>View</a>
+              <a onClick={() => this.setState({ loading: true })}>เปิดเอกสาร</a>
             </Link>
           );
         }
@@ -82,7 +86,7 @@ class List extends React.PureComponent {
     return (
       <ListContainer>
         <Container>
-          <H1TextCenter>Request List</H1TextCenter>
+          <H1TextCenter>รายการใบเสนอราคา</H1TextCenter>
 
           <Loading className="loader" loading={this.state.loading} />
           <ListTable loading={this.state.loading}>
@@ -111,7 +115,7 @@ List.getInitialProps = async ctx => {
   if (auth) {
     await checkUserRole(auth)(ctx);
   }
-  await ctx.reduxStore.dispatch({ type: actionTypes.CATEGORY.RESET });
+  await ctx.reduxStore.dispatch({ type: actionTypes.REQUEST.RESET });
   return { auth };
 };
 
