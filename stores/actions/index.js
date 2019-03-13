@@ -238,3 +238,47 @@ export const UpdateRequest = (id, value) => async dispatch => {
 };
 
 //#endregion Item Unit Action
+
+//#region PO Action
+export const InsertPO = value => async dispatch => {
+  const res = await axios.post("/api/po", value);
+  if (!res) return { status: false };
+  return { status: res.status === 200, id: res.data.id };
+};
+
+export const GetPO = page => async dispatch => {
+  const res = await axios.get("/api/po/list/" + page).catch(e => null);
+  if (!res) return { status: false };
+  const { data } = res;
+  dispatch({ type: actionTypes.PO.FETCH_LIST, payload: data });
+  return { status: res.status === 200 };
+};
+
+export const DeletePO = id => async (dispatch, currentState) => {
+  const res = await axios.delete(`/api/po/${id}`).catch(e => null);
+  if (!res) return { status: false };
+  return { status: res.status === 200 };
+};
+
+export const GetPOById = (id, { req }) => async dispatch => {
+  // const res = await axios.get("/api/request/form/" + id).catch(e => null);
+  const baseUrl = req ? `${req.protocol}://${req.get("Host")}` : "";
+
+  const res = await axios.get(baseUrl + "/api/po/form/" + id).catch(e => null);
+
+  if (!res) return { status: false };
+  const { data } = res;
+
+  // dispatch({ type: actionTypes.REQUEST.FETCH, payload: data });
+  // console.log("dispatch" , );
+  return data;
+};
+
+export const UpdatePO = (id, value) => async dispatch => {
+  const res = await axios.put("/api/po/" + id, value).catch(e => null);
+  if (!res) return { status: false };
+  // dispatch({ type: actionTypes.REQUEST.UPDATE, payload: value });
+  return { status: res.status === 200 };
+};
+
+//#endregion Item Unit Action

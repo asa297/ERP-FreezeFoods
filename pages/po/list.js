@@ -22,7 +22,7 @@ class List extends React.PureComponent {
 
   async LoadListMore(page) {
     const { loading } = this.state;
-    const { HasMore } = this.props.RequestReducer;
+    const { HasMore } = this.props.POReducer;
     if (HasMore && page !== 1 && !loading) {
       this.setState({ page, loading: true });
       await this.props.GetRequest(page);
@@ -73,7 +73,7 @@ class List extends React.PureComponent {
         render: (text, record) => {
           return (
             <Link
-              href={{ pathname: "/request/form", query: { id: record.id } }}
+              href={{ pathname: "/po/form", query: { id: record.id } }}
               prefetch
             >
               <a onClick={() => this.setState({ loading: true })}>เปิดเอกสาร</a>
@@ -86,7 +86,7 @@ class List extends React.PureComponent {
     return (
       <ListContainer>
         <Container>
-          <H1TextCenter>รายการใบขอซื้อ</H1TextCenter>
+          <H1TextCenter>รายการใบสั่งซื้อ</H1TextCenter>
 
           <Loading className="loader" loading={this.state.loading} />
           <ListTable loading={this.state.loading}>
@@ -98,7 +98,7 @@ class List extends React.PureComponent {
             >
               <Table
                 columns={columns}
-                dataSource={this.props.RequestReducer.List}
+                dataSource={this.props.POReducer.List}
                 pagination={false}
                 rowKey={record => record.id}
               />
@@ -120,7 +120,7 @@ List.getInitialProps = async ctx => {
 };
 
 export default connect(
-  ({ RequestReducer }) => ({ RequestReducer }),
+  ({ POReducer }) => ({ POReducer }),
   { GetRequest }
 )(List);
 

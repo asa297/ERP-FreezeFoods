@@ -10,10 +10,10 @@ import {
   DocStatus
 } from "<components>";
 import {
-  InsertRequest,
-  GetRequestById,
-  DeleteRequest,
-  UpdateRequest,
+  InsertPO,
+  GetPOById,
+  DeletePO,
+  UpdatePO,
   GetAllItem,
   GetAllItemUnit,
   ClearItem,
@@ -233,7 +233,7 @@ class Form extends React.PureComponent {
 
   async OnDelete() {
     const { formId } = this.props;
-    const { status } = await this.props.DeleteRequest(formId);
+    const { status } = await this.props.DeletePO(formId);
     if (status) {
       alert("Delete Done");
       Router.push(`/request/list`);
@@ -346,8 +346,8 @@ class Form extends React.PureComponent {
       deleted_data
     };
     const { status, id } = formId
-      ? await this.props.UpdateRequest(formId, saveData)
-      : await this.props.InsertRequest(saveData);
+      ? await this.props.UpdatePO(formId, saveData)
+      : await this.props.InsertPO(saveData);
 
     if (formId) {
       alert(status ? "Save Done" : "fail");
@@ -368,7 +368,7 @@ class Form extends React.PureComponent {
       <MasterContanier>
         <Container>
           <HeaderForm>
-            <H1Text>ฟอร์มใบขอซื้อ</H1Text>
+            <H1Text>ฟอร์มใบสั่งซื้อ</H1Text>
             <DocStatus status={this.state.status} />
           </HeaderForm>
 
@@ -488,7 +488,7 @@ Form.getInitialProps = async ctx => {
 
     if (query.id) {
       formId = query.id;
-      request = await ctx.reduxStore.dispatch(GetRequestById(formId, ctx));
+      request = await ctx.reduxStore.dispatch(GetPOById(formId, ctx));
     } else {
       await ctx.reduxStore.dispatch({ type: actionTypes.REQUEST.RESET });
     }
@@ -503,9 +503,9 @@ export default connect(
     ItemUnitReducer
   }),
   {
-    InsertRequest,
-    DeleteRequest,
-    UpdateRequest,
+    InsertPO,
+    DeletePO,
+    UpdatePO,
     GetAllItem,
     GetAllItemUnit,
     ClearItem,
