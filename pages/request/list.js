@@ -25,7 +25,7 @@ class List extends React.PureComponent {
     const { HasMore } = this.props.RequestReducer;
     if (HasMore && page !== 1 && !loading) {
       this.setState({ page, loading: true });
-      await this.props.GetContact(page);
+      await this.props.GetRequest(page);
 
       this.setState({ loading: false });
     }
@@ -115,7 +115,7 @@ List.getInitialProps = async ctx => {
   if (auth) {
     await checkUserRole(auth)(ctx);
   }
-  await ctx.reduxStore.dispatch({ type: actionTypes.REQUEST.RESET });
+  // await ctx.reduxStore.dispatch({ type: actionTypes.REQUEST.RESET });
   return { auth };
 };
 
