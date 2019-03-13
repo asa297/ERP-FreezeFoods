@@ -142,6 +142,10 @@ export const UpdateContact = (id, value) => async dispatch => {
   return { status: res.status === 200 };
 };
 
+export const CleaerContact = () => async dispatch => {
+  dispatch({ type: actionTypes.CONTACT.RESET });
+};
+
 //#endregion Contact Action
 
 //#region Item Unit Action
@@ -235,6 +239,10 @@ export const UpdateRequest = (id, value) => async dispatch => {
   if (!res) return { status: false };
   // dispatch({ type: actionTypes.REQUEST.UPDATE, payload: value });
   return { status: res.status === 200 };
+};
+
+export const ClearRequest = (id, value) => async dispatch => {
+  dispatch({ type: actionTypes.REQUEST.RESET });
 };
 
 //#endregion Item Unit Action

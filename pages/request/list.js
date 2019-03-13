@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
 import { authInitialProps, checkUserRole } from "<utils>/auth";
-import { GetRequest } from "<actions>";
+import { GetRequest, ClearRequest } from "<actions>";
 import { Table } from "antd";
 import styled from "styled-components";
 // import { Link } from "<routes>";
@@ -17,6 +17,7 @@ class List extends React.PureComponent {
   };
 
   componentWillMount() {
+    this.props.ClearRequest();
     this.props.GetRequest(this.state.page);
   }
 
@@ -121,7 +122,7 @@ List.getInitialProps = async ctx => {
 
 export default connect(
   ({ RequestReducer }) => ({ RequestReducer }),
-  { GetRequest }
+  { GetRequest, ClearRequest }
 )(List);
 
 const Container = styled.div`

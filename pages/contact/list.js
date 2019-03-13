@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
 import { authInitialProps, checkUserRole } from "<utils>/auth";
-import { GetContact } from "<actions>";
+import { GetContact, CleaerContact } from "<actions>";
 import { Table } from "antd";
 import styled from "styled-components";
 // import { Link } from "<routes>";
@@ -15,23 +15,12 @@ class List extends React.PureComponent {
   };
 
   componentWillMount() {
+    this.props.CleaerContact();
     this.props.GetContact(this.state.page);
   }
 
   _onChangePagination(page) {
     this.setState({ page });
-  }
-
-  async _onDelete(item) {
-    const { id } = item;
-
-    const res = await this.props.DeleteContact(id);
-
-    if (res.status) {
-      alert("done");
-    } else {
-      alert("fail");
-    }
   }
 
   async LoadListMore(page) {
@@ -127,7 +116,7 @@ List.getInitialProps = async ctx => {
 
 export default connect(
   ({ ContactReducer }) => ({ ContactReducer }),
-  { GetContact }
+  { GetContact, CleaerContact }
 )(List);
 
 const Container = styled.div`
