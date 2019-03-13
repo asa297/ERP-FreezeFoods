@@ -30,7 +30,8 @@ class Form extends React.PureComponent {
       name: Item.name,
       phone: Item.phone,
       org: Item.org,
-      remark: Item.remark
+      remark: Item.remark,
+      address: Item.address
     };
   }
 
@@ -120,6 +121,18 @@ class Form extends React.PureComponent {
                       />
                     </FieldContainer>
                   </FlexContainer>
+
+                  <RemarkContainer>
+                    <Field
+                      label="ที่อยู่"
+                      name="address"
+                      component={InputTextArea}
+                      value={props.values.address}
+                      onChange={e =>
+                        props.setFieldValue("address", e.target.value)
+                      }
+                    />
+                  </RemarkContainer>
 
                   <RemarkContainer>
                     <Field

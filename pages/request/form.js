@@ -404,7 +404,7 @@ class Form extends React.PureComponent {
                   <FlexContainer>
                     <FieldContainer width="40%">
                       <Field
-                        label="Code"
+                        label="รหัส"
                         type="text"
                         name="code"
                         component={InputItemInline}
@@ -415,7 +415,7 @@ class Form extends React.PureComponent {
                     </FieldContainer>
                     <FieldContainer width="30%">
                       <Field
-                        label="Date"
+                        label="วันที่"
                         name="date"
                         component={InputDateItem}
                         value={moment(props.values.date)}
@@ -428,7 +428,7 @@ class Form extends React.PureComponent {
 
                     <FieldContainer width="30%">
                       <Field
-                        label="By"
+                        label="โดย"
                         type="text"
                         name="create_by"
                         component={InputItemInline}
@@ -441,7 +441,7 @@ class Form extends React.PureComponent {
 
                   <RemarkContainer>
                     <Field
-                      label="Remark"
+                      label="หมายเหตุ"
                       name="remark"
                       component={InputTextArea}
                       value={props.values.remark}
