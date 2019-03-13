@@ -12,7 +12,8 @@ import {
   GetItemCategoryAll,
   GetItemById,
   UpdateItem,
-  DeleteItem
+  DeleteItem,
+  CleaerItemCategory
 } from "<actions>";
 import { Formik, Field } from "formik";
 import styled from "styled-components";
@@ -52,6 +53,10 @@ class Form extends React.PureComponent {
     };
   }
 
+  componentWillUnmount() {
+    this.props.CleaerItemCategory();
+    //Need to Clear ItemCategory Reducer
+  }
   async OnDelete() {
     const { formId } = this.props;
     const { status } = await this.props.DeleteItem(formId);
@@ -86,7 +91,6 @@ class Form extends React.PureComponent {
 
   render() {
     const { ItemCategoryReducer, ItemReducer, formId } = this.props;
-    console.log(ItemCategoryReducer);
     return (
       <MasterContanier>
         <Container>
@@ -182,7 +186,7 @@ Form.getInitialProps = async ctx => {
     if (query.id) formId = query.id;
   }
 
-  await ctx.reduxStore.dispatch({ type: actionTypes.ITEM.RESET });
+  // await ctx.reduxStore.dispatch({ type: actionTypes.ITEM.RESET });
   return { auth, formId };
 };
 
@@ -191,7 +195,14 @@ export default connect(
     ItemCategoryReducer,
     ItemReducer
   }),
-  { InsertItem, GetItemCategoryAll, GetItemById, UpdateItem, DeleteItem }
+  {
+    InsertItem,
+    GetItemCategoryAll,
+    GetItemById,
+    UpdateItem,
+    DeleteItem,
+    CleaerItemCategory
+  }
 )(Form);
 
 const MasterContanier = styled.div`

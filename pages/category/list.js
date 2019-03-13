@@ -18,10 +18,6 @@ class List extends React.PureComponent {
     this.props.GetItemCategory(this.state.page);
   }
 
-  _onChangePagination(page) {
-    this.setState({ page });
-  }
-
   async _onDelete(item) {
     const { id } = item;
 
@@ -109,7 +105,7 @@ List.getInitialProps = async ctx => {
   if (auth) {
     await checkUserRole(auth)(ctx);
   }
-  await ctx.reduxStore.dispatch({ type: actionTypes.CATEGORY.RESET });
+  // await ctx.reduxStore.dispatch({ type: actionTypes.CATEGORY.RESET });
   return { auth };
 };
 

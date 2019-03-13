@@ -192,7 +192,7 @@ Form.getInitialProps = async ctx => {
 
     if (query.id) formId = query.id;
   }
-  await ctx.reduxStore.dispatch({ type: actionTypes.CONTACT.RESET });
+  // await ctx.reduxStore.dispatch({ type: actionTypes.CONTACT.RESET });
   return { auth, formId };
 };
 

@@ -46,6 +46,10 @@ export const UpdateItem = (id, value) => async dispatch => {
   return { status: res.status === 200 };
 };
 
+export const ClearItem = () => async dispatch => {
+  dispatch({ type: actionTypes.ITEM.RESET });
+};
+
 //#endregion Item Action
 
 //#region Item Category Action
@@ -94,6 +98,10 @@ export const UpdateItemCategory = (id, value) => async dispatch => {
   if (!res) return { status: false };
   dispatch({ type: actionTypes.CATEGORY.UPDATE, payload: value });
   return { status: res.status === 200 };
+};
+
+export const CleaerItemCategory = () => async dispatch => {
+  dispatch({ type: actionTypes.CATEGORY.RESET });
 };
 
 //#endregion Item Category Action
@@ -180,6 +188,9 @@ export const UpdateItemUnit = (id, value) => async dispatch => {
   return { status: res.status === 200 };
 };
 
+export const ClearItemUnit = (id, value) => async dispatch => {
+  dispatch({ type: actionTypes.UNIT.RESET });
+};
 //#endregion Item Unit Action
 
 //#region Request Action
