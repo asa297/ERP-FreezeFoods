@@ -9,7 +9,7 @@ const LoginForm = () => {
   return (
     <Contanier>
       <LoginContainer>
-        <H1TextCenter>Login</H1TextCenter>
+        <H1TextCenter>เข้าสู่ระบบ</H1TextCenter>
         <Formik
           initialValues={{
             username: "god",
@@ -28,7 +28,7 @@ const LoginForm = () => {
           render={props => (
             <form onSubmit={props.handleSubmit}>
               <Field
-                label="Username"
+                label="ผู้ใช้"
                 type="text"
                 name="username"
                 component={InputItem}
@@ -38,7 +38,7 @@ const LoginForm = () => {
               />
 
               <Field
-                label="Password"
+                label="รหัสผ่าน"
                 type="password"
                 name="password"
                 component={InputItem}

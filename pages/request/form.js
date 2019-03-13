@@ -22,8 +22,10 @@ import styled from "styled-components";
 import Router from "next/router";
 import { actionTypes } from "<action_types>";
 import moment from "moment";
-import { Table, Input, Icon } from "antd";
+import { Table, Input, Icon, Modal } from "antd";
 import uuidv4 from "uuid";
+
+const confirm = Modal.confirm;
 
 class Form extends React.PureComponent {
   constructor(props) {
@@ -184,7 +186,6 @@ class Form extends React.PureComponent {
   }
 
   componentWillReceiveProps({ formId, request, auth }) {
-    console.log(formId, request);
     if (!formId) {
       let [data, deleted_data] = [...this.state.data, this.state.deleted_data];
       data = [
@@ -221,31 +222,6 @@ class Form extends React.PureComponent {
         deleted_data: [],
         status: document.status
       });
-    }
-  }
-
-  setInitialDataForm(formId, Item) {
-    const { auth } = this.props;
-    if (!formId) {
-      // return {
-      //   code: "####",
-      //   date: moment(),
-      //   by: auth.user.name
-      // };
-
-      return {
-        code: this.state.code,
-        date: this.state.date,
-        by: this.state.by
-      };
-    } else {
-      const { document } = Item;
-      return {
-        code: document.code,
-        date: moment(document.date),
-        by: document.create_by,
-        remark: document.remark
-      };
     }
   }
 
@@ -329,8 +305,58 @@ class Form extends React.PureComponent {
     data[index].remark = e.target.value;
     this.setState({ data });
   }
+
+  async onSubmit(values) {
+    const { formId } = this.props;
+    const { data, deleted_data } = this.state;
+
+    const item_code_empty = data.find(line => line.item_id === null);
+    const qty_empty = data.find(line => line.qty === 0);
+    const unit_empty = data.find(line => line.unit_name === null);
+    const line_empty = data.length === 0;
+
+    if (item_code_empty) {
+      alert("item code cannot empty");
+      return;
+    }
+    if (qty_empty) {
+      alert("qty cannot empty");
+      return;
+    }
+    if (line_empty) {
+      alert("lines cannot empty");
+      return;
+    }
+    if (unit_empty) {
+      alert("unit cannot empty");
+      return;
+    }
+
+    this.setState({ loading: true });
+
+    const saveData = {
+      document: values,
+      lines: data,
+      deleted_data
+    };
+    const { status, id } = formId
+      ? await this.props.UpdateRequest(formId, saveData)
+      : await this.props.InsertRequest(saveData);
+
+    if (formId) {
+      alert(status ? "Save Done" : "fail");
+    } else {
+      alert(status ? "Add Done" : "fail");
+      if (status) {
+        window.location.href = `/request/form?id=${id}`;
+      }
+    }
+
+    this.setState({ loading: false });
+  }
+
   render() {
-    const { request, formId } = this.props;
+    const { formId } = this.props;
 
     return (
       <MasterContanier>
@@ -351,56 +377,20 @@ class Form extends React.PureComponent {
               enableReinitialize={true}
               validationSchema={RequestFormSchema}
               onSubmit={async (values, actions) => {
-                const { data, deleted_data } = this.state;
-
-                const item_code_empty = data.find(
-                  line => line.item_id === null
-                );
-                const qty_empty = data.find(line => line.qty === 0);
-                const unit_empty = data.find(line => line.unit_name === null);
-                const line_empty = data.length === 0;
-
-                if (item_code_empty) {
-                  alert("item code cannot empty");
-                  return;
-                }
-                if (qty_empty) {
-                  alert("qty cannot empty");
-                  return;
-                }
-                if (line_empty) {
-                  alert("lines cannot empty");
-                  return;
-                }
-                if (unit_empty) {
-                  alert("unit cannot empty");
-                  return;
-                }
-
-                this.setState({ loading: true });
-
-                const saveData = {
-                  document: values,
-                  lines: data,
-                  deleted_data
-                };
-                const { status, id } = formId
-                  ? await this.props.UpdateRequest(formId, saveData)
-                  : await this.props.InsertRequest(saveData);
-
-                if (formId) {
-                  alert(status ? "Save Done" : "fail");
-                } else {
-                  alert(status ? "Add Done" : "fail");
-                  if (status) {
-                    window.location.href = `/request/form?id=${id}`;
+                const binding_this = this;
+                confirm({
+                  title: "ยืนยันการบันทึก",
+                  content: "",
+                  onOk() {
+                    binding_this.onSubmit(values);
+                  },
+                  onCancel() {
+                    return false;
                   }
-                }
-
-                this.setState({ loading: false });
+                });
               }}
               render={props => (
-                <form onSubmit={props.handleSubmit}>
+                <form>
                   <FlexContainer>
                     <FieldContainer width="40%">
                       <Field
@@ -466,6 +456,7 @@ class Form extends React.PureComponent {
                       loading={this.state.loading}
                       OnDelete={() => this.OnDelete()}
                       DisabledSave={this.state.status === 2 ? true : false}
+                      onSubmit={props.handleSubmit}
                     />
                   </FlexCenter>
                 </form>
