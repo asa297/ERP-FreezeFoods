@@ -64,17 +64,24 @@
       "role": [1]
     },
     {
-      "path": "/request/list",
-      "sub": "document",
-      "type": "List",
-      "page": "Request",
-      "role": [1]
-    },
-    {
       "path": "/request/form",
       "sub": "document",
       "type": "Form",
       "page": "Request",
+      "role": [1]
+    },
+    {
+      "path": "/po/list",
+      "sub": "document",
+      "type": "List",
+      "page": "Purchase",
+      "role": [1]
+    },
+    {
+      "path": "/po/form",
+      "sub": "document",
+      "type": "Form",
+      "page": "Purchase",
       "role": [1]
     }
   ]
