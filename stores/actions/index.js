@@ -289,4 +289,8 @@ export const UpdatePO = (id, value) => async dispatch => {
   return { status: res.status === 200 };
 };
 
+export const ClearPO = () => async dispatch => {
+  dispatch({ type: actionTypes.PO.RESET });
+};
+
 //#endregion Item Unit Action

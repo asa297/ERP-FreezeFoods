@@ -1,9 +1,8 @@
 import { connect } from "react-redux";
 import { authInitialProps, checkUserRole } from "<utils>/auth";
-import { GetRequest } from "<actions>";
+import { GetRequest, ClearPO } from "<actions>";
 import { Table } from "antd";
 import styled from "styled-components";
-// import { Link } from "<routes>";
 import Link from "next/link";
 import InfiniteScroll from "react-infinite-scroller";
 import { actionTypes } from "<action_types>";
@@ -17,6 +16,7 @@ class List extends React.PureComponent {
   };
 
   componentWillMount() {
+    this.props.ClearPO();
     this.props.GetRequest(this.state.page);
   }
 
@@ -47,7 +47,6 @@ class List extends React.PureComponent {
           return <div> {moment(record.date).format("DD/MM/YYYY")}</div>;
         }
       },
-
       {
         title: "สถานะเอกสาร",
         dataIndex: "status",
@@ -121,7 +120,7 @@ List.getInitialProps = async ctx => {
 
 export default connect(
   ({ POReducer }) => ({ POReducer }),
-  { GetRequest }
+  { GetRequest, ClearPO }
 )(List);
 
 const Container = styled.div`
