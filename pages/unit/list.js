@@ -102,7 +102,7 @@ List.getInitialProps = async ctx => {
 
 export default connect(
   ({ ItemUnitReducer }) => ({ ItemUnitReducer }),
-  { GetItemUnit }
+  { GetItemUnit, ClearItemUnit }
 )(List);
 
 const Container = styled.div`

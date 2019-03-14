@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
 import { authInitialProps, checkUserRole } from "<utils>/auth";
-import { RequestFormSchema } from "<utils>/validatior";
+import { POFormSchema } from "<utils>/validatior";
 import {
   InputItemInline,
   InputTextArea,
@@ -26,6 +26,8 @@ import { actionTypes } from "<action_types>";
 import moment from "moment";
 import { Table, Input, Icon, Modal } from "antd";
 import uuidv4 from "uuid";
+
+const Search = Input.Search;
 
 const confirm = Modal.confirm;
 
@@ -236,7 +238,7 @@ class Form extends React.PureComponent {
     const { status } = await this.props.DeletePO(formId);
     if (status) {
       alert("Delete Done");
-      Router.push(`/request/list`);
+      Router.push(`/po/list`);
     } else {
       alert("fail");
     }
@@ -354,7 +356,7 @@ class Form extends React.PureComponent {
     } else {
       alert(status ? "Add Done" : "fail");
       if (status) {
-        window.location.href = `/request/form?id=${id}`;
+        window.location.href = `/po/form?id=${id}`;
       }
     }
 
@@ -371,7 +373,11 @@ class Form extends React.PureComponent {
             <H1Text>ฟอร์มใบสั่งซื้อ</H1Text>
             <DocStatus status={this.state.status} />
           </HeaderForm>
-
+          <Search
+            placeholder="input search text"
+            onSearch={value => console.log(value)}
+            style={{ width: "100%" }}
+          />
           <FormContainer>
             <Formik
               initialValues={{
@@ -381,7 +387,7 @@ class Form extends React.PureComponent {
                 remark: this.state.document.remark
               }}
               enableReinitialize={true}
-              validationSchema={RequestFormSchema}
+              validationSchema={POFormSchema}
               onSubmit={async (values, actions) => {
                 const binding_this = this;
                 confirm({

@@ -23,3 +23,9 @@ export const RequestFormSchema = Yup.object().shape({
   date: Yup.date().required("Required"),
   create_by: Yup.string().required("Required")
 });
+
+export const POFormSchema = Yup.object().shape({
+  // code: Yup.string().required("Required"),
+  // date: Yup.date().required("Required"),
+  // create_by: Yup.string().required("Required")
+});
