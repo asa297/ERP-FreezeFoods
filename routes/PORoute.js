@@ -6,20 +6,20 @@ module.exports = (app, client) => {
     const { document, lines } = req.body;
 
     const LastDocument = await client.query(
-      `SELECT id from request order by id desc LIMIT 1`
+      `SELECT setval('po_id_seq',nextval('po_id_seq')-1) AS id;`
     );
 
-    const text_document = `INSERT INTO request(code, date, remark , status , create_by, 
-        create_time, last_modify_by, last_modify_time) 
-        VALUES($1, $2, $3, $4, $5,$6, $7 , $8) RETURNING id `;
+    //#region PO
+    const text_document = `INSERT INTO po(code, date, remark , ref_doc_id, status , create_by,
+        create_time, last_modify_by, last_modify_time)
+        VALUES($1, $2, $3, $4, $5,$6, $7 , $8, $9) RETURNING id `;
 
-    const generateCode = `RFQ-${
-      LastDocument.rows.length !== 0 ? LastDocument.rows[0].id + 1 : 1
-    }`;
+    const generateCode = `PO-${parseInt(LastDocument.rows[0].id) + 1}`;
     const values = [
       generateCode,
       document.date,
       document.remark,
+      document.refDocId,
       1, //Save
       UserName,
       new Date(),
@@ -27,24 +27,25 @@ module.exports = (app, client) => {
       new Date()
     ];
 
-    const request_doc = await client.query(text_document, values);
+    const po_doc = await client.query(text_document, values);
 
     const promise_lines_query = lines.map(line => {
       return new Promise(async (resolve, reject) => {
-        const text_lines = `INSERT INTO request_line(request_id, item_id, item_name , qty , remain_qty
-          ,unit_id ,unit_name, unit_price , remark
-          ,create_by, create_time, last_modify_by, last_modify_time, uuid) 
-          VALUES($1, $2, $3, $4, $5,$6, $7 , $8 ,$9 , $10, $11, $12, $13, $14)`;
+        const text_lines = `INSERT INTO po_line (po_id, item_id, item_name , qty , remain_qty
+          ,unit_id ,unit_name, unit_price , remark, ref_doc_id
+          ,create_by, create_time, last_modify_by, last_modify_time, uuid)
+          VALUES($1, $2, $3, $4, $5,$6, $7 , $8 ,$9 , $10, $11, $12, $13, $14, $15)`;
         const values = [
-          request_doc.rows[0].id,
+          po_doc.rows[0].id,
           line.item_id,
           line.item_name,
-          line.qty,
-          line.qty,
+          line.po_qty,
+          line.po_qty,
           line.unit_id,
           line.unit_name,
-          line.unit_price,
+          line.po_unit_price,
           line.remark,
+          line.request_id,
           UserName,
           new Date(),
           UserName,
@@ -58,9 +59,43 @@ module.exports = (app, client) => {
       });
     });
 
-    await Promise.all(promise_lines_query);
+    //#endregion PO
 
-    res.send({ id: request_doc.rows[0].id });
+    //#region RFQ
+
+    const promise_docRFQ_update = new Promise(async (resolve, reject) => {
+      const text = `UPDATE request SET status = 2 Where id = ${
+        document.refDocId
+      }`;
+      await client.query(text);
+      resolve();
+    });
+
+    const promise_linesRFQ_update = lines.map(line => {
+      return new Promise(async (resolve, reject) => {
+        const text = `UPDATE request_line SET remain_qty = remain_qty - ${
+          line.po_qty
+        } Where id = ${line.id} AND request_id = ${line.request_id}`;
+
+        await client.query(text);
+
+        resolve();
+      });
+    });
+
+    //#endregion RFQ
+
+    Promise.all([
+      promise_lines_query,
+      promise_docRFQ_update,
+      promise_linesRFQ_update
+    ])
+      .then(() => {
+        res.send({ id: po_doc.rows[0].id });
+      })
+      .catch(error => {
+        res.send(error);
+      });
   });
 
   app.get("/api/po/list/:page", isAuthenticated, async (req, res) => {
@@ -95,15 +130,13 @@ module.exports = (app, client) => {
     const { id } = req.params;
 
     const doc = new Promise(async (resolve, reject) => {
-      const result = await client.query(
-        `SELECT * from request WHERE id = ${id}`
-      );
+      const result = await client.query(`SELECT * from po WHERE id = ${id}`);
       resolve(result);
     });
 
     const lines = new Promise(async (resolve, reject) => {
       const result = await client.query(
-        `SELECT * from request_line WHERE request_id = ${id}`
+        `SELECT * from po_line WHERE po_id = ${id}`
       );
       resolve(result);
     });

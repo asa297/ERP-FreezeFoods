@@ -5,7 +5,7 @@ import {
   InputItemInline,
   InputTextArea,
   ActionForm,
-  InputDateItem,
+  InputDateItemInline,
   SelectOption,
   DocStatus
 } from "<components>";
@@ -413,7 +413,7 @@ class Form extends React.PureComponent {
                       <Field
                         label="วันที่"
                         name="date"
-                        component={InputDateItem}
+                        component={InputDateItemInline}
                         value={moment(props.values.date)}
                         requireStar="true"
                         onChange={e => props.setFieldValue("date", e)}
@@ -447,7 +447,14 @@ class Form extends React.PureComponent {
                     />
                   </RemarkContainer>
 
-                  <div style={{ paddingLeft: "15px", paddingTop: "10px" }}>
+                  <div
+                    style={{
+                      paddingLeft: "15px",
+                      paddingTop: "10px",
+                      overflowY: "scroll",
+                      maxHeight: "50vh"
+                    }}
+                  >
                     <Table
                       columns={this.state.columns}
                       dataSource={this.state.data}
@@ -517,7 +524,7 @@ const MasterContanier = styled.div`
   display: flex;
   justify-content: center;
   width: 100%;
-  margin-top: 5%;
+  margin-top: 10px;
 `;
 const Container = styled.div`
   width: 80%;

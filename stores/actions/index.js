@@ -245,6 +245,15 @@ export const ClearRequest = (id, value) => async dispatch => {
   dispatch({ type: actionTypes.REQUEST.RESET });
 };
 
+export const GetRequestForPO = code => async dispatch => {
+  const res = await axios.get("/api/request/rfq/" + code).catch(e => null);
+
+  const { data } = res;
+  if (!data) return { status: false };
+
+  dispatch({ type: actionTypes.REQUEST.FETCH, payload: data });
+  return { status: true };
+};
 //#endregion Item Unit Action
 
 //#region PO Action
