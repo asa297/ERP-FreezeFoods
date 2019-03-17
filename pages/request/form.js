@@ -49,6 +49,7 @@ class Form extends React.PureComponent {
               value={record.item_id}
               onChange={value => this.ChangeItemCode(value, index)}
               disabled={this.state.status === 2 ? true : false}
+              fieldread="id"
             />
           );
         }
@@ -107,6 +108,7 @@ class Form extends React.PureComponent {
               value={record.unit_name}
               onChange={value => this.ChangeItemUnit(value, index)}
               disabled={this.state.status === 2 ? true : false}
+              fieldread="name"
             />
           );
         }
