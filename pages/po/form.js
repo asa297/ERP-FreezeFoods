@@ -264,7 +264,7 @@ class Form extends React.PureComponent {
     } else {
       alert(status ? "Add Done" : "fail");
       if (status) {
-        window.location.href = `/po/form?id=${id}`;
+        window.location.href = `/po/list`;
       }
     }
 

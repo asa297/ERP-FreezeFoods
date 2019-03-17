@@ -63,7 +63,7 @@ class Form extends React.PureComponent {
     } else {
       alert(status ? "Add Done" : "fail");
       if (status) {
-        window.location.href = `/contact/form?id=${id}`;
+        window.location.href = `/contact/list`;
       }
     }
 
