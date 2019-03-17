@@ -2,7 +2,7 @@ import { Select, Form } from "antd";
 
 const Option = Select.Option;
 
-const SelectOption = ({ data, ...props }) => {
+const SelectOption = ({ data, fieldread, ...props }) => {
   return (
     <Select
       {...props}
@@ -15,7 +15,7 @@ const SelectOption = ({ data, ...props }) => {
       {data.map(item => {
         return (
           <Option key={item.id} value={item.id}>
-            {item.name}
+            {item[fieldread]}
           </Option>
         );
       })}

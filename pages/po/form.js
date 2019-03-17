@@ -36,12 +36,7 @@ class Form extends React.PureComponent {
         title: "รหัสสินค้า",
         dataIndex: "item_id",
         width: "15%",
-        align: "center",
-        render: (text, record, index) => {
-          return (
-            <SelectOption data={[]} value={record.item_id} disabled={true} />
-          );
-        }
+        align: "center"
       },
       {
         title: "ชื่อสินค้า",
@@ -89,12 +84,7 @@ class Form extends React.PureComponent {
       {
         title: "หน่วยสินค้า",
         dataIndex: "unit_name",
-        width: "15%",
-        render: (text, record, index) => {
-          return (
-            <SelectOption data={[]} value={record.unit_name} disabled={true} />
-          );
-        }
+        width: "15%"
       },
       {
         title: "หมายเหตุ",
@@ -135,7 +125,9 @@ class Form extends React.PureComponent {
   componentWillMount() {
     const { formId, po } = this.props;
     if (formId) {
-      const { document, lines } = po;
+      let { document, lines } = po;
+      document.date = moment(document.date);
+      document.request_date = moment(document.request_date);
       this.setState({
         document,
         lines,
@@ -154,8 +146,8 @@ class Form extends React.PureComponent {
         ? document.code
         : document.request_code;
       document_state.request_date = !formId
-        ? document.date
-        : document.request_date;
+        ? moment(document.date)
+        : moment(document.request_date);
       document_state.refDocId = !formId ? document.id : document.ref_doc_id;
 
       const lines_state = lines.map(line => {
@@ -259,12 +251,10 @@ class Form extends React.PureComponent {
       lines
     };
 
-    // console.log(saveData);
     const { status, id } = formId
       ? await this.props.UpdatePO(formId, saveData)
       : await this.props.InsertPO(saveData);
 
-    // console.log(id);
     if (formId) {
       alert(status ? "Save Done" : "fail");
     } else {
@@ -289,6 +279,7 @@ class Form extends React.PureComponent {
   render() {
     const { formId } = this.props;
     const { lines, columns, document, loading, found } = this.state;
+    console.log(this.state);
     return (
       <MasterContanier>
         <Container>
@@ -345,7 +336,9 @@ class Form extends React.PureComponent {
                         requireStar="true"
                         onChange={e => this.ChanegDate(props, e)}
                         allowClear={false}
-                        disabled={formId ? true : false}
+                        disabled={
+                          this.state.document.status === 2 ? true : false
+                        }
                         onBlur={null}
                       />
                     </FieldContainer>

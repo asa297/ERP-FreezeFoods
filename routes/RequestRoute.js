@@ -135,8 +135,8 @@ module.exports = (app, client) => {
     const { document, lines, deleted_data } = req.body;
 
     const promise_doc_query = new Promise(async (resolve, reject) => {
-      const text = `UPDATE request SET remark = $1, last_modify_by = $2, last_modify_time = $3 Where id = ${id}`;
-      const values = [document.remark, UserName, new Date()];
+      const text = `UPDATE request SET remark = $1, date = $2,  last_modify_by = $3, last_modify_time = $4 Where id = ${id}`;
+      const values = [document.remark, document.date, UserName, new Date()];
 
       await client.query(text, values);
       resolve();
