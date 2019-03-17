@@ -278,7 +278,6 @@ class Form extends React.PureComponent {
   render() {
     const { formId } = this.props;
     const { lines, columns, document, loading, found } = this.state;
-    // console.log(this.state);
     return (
       <MasterContanier>
         <Container>
@@ -293,7 +292,7 @@ class Form extends React.PureComponent {
                 date: document.date,
                 create_by: document.create_by,
                 request_code: document.request_code,
-                po_date: document.request_date,
+                request_date: document.request_date,
                 remark: document.remark,
                 refDocId: document.refDocId
               }}
@@ -331,7 +330,7 @@ class Form extends React.PureComponent {
                         label="วันที่"
                         name="date"
                         component={InputDateItem}
-                        value={props.values.date}
+                        value={moment(props.values.date)}
                         requireStar="true"
                         onChange={e => this.ChanegDate(props, e)}
                         allowClear={false}
@@ -372,7 +371,7 @@ class Form extends React.PureComponent {
                         label="วันทีใบขอซื้อ"
                         name="request_date"
                         component={InputDateItem}
-                        value={props.values.request_date}
+                        value={moment(props.values.request_date)}
                         allowClear={false}
                         disabled={true}
                         onBlur={null}
