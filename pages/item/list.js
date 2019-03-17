@@ -35,7 +35,7 @@ class List extends React.PureComponent {
       {
         title: "รหัส",
         dataIndex: "id",
-        width: 150,
+        width: "10%",
         align: "center"
       },
       {
@@ -48,15 +48,21 @@ class List extends React.PureComponent {
         dataIndex: "item_category_name",
         width: "20%"
       },
-
+      {
+        title: "จำนวน",
+        dataIndex: "qty",
+        width: "20%",
+        align: "center"
+      },
       {
         title: "หมายเหตุ",
         dataIndex: "remark",
-        width: "20%"
+        width: "25%"
       },
       {
         title: "",
         dataIndex: "",
+        width: "5%",
         render: (text, record) => {
           return (
             <Link
