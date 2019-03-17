@@ -2,6 +2,7 @@ import { Menu, Icon } from "antd";
 import { MenuItem } from "<components>";
 import { logoutUser } from "<utils>/auth";
 import { RoleMappingRoute } from "../static/data.json";
+import styled from "styled-components";
 import Router from "next/router";
 const SubMenu = Menu.SubMenu;
 
@@ -76,7 +77,7 @@ export const MenuManage = ({ UserRole }) => {
         >
           {CategoryPage.length ? (
             <MenuItem routeform={GetFormPath(CategoryPage)}>
-              <span
+              <SpanPointer
                 onClick={
                   GetListPath(CategoryPage)
                     ? () => Router.push(GetListPath(CategoryPage))
@@ -84,13 +85,13 @@ export const MenuManage = ({ UserRole }) => {
                 }
               >
                 หมวดสินค้า
-              </span>
+              </SpanPointer>
             </MenuItem>
           ) : null}
 
           {ItemPage.length ? (
             <MenuItem routeform={GetFormPath(ItemPage)}>
-              <span
+              <SpanPointer
                 onClick={
                   GetListPath(ItemPage)
                     ? () => Router.push(GetListPath(ItemPage))
@@ -98,13 +99,13 @@ export const MenuManage = ({ UserRole }) => {
                 }
               >
                 สินค้า
-              </span>
+              </SpanPointer>
             </MenuItem>
           ) : null}
 
           {UnitPage.length ? (
             <MenuItem routeform={GetFormPath(UnitPage)}>
-              <span
+              <SpanPointer
                 onClick={
                   GetListPath(UnitPage)
                     ? () => Router.push(GetListPath(UnitPage))
@@ -112,13 +113,13 @@ export const MenuManage = ({ UserRole }) => {
                 }
               >
                 หน่วยสินค้า
-              </span>
+              </SpanPointer>
             </MenuItem>
           ) : null}
 
           {ContactPage.length !== 0 ? (
             <MenuItem routeform={GetFormPath(ContactPage)}>
-              <span
+              <SpanPointer
                 onClick={
                   GetListPath(ContactPage)
                     ? () => Router.push(GetListPath(ContactPage))
@@ -126,7 +127,7 @@ export const MenuManage = ({ UserRole }) => {
                 }
               >
                 บริษัท
-              </span>
+              </SpanPointer>
             </MenuItem>
           ) : null}
         </SubMenu>
@@ -144,7 +145,7 @@ export const MenuManage = ({ UserRole }) => {
         >
           {RequestPage.length !== 0 ? (
             <MenuItem routeform={GetFormPath(RequestPage)}>
-              <span
+              <SpanPointer
                 onClick={
                   GetListPath(RequestPage)
                     ? () => Router.push(GetListPath(RequestPage))
@@ -152,13 +153,14 @@ export const MenuManage = ({ UserRole }) => {
                 }
               >
                 ใบขอซื้อ
-              </span>
+              </SpanPointer>
             </MenuItem>
           ) : null}
 
           {PurchasePage.length !== 0 ? (
             <MenuItem routeform={GetFormPath(PurchasePage)}>
-              <span
+              <SpanPointer
+                style={{ cursor: "pointer" }}
                 onClick={
                   GetListPath(PurchasePage)
                     ? () => Router.push(GetListPath(PurchasePage))
@@ -166,13 +168,14 @@ export const MenuManage = ({ UserRole }) => {
                 }
               >
                 ใบสั่งซื้อ
-              </span>
+                <div>test</div>
+              </SpanPointer>
             </MenuItem>
           ) : null}
 
           {ReceiveSuppierPage.length !== 0 ? (
             <MenuItem routeform={GetFormPath(ReceiveSuppierPage)}>
-              <span
+              <SpanPointer
                 onClick={
                   GetListPath(ReceiveSuppierPage)
                     ? () => Router.push(GetListPath(ReceiveSuppierPage))
@@ -180,7 +183,7 @@ export const MenuManage = ({ UserRole }) => {
                 }
               >
                 ใบรับของ
-              </span>
+              </SpanPointer>
             </MenuItem>
           ) : null}
         </SubMenu>
@@ -193,8 +196,12 @@ export const MenuManage = ({ UserRole }) => {
         }}
       >
         <Icon type="unlock" />
-        <span>ออกจากระบบ</span>
+        <SpanPointer>ออกจากระบบ</SpanPointer>
       </Menu.Item>
     </Menu>
   );
 };
+
+const SpanPointer = styled.span`
+  cursor: pointer;
+`;
