@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
 import { authInitialProps, checkUserRole } from "<utils>/auth";
-import { GetPO, ClearRS } from "<actions>";
+import { GetRS, ClearRS } from "<actions>";
 import { Table, Icon } from "antd";
 import styled from "styled-components";
 import Link from "next/link";
@@ -16,15 +16,15 @@ class List extends React.PureComponent {
 
   componentWillMount() {
     this.props.ClearRS();
-    this.props.GetPO(this.state.page);
+    this.props.GetRS(this.state.page);
   }
 
   async LoadListMore(page) {
     const { loading } = this.state;
-    const { HasMore } = this.props.POReducer;
+    const { HasMore } = this.props.RSReducer;
     if (HasMore && page !== 1 && !loading) {
       this.setState({ page, loading: true });
-      await this.props.GetPO(page);
+      await this.props.GetRS(page);
 
       this.setState({ loading: false });
     }
@@ -71,7 +71,7 @@ class List extends React.PureComponent {
         render: (text, record) => {
           return (
             <Link
-              href={{ pathname: "/po/form", query: { id: record.id } }}
+              href={{ pathname: "/rs/form", query: { id: record.id } }}
               prefetch
             >
               <a onClick={() => this.setState({ loading: true })}>
@@ -98,7 +98,7 @@ class List extends React.PureComponent {
             >
               <Table
                 columns={columns}
-                dataSource={this.props.POReducer.List}
+                dataSource={this.props.RSReducer.List}
                 pagination={false}
                 rowKey={record => record.id}
               />
@@ -119,8 +119,8 @@ List.getInitialProps = async ctx => {
 };
 
 export default connect(
-  ({ POReducer }) => ({ POReducer }),
-  { GetPO, ClearRS }
+  ({ RSReducer }) => ({ RSReducer }),
+  { GetRS, ClearRS }
 )(List);
 
 const Container = styled.div`

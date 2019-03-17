@@ -300,6 +300,16 @@ export const ClearPO = () => async dispatch => {
   dispatch({ type: actionTypes.PO.RESET });
 };
 
+export const GetPOForRS = code => async dispatch => {
+  const res = await axios.get("/api/po/findpobycode/" + code).catch(e => null);
+
+  const { data } = res;
+  if (!data) return { status: false };
+
+  dispatch({ type: actionTypes.PO.FETCH, payload: data });
+  return { status: true };
+};
+
 //#endregion PO Action
 
 //#region RS Action

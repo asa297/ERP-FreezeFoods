@@ -2,7 +2,6 @@ import { connect } from "react-redux";
 import { authInitialProps, checkUserRole } from "<utils>/auth";
 import { POFormSchema } from "<utils>/validatior";
 import {
-  InputItemInline,
   InputItem,
   InputTextArea,
   ActionForm,
@@ -279,7 +278,7 @@ class Form extends React.PureComponent {
   render() {
     const { formId } = this.props;
     const { lines, columns, document, loading, found } = this.state;
-    console.log(this.state);
+    // console.log(this.state);
     return (
       <MasterContanier>
         <Container>
@@ -294,7 +293,7 @@ class Form extends React.PureComponent {
                 date: document.date,
                 create_by: document.create_by,
                 request_code: document.request_code,
-                request_date: document.request_date,
+                po_date: document.request_date,
                 remark: document.remark,
                 refDocId: document.refDocId
               }}
@@ -332,7 +331,7 @@ class Form extends React.PureComponent {
                         label="วันที่"
                         name="date"
                         component={InputDateItem}
-                        value={moment(props.values.date)}
+                        value={props.values.date}
                         requireStar="true"
                         onChange={e => this.ChanegDate(props, e)}
                         allowClear={false}
@@ -373,7 +372,7 @@ class Form extends React.PureComponent {
                         label="วันทีใบขอซื้อ"
                         name="request_date"
                         component={InputDateItem}
-                        value={moment(props.values.request_date)}
+                        value={props.values.request_date}
                         allowClear={false}
                         disabled={true}
                         onBlur={null}

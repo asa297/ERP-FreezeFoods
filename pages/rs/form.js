@@ -2,7 +2,6 @@ import { connect } from "react-redux";
 import { authInitialProps, checkUserRole } from "<utils>/auth";
 import { POFormSchema } from "<utils>/validatior";
 import {
-  InputItemInline,
   InputItem,
   InputTextArea,
   ActionForm,
@@ -10,13 +9,7 @@ import {
   SelectOption,
   DocStatus
 } from "<components>";
-import {
-  GetRequestForPO,
-  InsertPO,
-  UpdatePO,
-  GetPOById,
-  DeletePO
-} from "<actions>";
+import { GetPOForRS, InsertPO, UpdatePO, GetPOById, DeletePO } from "<actions>";
 import { Formik, Field } from "formik";
 import styled from "styled-components";
 import Router from "next/router";
@@ -77,12 +70,7 @@ class Form extends React.PureComponent {
         width: "10%",
         render: (text, record, index) => {
           return (
-            <Input
-              type="number"
-              value={record.unit_price}
-              onChange={value => this.ChangeUnitPrice(value, index)}
-              disabled={this.state.document.status === 2 ? true : false}
-            />
+            <Input type="number" value={record.unit_price} disabled={true} />
           );
         }
       },
@@ -121,8 +109,8 @@ class Form extends React.PureComponent {
         date: moment(),
         status: 0,
         create_by: this.props.auth.user.name,
-        request_code: null,
-        request_date: moment(),
+        po_code: null,
+        po_date: moment(),
         remark: "",
         refDocId: 0
       },
@@ -144,18 +132,17 @@ class Form extends React.PureComponent {
     }
   }
 
-  componentWillReceiveProps({ RequestReducer, formId, po }) {
-    const { Item } = RequestReducer;
-    if ((!formId && !isEmpty(Item)) || (formId && po)) {
+  componentWillReceiveProps({ POReducer, formId, rs }) {
+    // console.log(POReducer);
+    const { Item } = POReducer;
+    if ((!formId && !isEmpty(Item)) || (formId && rs)) {
       const { document, lines } = !formId ? Item : po;
 
       let document_state = { ...this.state.document };
-      document_state.request_code = !formId
-        ? document.code
-        : document.request_code;
-      document_state.request_date = !formId
-        ? document.date
-        : document.request_date;
+      document_state.po_code = !formId ? document.code : document.po_code;
+      document_state.po_date = !formId
+        ? moment(document.date)
+        : moment(document.po_date);
       document_state.refDocId = !formId ? document.id : document.ref_doc_id;
 
       const lines_state = lines.map(line => {
@@ -177,8 +164,8 @@ class Form extends React.PureComponent {
           date: moment(),
           status: 0,
           create_by: this.props.auth.user.name,
-          request_code: null,
-          request_date: moment(),
+          po_code: null,
+          po_date: moment(),
           remark: "",
           refDocId: 0
         },
@@ -218,12 +205,6 @@ class Form extends React.PureComponent {
     this.setState({ lines });
   }
 
-  ChangeUnitPrice(e, index) {
-    let lines = [...this.state.lines];
-    lines[index].unit_price = e.target.value;
-    this.setState({ lines });
-  }
-
   ChangeRemark(e, index) {
     let lines = [...this.state.lines];
     lines[index].remark = e.target.value;
@@ -231,7 +212,9 @@ class Form extends React.PureComponent {
   }
 
   ChanegDate(props, e) {
-    if (e >= props.values.request_date) props.setFieldValue("date", e);
+    console.log(e, props.values.po_date);
+
+    if (e >= props.values.po_date) props.setFieldValue("date", e);
     else alert("cannot set po date less than rfq date");
   }
 
@@ -259,26 +242,26 @@ class Form extends React.PureComponent {
       lines
     };
 
-    // console.log(saveData);
-    const { status, id } = formId
-      ? await this.props.UpdatePO(formId, saveData)
-      : await this.props.InsertPO(saveData);
+    console.log(saveData);
+    // const { status, id } = formId
+    //   ? await this.props.UpdatePO(formId, saveData)
+    //   : await this.props.InsertPO(saveData);
 
-    // console.log(id);
-    if (formId) {
-      alert(status ? "Save Done" : "fail");
-    } else {
-      alert(status ? "Add Done" : "fail");
-      if (status) {
-        window.location.href = `/po/form?id=${id}`;
-      }
-    }
+    // // console.log(id);
+    // if (formId) {
+    //   alert(status ? "Save Done" : "fail");
+    // } else {
+    //   alert(status ? "Add Done" : "fail");
+    //   if (status) {
+    //     window.location.href = `/po/form?id=${id}`;
+    //   }
+    // }
 
     this.setState({ loading: false });
   }
 
-  async GetRFQ(code) {
-    const { status: found } = await this.props.GetRequestForPO(code);
+  async GetPO(code) {
+    const { status: found } = await this.props.GetPOForRS(code);
     if (found) {
       this.setState({ show_modal: false });
     }
@@ -289,11 +272,12 @@ class Form extends React.PureComponent {
   render() {
     const { formId } = this.props;
     const { lines, columns, document, loading, found } = this.state;
+
     return (
       <MasterContanier>
         <Container>
           <HeaderForm>
-            <H1Text>ฟอร์มใบสั่งซื้อ</H1Text>
+            <H1Text>ฟอร์มใบรับของ</H1Text>
             <DocStatus status={document.status} />
           </HeaderForm>
           <FormContainer>
@@ -302,8 +286,8 @@ class Form extends React.PureComponent {
                 code: document.code,
                 date: document.date,
                 create_by: document.create_by,
-                request_code: document.request_code,
-                request_date: document.request_date,
+                po_code: document.po_code,
+                po_date: document.po_date,
                 remark: document.remark,
                 refDocId: document.refDocId
               }}
@@ -366,21 +350,21 @@ class Form extends React.PureComponent {
                   <FlexContainer>
                     <FieldContainer width="40%">
                       <Field
-                        label="รหัสใบขอซื้อ"
+                        label="รหัสใบสั่งซื้อ"
                         type="text"
-                        name="request_code"
+                        name="po_code"
                         component={InputItem}
-                        value={props.values.request_code}
+                        value={props.values.po_code}
                         disabled={true}
                         padding={true}
                       />
                     </FieldContainer>
                     <FieldContainer width="40%">
                       <Field
-                        label="วันทีใบขอซื้อ"
-                        name="request_date"
+                        label="วันทีใบสั่งซื้อ"
+                        name="po_date"
                         component={InputDateItem}
-                        value={moment(props.values.request_date)}
+                        value={props.values.po_date}
                         allowClear={false}
                         disabled={true}
                         onBlur={null}
@@ -425,15 +409,15 @@ class Form extends React.PureComponent {
         </Container>
 
         <Modal
-          title="ค้นหาเอกสารใบขอซื้อ"
+          title="ค้นหาเอกสารใบสั่งซื้อ"
           onCancel={() => this.setState({ show_modal: false })}
           visible={this.state.show_modal}
           footer={null}
         >
           <InputSearch
-            placeholder="รหัสเอกสารใบขอซื้อ"
+            placeholder="รหัสเอกสารใบสั่งซื้อ"
             prefix={<Icon type="search" />}
-            onPressEnter={e => this.GetRFQ(e.target.value)}
+            onPressEnter={e => this.GetPO(e.target.value)}
             found={found.toString()}
           />
           {!found ? <label className="error">RFQ Not found</label> : null}
@@ -445,7 +429,7 @@ class Form extends React.PureComponent {
 
 Form.getInitialProps = async ctx => {
   let formId;
-  let po = {
+  let rs = {
     document: {},
     lines: []
   };
@@ -456,21 +440,21 @@ Form.getInitialProps = async ctx => {
 
     if (query.id) {
       formId = query.id;
-      po = await ctx.reduxStore.dispatch(GetPOById(formId, ctx));
+      rs = await ctx.reduxStore.dispatch(GetPOById(formId, ctx));
     } else {
       await ctx.reduxStore.dispatch({ type: actionTypes.PO.RESET });
     }
   }
 
-  return { auth, formId, po };
+  return { auth, formId, rs };
 };
 
 export default connect(
-  ({ RequestReducer }) => ({
-    RequestReducer
+  ({ POReducer }) => ({
+    POReducer
   }),
   {
-    GetRequestForPO,
+    GetPOForRS,
     InsertPO,
     UpdatePO,
     DeletePO

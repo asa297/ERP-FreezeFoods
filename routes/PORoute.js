@@ -235,4 +235,25 @@ module.exports = (app, client) => {
 
     res.send();
   });
+
+  app.get("/api/po/findpobycode/:code", isAuthenticated, async (req, res) => {
+    const { code } = req.params;
+
+    const { rowCount, rows: document } = await client.query(
+      `SELECT * from po WHERE code = '${code}' AND status = 1 limit 1`
+    );
+    if (rowCount !== 1 || document.length == 0) res.send();
+    else {
+      const { id } = document[0];
+      const { rows: lines } = await client.query(
+        `SELECT * from po_line WHERE po_id = ${id}`
+      );
+      const data = {
+        document: document[0],
+        lines: lines
+      };
+
+      res.send(data);
+    }
+  });
 };
