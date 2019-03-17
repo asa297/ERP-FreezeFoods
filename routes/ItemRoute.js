@@ -31,7 +31,7 @@ module.exports = (app, client) => {
     const { page } = req.params;
 
     const data = await client.query(
-      `SELECT id, name, item_category_id, item_category_name ,remark from item order by id OFFSET ${(page -
+      `SELECT id, name, item_category_id, item_category_name ,remark from item order by last_modify_time desc OFFSET ${(page -
         1) *
         30} ROWS FETCH NEXT 30 ROWS ONLY;`
     );

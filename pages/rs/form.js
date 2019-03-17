@@ -9,13 +9,13 @@ import {
   SelectOption,
   DocStatus
 } from "<components>";
-import { GetPOForRS, InsertPO, UpdatePO, GetPOById, DeletePO } from "<actions>";
+import { GetPOForRS, InsertRS, UpdateRS, GetPOById, DeleteRS } from "<actions>";
 import { Formik, Field } from "formik";
 import styled from "styled-components";
 import Router from "next/router";
 import { actionTypes } from "<action_types>";
 import moment from "moment";
-import { Table, Input, Icon, Modal } from "antd";
+import { Table, Input, Icon, Modal, DatePicker } from "antd";
 import uuidv4 from "uuid";
 import { isEmpty } from "lodash";
 
@@ -29,12 +29,7 @@ class Form extends React.PureComponent {
         title: "รหัสสินค้า",
         dataIndex: "item_id",
         width: "15%",
-        align: "center",
-        render: (text, record, index) => {
-          return (
-            <SelectOption data={[]} value={record.item_id} disabled={true} />
-          );
-        }
+        align: "center"
       },
       {
         title: "ชื่อสินค้า",
@@ -67,27 +62,35 @@ class Form extends React.PureComponent {
           </FlexContainer>
         ),
         dataIndex: "unit_price",
-        width: "10%",
-        render: (text, record, index) => {
-          return (
-            <Input type="number" value={record.unit_price} disabled={true} />
-          );
-        }
+        width: "10%"
       },
       {
         title: "หน่วยสินค้า",
         dataIndex: "unit_name",
-        width: "15%",
+        width: "10%"
+      },
+      {
+        title: (filters, sortOrder) => (
+          <FlexContainer>
+            วันหมดอายุ<LabelRequire>*</LabelRequire>
+          </FlexContainer>
+        ),
+        dataIndex: "expire_date",
+        width: "10%",
         render: (text, record, index) => {
           return (
-            <SelectOption data={[]} value={record.unit_name} disabled={true} />
+            <Input
+              value={record.qty}
+              // onChange={value => this.ChangeQTY(value, index)}
+              // disabled={this.state.document.status === 2 ? true : false}
+            />
           );
         }
       },
       {
         title: "หมายเหตุ",
         dataIndex: "remark",
-        width: "20%",
+        width: "15%",
         render: (text, record, index) => {
           return (
             <Input
@@ -146,8 +149,7 @@ class Form extends React.PureComponent {
       document_state.refDocId = !formId ? document.id : document.ref_doc_id;
 
       const lines_state = lines.map(line => {
-        line.request_qty = !formId ? line.qty : line.request_qty;
-        line.request_unit_price = line.unit_price;
+        line.po_qty = !formId ? line.qty : line.po_qty;
         line.uuid = uuidv4();
         return line;
       });
@@ -185,10 +187,10 @@ class Form extends React.PureComponent {
       lines
     };
 
-    const { status } = await this.props.DeletePO(formId, { data });
+    const { status } = await this.props.DeleteRS(formId, { data });
     if (status) {
       alert("Delete Done");
-      Router.push(`/po/list`);
+      Router.push(`/rs/list`);
     } else {
       alert("fail");
     }
@@ -197,10 +199,10 @@ class Form extends React.PureComponent {
   ChangeQTY(e, index) {
     let lines = [...this.state.lines];
     const newValue = Math.floor(e.target.value);
-    if (newValue <= lines[index].request_qty) {
+    if (newValue <= lines[index].po_qty) {
       lines[index].qty = newValue;
     } else {
-      lines[index].qty = lines[index].request_qty;
+      lines[index].qty = lines[index].po_qty;
     }
     this.setState({ lines });
   }
@@ -212,8 +214,6 @@ class Form extends React.PureComponent {
   }
 
   ChanegDate(props, e) {
-    console.log(e, props.values.po_date);
-
     if (e >= props.values.po_date) props.setFieldValue("date", e);
     else alert("cannot set po date less than rfq date");
   }
@@ -243,19 +243,18 @@ class Form extends React.PureComponent {
     };
 
     console.log(saveData);
-    // const { status, id } = formId
-    //   ? await this.props.UpdatePO(formId, saveData)
-    //   : await this.props.InsertPO(saveData);
+    const { status, id } = formId
+      ? await this.props.UpdateRS(formId, saveData)
+      : await this.props.InsertRS(saveData);
 
-    // // console.log(id);
-    // if (formId) {
-    //   alert(status ? "Save Done" : "fail");
-    // } else {
-    //   alert(status ? "Add Done" : "fail");
-    //   if (status) {
-    //     window.location.href = `/po/form?id=${id}`;
-    //   }
-    // }
+    if (formId) {
+      alert(status ? "Save Done" : "fail");
+    } else {
+      alert(status ? "Add Done" : "fail");
+      if (status) {
+        window.location.href = `/po/form?id=${id}`;
+      }
+    }
 
     this.setState({ loading: false });
   }
@@ -420,7 +419,7 @@ class Form extends React.PureComponent {
             onPressEnter={e => this.GetPO(e.target.value)}
             found={found.toString()}
           />
-          {!found ? <label className="error">RFQ Not found</label> : null}
+          {!found ? <label className="error">PO Not found</label> : null}
         </Modal>
       </MasterContanier>
     );
@@ -440,7 +439,7 @@ Form.getInitialProps = async ctx => {
 
     if (query.id) {
       formId = query.id;
-      rs = await ctx.reduxStore.dispatch(GetPOById(formId, ctx));
+      rs = await ctx.reduxStore.dispatch(GetRSById(formId, ctx));
     } else {
       await ctx.reduxStore.dispatch({ type: actionTypes.PO.RESET });
     }
@@ -455,9 +454,9 @@ export default connect(
   }),
   {
     GetPOForRS,
-    InsertPO,
-    UpdatePO,
-    DeletePO
+    InsertRS,
+    UpdateRS,
+    DeleteRS
   }
 )(Form);
 

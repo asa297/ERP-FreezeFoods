@@ -11,7 +11,7 @@ const DocStatus = ({ status, nomargin = false }) => {
         </Status>
       ) : (
         <Status color="red" nomargin={nomargin.toString()}>
-          เอกสารถูกปิด
+          เอกสารถูกใช็
         </Status>
       )}
     </div>

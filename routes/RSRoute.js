@@ -5,98 +5,101 @@ module.exports = (app, client) => {
     const { name: UserName } = req.user;
     const { document, lines } = req.body;
 
-    const LastDocument = await client.query(
-      `SELECT setval('po_id_seq',nextval('po_id_seq')-1) AS id;`
-    );
+    console.log(req.body);
 
-    //#region PO
-    const text_document = `INSERT INTO po(code, date, remark , ref_doc_id, status , create_by,
-        create_time, last_modify_by, last_modify_time)
-        VALUES($1, $2, $3, $4, $5,$6, $7 , $8, $9) RETURNING id `;
+    res.send();
+    // const LastDocument = await client.query(
+    //   `SELECT setval('rs_id_seq',nextval('rs_id_seq')-1) AS id;`
+    // );
 
-    const generateCode = `PO-${parseInt(LastDocument.rows[0].id) + 1}`;
-    const values = [
-      generateCode,
-      document.date,
-      document.remark,
-      document.refDocId,
-      1, //Save
-      UserName,
-      new Date(),
-      UserName,
-      new Date()
-    ];
+    // //#region PO
+    // const text_document = `INSERT INTO po(code, date, remark , ref_doc_id, status , create_by,
+    //     create_time, last_modify_by, last_modify_time)
+    //     VALUES($1, $2, $3, $4, $5,$6, $7 , $8, $9) RETURNING id `;
 
-    const po_doc = await client.query(text_document, values);
+    // const generateCode = `PO-${parseInt(LastDocument.rows[0].id) + 1}`;
+    // const values = [
+    //   generateCode,
+    //   document.date,
+    //   document.remark,
+    //   document.refDocId,
+    //   1, //Save
+    //   UserName,
+    //   new Date(),
+    //   UserName,
+    //   new Date()
+    // ];
 
-    const promise_lines_query = lines.map(line => {
-      return new Promise(async (resolve, reject) => {
-        const text_lines = `INSERT INTO po_line (po_id, item_id, item_name , qty , remain_qty
-          ,unit_id ,unit_name, unit_price , remark, ref_doc_id, ref_line_id
-          ,create_by, create_time, last_modify_by, last_modify_time, uuid)
-          VALUES($1, $2, $3, $4, $5,$6, $7 , $8 ,$9 , $10, $11, $12, $13, $14, $15, $16)`;
-        const values = [
-          po_doc.rows[0].id,
-          line.item_id,
-          line.item_name,
-          line.qty,
-          line.qty,
-          line.unit_id,
-          line.unit_name,
-          line.unit_price,
-          line.remark,
-          line.request_id,
-          line.id,
-          UserName,
-          new Date(),
-          UserName,
-          new Date(),
-          line.uuid
-        ];
+    // const po_doc = await client.query(text_document, values);
 
-        await client.query(text_lines, values);
+    // const promise_lines_query = lines.map(line => {
+    //   return new Promise(async (resolve, reject) => {
+    //     const text_lines = `INSERT INTO po_line (po_id, item_id, item_name , qty , remain_qty
+    //       ,unit_id ,unit_name, unit_price , remark, ref_doc_id, ref_line_id
+    //       ,create_by, create_time, last_modify_by, last_modify_time, uuid)
+    //       VALUES($1, $2, $3, $4, $5,$6, $7 , $8 ,$9 , $10, $11, $12, $13, $14, $15, $16)`;
+    //     const values = [
+    //       po_doc.rows[0].id,
+    //       line.item_id,
+    //       line.item_name,
+    //       line.qty,
+    //       line.qty,
+    //       line.unit_id,
+    //       line.unit_name,
+    //       line.unit_price,
+    //       line.remark,
+    //       line.request_id,
+    //       line.id,
+    //       UserName,
+    //       new Date(),
+    //       UserName,
+    //       new Date(),
+    //       line.uuid
+    //     ];
 
-        resolve();
-      });
-    });
+    //     await client.query(text_lines, values);
 
-    //#endregion PO
+    //     resolve();
+    //   });
+    // });
 
-    //#region RFQ
+    // //#endregion PO
 
-    const promise_docRFQ_update = new Promise(async (resolve, reject) => {
-      const text = `UPDATE request SET status = 2 Where id = ${
-        document.refDocId
-      }`;
-      await client.query(text);
-      resolve();
-    });
+    // //#region RFQ
 
-    const promise_linesRFQ_update = lines.map(line => {
-      return new Promise(async (resolve, reject) => {
-        const text = `UPDATE request_line SET remain_qty = remain_qty - ${
-          line.qty
-        } Where id = ${line.id} AND request_id = ${line.request_id}`;
+    // const promise_docRFQ_update = new Promise(async (resolve, reject) => {
+    //   const text = `UPDATE request SET status = 2 Where id = ${
+    //     document.refDocId
+    //   }`;
+    //   await client.query(text);
+    //   resolve();
+    // });
 
-        await client.query(text);
+    // const promise_linesRFQ_update = lines.map(line => {
+    //   return new Promise(async (resolve, reject) => {
+    //     const text = `UPDATE request_line SET remain_qty = remain_qty - ${
+    //       line.qty
+    //     } Where id = ${line.id} AND request_id = ${line.request_id}`;
 
-        resolve();
-      });
-    });
+    //     await client.query(text);
 
-    //#endregion RFQ
+    //     resolve();
+    //   });
+    // });
 
-    Promise.all([
-      promise_lines_query,
-      promise_docRFQ_update,
-      promise_linesRFQ_update
-    ])
-      .then(() => {
-        res.send({ id: po_doc.rows[0].id });
-      })
-      .catch(error => {
-        res.send(error);
-      });
+    // //#endregion RFQ
+
+    // Promise.all([
+    //   promise_lines_query,
+    //   promise_docRFQ_update,
+    //   promise_linesRFQ_update
+    // ])
+    //   .then(() => {
+    //     res.send({ id: po_doc.rows[0].id });
+    //   })
+    //   .catch(error => {
+    //     res.send(error);
+    //   });
   });
 
   app.get("/api/rs/list/:page", isAuthenticated, async (req, res) => {
