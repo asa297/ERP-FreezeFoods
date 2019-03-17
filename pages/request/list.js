@@ -1,7 +1,7 @@
 import { connect } from "react-redux";
 import { authInitialProps, checkUserRole } from "<utils>/auth";
 import { GetRequest, ClearRequest } from "<actions>";
-import { Table } from "antd";
+import { Table, Icon } from "antd";
 import styled from "styled-components";
 // import { Link } from "<routes>";
 import Link from "next/link";
@@ -77,7 +77,9 @@ class List extends React.PureComponent {
               href={{ pathname: "/request/form", query: { id: record.id } }}
               prefetch
             >
-              <a onClick={() => this.setState({ loading: true })}>เปิดเอกสาร</a>
+              <a onClick={() => this.setState({ loading: true })}>
+                <Icon type="snippets" />
+              </a>
             </Link>
           );
         }

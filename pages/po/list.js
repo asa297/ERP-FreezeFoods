@@ -1,7 +1,7 @@
 import { connect } from "react-redux";
 import { authInitialProps, checkUserRole } from "<utils>/auth";
 import { GetPO, ClearPO } from "<actions>";
-import { Table } from "antd";
+import { Table, Icon } from "antd";
 import styled from "styled-components";
 import Link from "next/link";
 import InfiniteScroll from "react-infinite-scroller";
@@ -74,7 +74,9 @@ class List extends React.PureComponent {
               href={{ pathname: "/po/form", query: { id: record.id } }}
               prefetch
             >
-              <a onClick={() => this.setState({ loading: true })}>เปิดเอกสาร</a>
+              <a onClick={() => this.setState({ loading: true })}>
+                <Icon type="snippets" />
+              </a>
             </Link>
           );
         }
