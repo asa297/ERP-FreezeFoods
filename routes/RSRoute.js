@@ -41,8 +41,8 @@ module.exports = (app, client) => {
       return new Promise(async (resolve, reject) => {
         const text_lines = `INSERT INTO rs_line (rs_id, item_id, item_name , qty , remain_qty
           ,unit_id ,unit_name, unit_price , remark, ref_doc_id, ref_line_id
-          ,create_by, create_time, last_modify_by, last_modify_time, uuid, expire_date)
-          VALUES($1, $2, $3, $4, $5,$6, $7 , $8 ,$9 , $10, $11, $12, $13, $14, $15, $16, $17)`;
+          ,create_by, create_time, last_modify_by, last_modify_time, uuid, expire_date_count, expire_date)
+          VALUES($1, $2, $3, $4, $5,$6, $7 , $8 ,$9 , $10, $11, $12, $13, $14, $15, $16, $17, $18)`;
         const values = [
           newId,
           line.item_id,
@@ -60,8 +60,9 @@ module.exports = (app, client) => {
           UserName,
           new Date(),
           line.uuid,
-          moment()
-            .add(line.expire_date, "d")
+          line.expire_date_count,
+          moment(document.date)
+            .add(line.expire_date_count, "d")
             .utcOffset(7)
             .format("YYYY-MM-DDTHH:mm:ss.SSS")
         ];
@@ -130,7 +131,8 @@ module.exports = (app, client) => {
     const { page } = req.params;
 
     const data = await client.query(
-      `SELECT * from rs order by id OFFSET ${(page - 1) *
+      `SELECT rs.*, po.code AS po_code from rs left join po on rs.ref_doc_id = po.id 
+      order by rs.last_modify_time desc OFFSET ${(page - 1) *
         30} ROWS FETCH NEXT 30 ROWS ONLY;`
     );
 
@@ -147,7 +149,7 @@ module.exports = (app, client) => {
 
     const doc = new Promise(async (resolve, reject) => {
       const result = await client.query(
-        `select po.* , request.code AS request_code, request.date AS request_date from po left join request on po.ref_doc_id = request.id  where po.id = ${id}`
+        `select rs.* , po.code AS po_code, po.date AS po_date from rs left join po on rs.ref_doc_id = po.id  where rs.id = ${id}`
       );
 
       resolve(result);
@@ -155,7 +157,7 @@ module.exports = (app, client) => {
 
     const lines = new Promise(async (resolve, reject) => {
       const result = await client.query(
-        `SELECT po_line.* , request_line.qty AS request_qty from po_line left join request_line on po_line.ref_line_id =  request_line.id WHERE po_id = ${id}
+        `SELECT rs_line.* , po_line.qty AS po_qty from rs_line left join po_line on rs_line.ref_line_id =  po_line.id WHERE rs_id = ${id}
         `
       );
       resolve(result);
@@ -177,18 +179,16 @@ module.exports = (app, client) => {
     const { document, lines } = req.body;
     if (!id) res.status(400).send("need id of item category");
 
-    const promise_docRFQ_updatequery = new Promise(async (resolve, reject) => {
-      const text = `UPDATE request SET status = 1 Where id = ${
-        document.ref_doc_id
-      }`;
+    const promise_docPO_updatequery = new Promise(async (resolve, reject) => {
+      const text = `UPDATE po SET status = 1 Where id = ${document.ref_doc_id}`;
 
       await client.query(text);
       resolve();
     });
 
-    const promise_linesRFQ_updatequery = lines.map(line => {
+    const promise_linesPO_updatequery = lines.map(line => {
       return new Promise(async (resolve, reject) => {
-        const text = `UPDATE request_line SET remain_qty = qty Where id = ${
+        const text = `UPDATE po_line SET remain_qty = qty Where id = ${
           line.ref_line_id
         }`;
         await client.query(text);
@@ -196,13 +196,38 @@ module.exports = (app, client) => {
       });
     });
 
-    await Promise.all([
-      promise_docRFQ_updatequery,
-      promise_linesRFQ_updatequery
-    ]);
+    const promise_linesItem_updatequery = lines.map(line => {
+      return new Promise(async (resolve, reject) => {
+        const text = `UPDATE item SET qty = qty - ${line.qty} Where id = ${
+          line.item_id
+        }`;
 
-    await client.query(`DELETE from po Where id = ${id}`);
-    await client.query(`DELETE from po_line Where po_id = ${id}`);
+        await client.query(text);
+        resolve();
+      });
+    });
+
+    const promise_docRS_deletequery = new Promise(async (resolve, reject) => {
+      const text = `DELETE from rs Where id = ${id}`;
+
+      await client.query(text);
+      resolve();
+    });
+
+    const promise_linesRS_deletequery = new Promise(async (resolve, reject) => {
+      const text = `DELETE from rs_line Where rs_id = ${id}`;
+
+      await client.query(text);
+      resolve();
+    });
+
+    await Promise.all([
+      promise_docPO_updatequery,
+      promise_linesPO_updatequery,
+      promise_linesItem_updatequery,
+      promise_docRS_deletequery,
+      promise_linesRS_deletequery
+    ]);
 
     res.send();
   });
@@ -215,7 +240,7 @@ module.exports = (app, client) => {
     const { document, lines } = req.body;
 
     const promise_doc_query = new Promise(async (resolve, reject) => {
-      const text = `UPDATE po SET remark = $1, last_modify_by = $2, last_modify_time = $3 Where id = ${id}`;
+      const text = `UPDATE rs SET remark = $1, last_modify_by = $2, last_modify_time = $3 Where id = ${id}`;
       const values = [document.remark, UserName, new Date()];
 
       await client.query(text, values);
@@ -226,16 +251,9 @@ module.exports = (app, client) => {
 
     const promise_lines_updatequery = lines.map(line => {
       return new Promise(async (resolve, reject) => {
-        const text = `UPDATE po_line SET qty = $1, remain_qty = $2,  unit_price =$3 , remark = $4
-        ,last_modify_by = $5, last_modify_time = $6 Where id = ${line.id}`;
-        const values = [
-          line.qty,
-          line.qty,
-          line.unit_price,
-          line.remark,
-          UserName,
-          new Date()
-        ];
+        const text = `UPDATE rs_line SET remark = $1
+        ,last_modify_by = $2, last_modify_time = $3 Where id = ${line.id}`;
+        const values = [line.remark, UserName, new Date()];
 
         await client.query(text, values);
 
@@ -243,20 +261,6 @@ module.exports = (app, client) => {
       });
     });
     array_promise.push(promise_lines_updatequery);
-
-    //คืน Remain Request_QTY
-
-    const promise_linesRFQ_updatequery = lines.map(line => {
-      return new Promise(async (resolve, reject) => {
-        const text = `UPDATE request_line SET remain_qty = qty - ${
-          line.qty
-        } Where id = ${line.ref_line_id}`;
-
-        await client.query(text);
-        resolve();
-      });
-    });
-    array_promise.push(promise_linesRFQ_updatequery);
 
     await Promise.all(array_promise);
 

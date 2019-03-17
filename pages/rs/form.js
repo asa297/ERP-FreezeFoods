@@ -50,7 +50,7 @@ class Form extends React.PureComponent {
               type="number"
               value={record.qty}
               onChange={value => this.ChangeQTY(value, index)}
-              disabled={this.state.document.status === 2 ? true : false}
+              disabled={this.props.formId ? true : false}
             />
           );
         }
@@ -82,7 +82,7 @@ class Form extends React.PureComponent {
             <Input
               value={record.expire_date_count}
               onChange={value => this.ChangeExpireDate(value, index)}
-              disabled={this.state.document.status === 2 ? true : false}
+              disabled={this.props.formId ? true : false}
             />
           );
         }
@@ -97,7 +97,6 @@ class Form extends React.PureComponent {
               type="text"
               value={record.remark}
               onChange={value => this.ChangeRemark(value, index)}
-              disabled={this.state.document.status === 2 ? true : false}
             />
           );
         }
@@ -127,12 +126,12 @@ class Form extends React.PureComponent {
     const { formId, rs } = this.props;
     if (formId) {
       const { document, lines } = rs;
-      console.log(rs);
-      // this.setState({
-      //   document,
-      //   lines,
-      //   show_modal: false
-      // });
+
+      this.setState({
+        document,
+        lines,
+        show_modal: false
+      });
     }
   }
 
@@ -381,7 +380,7 @@ class Form extends React.PureComponent {
                         label="วันทีใบสั่งซื้อ"
                         name="po_date"
                         component={InputDateItem}
-                        value={props.values.po_date}
+                        value={moment(props.values.po_date)}
                         allowClear={false}
                         disabled={true}
                         onBlur={null}
