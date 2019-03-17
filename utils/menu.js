@@ -52,6 +52,12 @@ export const MenuManage = ({ UserRole }) => {
       route.page === "Purchase" && route.role.find(role => role === UserRole)
   );
 
+  const ReceiveSuppierPage = RoleMappingRoute.filter(
+    route =>
+      route.page === "ReceiveSuppier" &&
+      route.role.find(role => role === UserRole)
+  );
+
   return (
     <Menu theme="dark" mode="inline">
       <Menu.Item key="1" onClick={() => Router.push("/")}>
@@ -160,6 +166,20 @@ export const MenuManage = ({ UserRole }) => {
                 }
               >
                 ใบสั่งซื้อ
+              </span>
+            </MenuItem>
+          ) : null}
+
+          {ReceiveSuppierPage.length !== 0 ? (
+            <MenuItem routeform={GetFormPath(ReceiveSuppierPage)}>
+              <span
+                onClick={
+                  GetListPath(ReceiveSuppierPage)
+                    ? () => Router.push(GetListPath(ReceiveSuppierPage))
+                    : null
+                }
+              >
+                ใบรับของ
               </span>
             </MenuItem>
           ) : null}

@@ -254,7 +254,7 @@ export const GetRequestForPO = code => async dispatch => {
   dispatch({ type: actionTypes.REQUEST.FETCH, payload: data });
   return { status: true };
 };
-//#endregion Item Unit Action
+//#endregion Request Action
 
 //#region PO Action
 export const InsertPO = value => async dispatch => {
@@ -272,7 +272,6 @@ export const GetPO = page => async dispatch => {
 };
 
 export const DeletePO = (id, value) => async (dispatch, currentState) => {
-  console.log(value);
   const res = await axios.delete(`/api/po/${id}`, value).catch(e => null);
   if (!res) return { status: false };
   return { status: res.status === 200 };
@@ -287,8 +286,6 @@ export const GetPOById = (id, { req }) => async dispatch => {
   if (!res) return { status: false };
   const { data } = res;
 
-  // dispatch({ type: actionTypes.REQUEST.FETCH, payload: data });
-  // console.log("dispatch" , );
   return data;
 };
 
@@ -303,4 +300,49 @@ export const ClearPO = () => async dispatch => {
   dispatch({ type: actionTypes.PO.RESET });
 };
 
-//#endregion Item Unit Action
+//#endregion PO Action
+
+//#region RS Action
+export const InsertRS = value => async dispatch => {
+  const res = await axios.post("/api/rs", value);
+  if (!res) return { status: false };
+  return { status: res.status === 200, id: res.data.id };
+};
+
+export const GetRS = page => async dispatch => {
+  const res = await axios.get("/api/rs/list/" + page).catch(e => null);
+  if (!res) return { status: false };
+  const { data } = res;
+  dispatch({ type: actionTypes.RS.FETCH_LIST, payload: data });
+  return { status: res.status === 200 };
+};
+
+export const DeleteRS = (id, value) => async (dispatch, currentState) => {
+  const res = await axios.delete(`/api/rs/${id}`, value).catch(e => null);
+  if (!res) return { status: false };
+  return { status: res.status === 200 };
+};
+
+export const GetRSById = (id, { req }) => async dispatch => {
+  // const res = await axios.get("/api/request/form/" + id).catch(e => null);
+  const baseUrl = req ? `${req.protocol}://${req.get("Host")}` : "";
+
+  const res = await axios.get(baseUrl + "/api/rs/form/" + id).catch(e => null);
+
+  if (!res) return { status: false };
+  const { data } = res;
+
+  return data;
+};
+
+export const UpdateRS = (id, value) => async dispatch => {
+  const res = await axios.put("/api/rs/" + id, value).catch(e => null);
+  if (!res) return { status: false };
+  return { status: res.status === 200 };
+};
+
+export const ClearRS = () => async dispatch => {
+  dispatch({ type: actionTypes.RS.RESET });
+};
+
+//#endregion RS Action

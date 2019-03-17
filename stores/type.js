@@ -52,5 +52,14 @@ export const actionTypes = {
     DELETE: "DELETE_PO",
     UPDATE: "UPDATE_PO",
     RESET: "RESET_PO"
+  },
+  RS: {
+    CREATE: "CREATE_RS",
+    FETCH_LIST: "FETCH_LIST_RS",
+    FETCH_LIST_ALL: "FETCH_LIST_ALL_RS",
+    FETCH: "FETCH_RS",
+    DELETE: "DELETE_RS",
+    UPDATE: "UPDATE_RS",
+    RESET: "RESET_RS"
   }
 };
