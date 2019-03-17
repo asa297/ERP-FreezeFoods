@@ -87,9 +87,9 @@ module.exports = (app, client) => {
     //#endregion RFQ
 
     Promise.all([
-      promise_lines_query
-      // promise_docRFQ_update,
-      // promise_linesRFQ_update
+      promise_lines_query,
+      promise_docRFQ_update,
+      promise_linesRFQ_update
     ])
       .then(() => {
         res.send({ id: po_doc.rows[0].id });
