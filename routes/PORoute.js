@@ -1,4 +1,5 @@
 const isAuthenticated = require("../middlewares/Authenticated");
+const moment = require("moment");
 
 module.exports = (app, client) => {
   app.post("/api/po", isAuthenticated, async (req, res) => {
@@ -17,7 +18,9 @@ module.exports = (app, client) => {
     const generateCode = `PO-${parseInt(LastDocument.rows[0].id) + 1}`;
     const values = [
       generateCode,
-      document.date,
+      moment(document.date)
+        .utcOffset(7)
+        .format("YYYY-MM-DDTHH:mm:ss.SSS"),
       document.remark,
       document.refDocId,
       1, //Save
@@ -189,8 +192,15 @@ module.exports = (app, client) => {
     const { document, lines } = req.body;
 
     const promise_doc_query = new Promise(async (resolve, reject) => {
-      const text = `UPDATE po SET remark = $1, last_modify_by = $2, last_modify_time = $3 Where id = ${id}`;
-      const values = [document.remark, UserName, new Date()];
+      const text = `UPDATE po SET remark = $1, date = $2, last_modify_by = $3, last_modify_time = $4 Where id = ${id}`;
+      const values = [
+        document.remark,
+        moment(document.date)
+          .utcOffset(7)
+          .format("YYYY-MM-DDTHH:mm:ss.SSS"),
+        UserName,
+        new Date()
+      ];
 
       await client.query(text, values);
       resolve();

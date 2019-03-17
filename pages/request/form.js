@@ -358,6 +358,7 @@ class Form extends React.PureComponent {
       lines: data,
       deleted_data
     };
+
     const { status, id } = formId
       ? await this.props.UpdateRequest(formId, saveData)
       : await this.props.InsertRequest(saveData);

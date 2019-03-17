@@ -72,7 +72,7 @@ class Form extends React.PureComponent {
       {
         title: (filters, sortOrder) => (
           <FlexContainer>
-            วันหมดอายุ<LabelRequire>*</LabelRequire>
+            วันหมดอายุ(วัน)<LabelRequire>*</LabelRequire>
           </FlexContainer>
         ),
         dataIndex: "expire_date",
@@ -80,8 +80,8 @@ class Form extends React.PureComponent {
         render: (text, record, index) => {
           return (
             <Input
-              value={record.qty}
-              // onChange={value => this.ChangeQTY(value, index)}
+              value={record.expire_date}
+              onChange={value => this.ChangeExpireDate(value, index)}
               // disabled={this.state.document.status === 2 ? true : false}
             />
           );
@@ -136,7 +136,6 @@ class Form extends React.PureComponent {
   }
 
   componentWillReceiveProps({ POReducer, formId, rs }) {
-    // console.log(POReducer);
     const { Item } = POReducer;
     if ((!formId && !isEmpty(Item)) || (formId && rs)) {
       const { document, lines } = !formId ? Item : po;
@@ -150,6 +149,7 @@ class Form extends React.PureComponent {
 
       const lines_state = lines.map(line => {
         line.po_qty = !formId ? line.qty : line.po_qty;
+        line.expire_date = 0;
         line.uuid = uuidv4();
         return line;
       });
@@ -213,6 +213,15 @@ class Form extends React.PureComponent {
     this.setState({ lines });
   }
 
+  ChangeExpireDate(e, index) {
+    let lines = [...this.state.lines];
+    const newValue = Math.floor(e.target.value);
+
+    lines[index].expire_date = newValue;
+
+    this.setState({ lines });
+  }
+
   ChanegDate(props, e) {
     if (e >= props.values.po_date) props.setFieldValue("date", e);
     else alert("cannot set po date less than rfq date");
@@ -226,8 +235,14 @@ class Form extends React.PureComponent {
 
     const unitprice_empty = lines.find(line => line.unit_price === 0);
 
+    const expiredate_empty = lines.find(line => line.expire_date === 0);
+
     if (lines_empty) {
       alert("lines cannot empty");
+      return;
+    }
+    if (expiredate_empty) {
+      alert("expire date cannot empty");
       return;
     }
     if (unitprice_empty) {
@@ -252,7 +267,7 @@ class Form extends React.PureComponent {
     } else {
       alert(status ? "Add Done" : "fail");
       if (status) {
-        window.location.href = `/po/list`;
+        window.location.href = `/rs/list`;
       }
     }
 

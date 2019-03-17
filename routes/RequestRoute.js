@@ -1,4 +1,5 @@
 const isAuthenticated = require("../middlewares/Authenticated");
+const moment = require("moment");
 
 module.exports = (app, client) => {
   app.post("/api/request", isAuthenticated, async (req, res) => {
@@ -17,7 +18,9 @@ module.exports = (app, client) => {
 
     const values = [
       generateCode,
-      document.date,
+      moment(document.date)
+        .utcOffset(7)
+        .format("YYYY-MM-DDTHH:mm:ss.SSS"),
       document.remark,
       1, //Save
       UserName,
@@ -137,7 +140,14 @@ module.exports = (app, client) => {
 
     const promise_doc_query = new Promise(async (resolve, reject) => {
       const text = `UPDATE request SET remark = $1, date = $2,  last_modify_by = $3, last_modify_time = $4 Where id = ${id}`;
-      const values = [document.remark, document.date, UserName, new Date()];
+      const values = [
+        document.remark,
+        moment(document.date)
+          .utcOffset(7)
+          .format("YYYY-MM-DDTHH:mm:ss.SSS"),
+        UserName,
+        new Date()
+      ];
 
       await client.query(text, values);
       resolve();
