@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
 import { authInitialProps, checkUserRole } from "<utils>/auth";
-import { GetRequest, ClearPO } from "<actions>";
+import { GetPO, ClearPO } from "<actions>";
 import { Table } from "antd";
 import styled from "styled-components";
 import Link from "next/link";
@@ -17,7 +17,7 @@ class List extends React.PureComponent {
 
   componentWillMount() {
     this.props.ClearPO();
-    this.props.GetRequest(this.state.page);
+    this.props.GetPO(this.state.page);
   }
 
   async LoadListMore(page) {
@@ -25,7 +25,7 @@ class List extends React.PureComponent {
     const { HasMore } = this.props.POReducer;
     if (HasMore && page !== 1 && !loading) {
       this.setState({ page, loading: true });
-      await this.props.GetRequest(page);
+      await this.props.GetPO(page);
 
       this.setState({ loading: false });
     }
@@ -114,13 +114,12 @@ List.getInitialProps = async ctx => {
   if (auth) {
     await checkUserRole(auth)(ctx);
   }
-  // await ctx.reduxStore.dispatch({ type: actionTypes.REQUEST.RESET });
   return { auth };
 };
 
 export default connect(
   ({ POReducer }) => ({ POReducer }),
-  { GetRequest, ClearPO }
+  { GetPO, ClearPO }
 )(List);
 
 const Container = styled.div`

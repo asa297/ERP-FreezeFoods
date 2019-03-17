@@ -245,6 +245,15 @@ export const ClearRequest = (id, value) => async dispatch => {
   dispatch({ type: actionTypes.REQUEST.RESET });
 };
 
+export const GetRequestForPO = code => async dispatch => {
+  const res = await axios.get("/api/request/rfq/" + code).catch(e => null);
+
+  const { data } = res;
+  if (!data) return { status: false };
+
+  dispatch({ type: actionTypes.REQUEST.FETCH, payload: data });
+  return { status: true };
+};
 //#endregion Item Unit Action
 
 //#region PO Action
@@ -262,8 +271,9 @@ export const GetPO = page => async dispatch => {
   return { status: res.status === 200 };
 };
 
-export const DeletePO = id => async (dispatch, currentState) => {
-  const res = await axios.delete(`/api/po/${id}`).catch(e => null);
+export const DeletePO = (id, value) => async (dispatch, currentState) => {
+  console.log(value);
+  const res = await axios.delete(`/api/po/${id}`, value).catch(e => null);
   if (!res) return { status: false };
   return { status: res.status === 200 };
 };

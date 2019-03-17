@@ -6,16 +6,15 @@ module.exports = (app, client) => {
     const { document, lines } = req.body;
 
     const LastDocument = await client.query(
-      `SELECT id from request order by id desc LIMIT 1`
+      `SELECT setval('request_id_seq',nextval('request_id_seq')-1) AS id;`
     );
 
     const text_document = `INSERT INTO request(code, date, remark , status , create_by, 
         create_time, last_modify_by, last_modify_time) 
         VALUES($1, $2, $3, $4, $5,$6, $7 , $8) RETURNING id `;
 
-    const generateCode = `RFQ-${
-      LastDocument.rows.length !== 0 ? LastDocument.rows[0].id + 1 : 1
-    }`;
+    const generateCode = `RFQ-${parseInt(LastDocument.rows[0].id) + 1}`;
+
     const values = [
       generateCode,
       document.date,
@@ -219,5 +218,26 @@ module.exports = (app, client) => {
     await Promise.all(array_promise);
 
     res.send();
+  });
+
+  app.get("/api/request/rfq/:code", isAuthenticated, async (req, res) => {
+    const { code } = req.params;
+
+    const { rowCount, rows: document } = await client.query(
+      `SELECT * from request WHERE code = '${code}' AND status = 1 limit 1`
+    );
+    if (rowCount !== 1 || document.length == 0) res.send();
+    else {
+      const { id } = document[0];
+      const { rows: lines } = await client.query(
+        `SELECT * from request_line WHERE request_id = ${id}`
+      );
+      const data = {
+        document: document[0],
+        lines: lines
+      };
+
+      res.send(data);
+    }
   });
 };

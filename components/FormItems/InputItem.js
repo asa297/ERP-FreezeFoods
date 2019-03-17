@@ -5,12 +5,13 @@ const InputItem = ({
   label,
   requireStar,
   labelafter,
+  padding,
   field, // { name, value, onChange, onBlur }
   form: { touched, errors }, // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
   ...props
 }) => {
   return (
-    <div>
+    <Container padding={padding}>
       <FlexContainer>
         <label>{label}</label>
         {requireStar === "true" ? <LabelRequire>*</LabelRequire> : null}
@@ -23,7 +24,7 @@ const InputItem = ({
       <div className="error">
         {(touched[field.name] && errors[field.name]) || errors[field.name]}
       </div>
-    </div>
+    </Container>
   );
 };
 
@@ -38,22 +39,13 @@ const LabelRequire = styled.div`
   color: red;
 `;
 
-const InputContainer = styled.div`
-  margin-left: 10px;
-  width: 100%;
-`;
-
 const InputForm = styled(Input)`
   width: 100%;
   height: 35px;
   border: ${props => props.border || "1px solid #ccc"};
-  background-color: #fff;
   padding: 5px 15px;
 `;
 
-const LabelContainer = styled.label`
-  display: flex;
-  padding: 5px 15px;
-  white-space: nowrap;
-  width: 10%;
+const Container = styled.div`
+  padding-left: ${props => (props.padding ? "15px" : "0px")};
 `;

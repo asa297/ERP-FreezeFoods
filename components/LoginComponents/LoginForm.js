@@ -48,7 +48,7 @@ const LoginForm = () => {
               />
               <FlexCenter>
                 <Button type="primary" htmlType="submit">
-                  Login
+                  เข้าสู่ระบบ
                 </Button>
               </FlexCenter>
             </form>
