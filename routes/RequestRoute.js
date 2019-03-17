@@ -42,7 +42,7 @@ module.exports = (app, client) => {
           line.qty,
           line.unit_id,
           line.unit_name,
-          line.unit_price,
+          line.unit_price || 0,
           line.remark,
           UserName,
           new Date(),
