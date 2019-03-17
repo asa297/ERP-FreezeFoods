@@ -38,6 +38,7 @@ const ActionForm = ({
               icon="save"
               loading={loading}
               disabled={loading}
+              onClick={() => submit()}
             >
               บันทึก
             </ButtonSave>

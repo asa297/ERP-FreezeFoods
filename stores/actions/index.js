@@ -271,8 +271,9 @@ export const GetPO = page => async dispatch => {
   return { status: res.status === 200 };
 };
 
-export const DeletePO = id => async (dispatch, currentState) => {
-  const res = await axios.delete(`/api/po/${id}`).catch(e => null);
+export const DeletePO = (id, value) => async (dispatch, currentState) => {
+  console.log(value);
+  const res = await axios.delete(`/api/po/${id}`, value).catch(e => null);
   if (!res) return { status: false };
   return { status: res.status === 200 };
 };

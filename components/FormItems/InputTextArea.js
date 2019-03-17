@@ -49,7 +49,6 @@ const TextAreaForm = styled(TextArea)`
   width: 100%;
   height: 35px;
   border: ${props => props.border || "1px solid #ccc"};
-  background-color: #fff;
   padding: 5px 15px;
 `;
 

@@ -444,6 +444,7 @@ class Form extends React.PureComponent {
                       onChange={e =>
                         props.setFieldValue("remark", e.target.value)
                       }
+                      disabled={this.state.status === 2 ? true : false}
                     />
                   </RemarkContainer>
 

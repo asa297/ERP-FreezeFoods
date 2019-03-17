@@ -10,7 +10,13 @@ import {
   SelectOption,
   DocStatus
 } from "<components>";
-import { GetRequestForPO, InsertPO, UpdatePO, GetPOById } from "<actions>";
+import {
+  GetRequestForPO,
+  InsertPO,
+  UpdatePO,
+  GetPOById,
+  DeletePO
+} from "<actions>";
 import { Formik, Field } from "formik";
 import styled from "styled-components";
 import Router from "next/router";
@@ -19,8 +25,6 @@ import moment from "moment";
 import { Table, Input, Icon, Modal } from "antd";
 import uuidv4 from "uuid";
 import { isEmpty } from "lodash";
-
-const Search = Input.Search;
 
 const confirm = Modal.confirm;
 
@@ -50,15 +54,15 @@ class Form extends React.PureComponent {
             จำนวน<LabelRequire>*</LabelRequire>
           </FlexContainer>
         ),
-        dataIndex: "po_qty",
+        dataIndex: "qty",
         width: "10%",
         render: (text, record, index) => {
           return (
             <Input
               type="number"
-              value={record.po_qty}
+              value={record.qty}
               onChange={value => this.ChangeQTY(value, index)}
-              disabled={this.state.status === 2 ? true : false}
+              disabled={this.state.document.status === 2 ? true : false}
             />
           );
         }
@@ -69,15 +73,15 @@ class Form extends React.PureComponent {
             ราคาต่อหน่วย<LabelRequire>*</LabelRequire>
           </FlexContainer>
         ),
-        dataIndex: "po_unit_price",
+        dataIndex: "unit_price",
         width: "10%",
         render: (text, record, index) => {
           return (
             <Input
               type="number"
-              value={record.po_unit_price}
+              value={record.unit_price}
               onChange={value => this.ChangeUnitPrice(value, index)}
-              disabled={this.state.status === 2 ? true : false}
+              disabled={this.state.document.status === 2 ? true : false}
             />
           );
         }
@@ -102,7 +106,7 @@ class Form extends React.PureComponent {
               type="text"
               value={record.remark}
               onChange={value => this.ChangeRemark(value, index)}
-              disabled={this.state.status === 2 ? true : false}
+              disabled={this.state.document.status === 2 ? true : false}
             />
           );
         }
@@ -117,53 +121,84 @@ class Form extends React.PureComponent {
         date: moment(),
         status: 0,
         create_by: this.props.auth.user.name,
-        code_po: null,
-        date_po: moment(),
+        request_code: null,
+        request_date: moment(),
         remark: "",
         refDocId: 0
       },
       lines: [],
-      deleted_data: [],
       show_modal: true,
       found: true
     };
   }
 
   componentWillMount() {
-    const { formId } = this.props;
+    const { formId, po } = this.props;
     if (formId) {
-      const { document, lines } = this.props.request;
+      const { document, lines } = po;
       this.setState({
         document,
-        data: lines,
+        lines,
         show_modal: false
       });
     }
   }
 
-  componentWillReceiveProps({ RequestReducer, formId }) {
+  componentWillReceiveProps({ RequestReducer, formId, po }) {
     const { Item } = RequestReducer;
-    if (!formId && !isEmpty(Item)) {
-      // console.log(RequestReducer);
-      const { document, lines } = Item;
+    if ((!formId && !isEmpty(Item)) || (formId && po)) {
+      const { document, lines } = !formId ? Item : po;
+
       let document_state = { ...this.state.document };
-      document_state.code_po = document.code;
-      document_state.date_po = document.date;
-      document_state.refDocId = document.id;
+      document_state.request_code = !formId
+        ? document.code
+        : document.request_code;
+      document_state.request_date = !formId
+        ? document.date
+        : document.request_date;
+      document_state.refDocId = !formId ? document.id : document.ref_doc_id;
 
       const lines_state = lines.map(line => {
-        line.po_qty = line.qty;
-        line.po_unit_price = line.unit_price;
+        line.request_qty = !formId ? line.qty : line.request_qty;
+        line.request_unit_price = line.unit_price;
         line.uuid = uuidv4();
         return line;
       });
-      this.setState({ document: document_state, lines: lines_state });
+      this.setState({
+        document: document_state,
+        lines: lines_state,
+        show_modal: false,
+        found: true
+      });
+    } else if (!formId) {
+      this.setState({
+        document: {
+          code: "####",
+          date: moment(),
+          status: 0,
+          create_by: this.props.auth.user.name,
+          request_code: null,
+          request_date: moment(),
+          remark: "",
+          refDocId: 0
+        },
+        lines: [],
+        show_modal: true,
+        found: true
+      });
     }
   }
 
   async OnDelete() {
     const { formId } = this.props;
-    const { status } = await this.props.DeletePO(formId);
+    const { document, lines } = this.state;
+
+    const data = {
+      document,
+      lines
+    };
+
+    const { status } = await this.props.DeletePO(formId, { data });
     if (status) {
       alert("Delete Done");
       Router.push(`/po/list`);
@@ -175,17 +210,17 @@ class Form extends React.PureComponent {
   ChangeQTY(e, index) {
     let lines = [...this.state.lines];
     const newValue = Math.floor(e.target.value);
-    if (newValue <= lines[index].qty) {
-      lines[index].po_qty = newValue;
+    if (newValue <= lines[index].request_qty) {
+      lines[index].qty = newValue;
     } else {
-      lines[index].po_qty = lines[index].qty;
+      lines[index].qty = lines[index].request_qty;
     }
     this.setState({ lines });
   }
 
   ChangeUnitPrice(e, index) {
     let lines = [...this.state.lines];
-    lines[index].po_unit_price = e.target.value;
+    lines[index].unit_price = e.target.value;
     this.setState({ lines });
   }
 
@@ -196,24 +231,20 @@ class Form extends React.PureComponent {
   }
 
   ChanegDate(props, e) {
-    if (e >= props.values.date_po) props.setFieldValue("date", e);
+    if (e >= props.values.request_date) props.setFieldValue("date", e);
     else alert("cannot set po date less than rfq date");
   }
 
   async onSubmit(values) {
     const { formId } = this.props;
-    const { lines, deleted_data } = this.state;
+    const { lines } = this.state;
 
     const lines_empty = lines.length === 0;
-    const qty_empty = lines.find(line => line.po_qty === 0);
-    const unitprice_empty = lines.find(line => line.po_unit_price === 0);
+
+    const unitprice_empty = lines.find(line => line.unit_price === 0);
 
     if (lines_empty) {
       alert("lines cannot empty");
-      return;
-    }
-    if (qty_empty) {
-      alert("qty cannot empty");
       return;
     }
     if (unitprice_empty) {
@@ -225,10 +256,10 @@ class Form extends React.PureComponent {
 
     const saveData = {
       document: values,
-      lines,
-      deleted_data
+      lines
     };
 
+    // console.log(saveData);
     const { status, id } = formId
       ? await this.props.UpdatePO(formId, saveData)
       : await this.props.InsertPO(saveData);
@@ -271,8 +302,8 @@ class Form extends React.PureComponent {
                 code: document.code,
                 date: document.date,
                 create_by: document.create_by,
-                code_po: document.code_po,
-                date_po: document.date_po,
+                request_code: document.request_code,
+                request_date: document.request_date,
                 remark: document.remark,
                 refDocId: document.refDocId
               }}
@@ -337,9 +368,9 @@ class Form extends React.PureComponent {
                       <Field
                         label="รหัสใบขอซื้อ"
                         type="text"
-                        name="code_po"
+                        name="request_code"
                         component={InputItem}
-                        value={props.values.code_po}
+                        value={props.values.request_code}
                         disabled={true}
                         padding={true}
                       />
@@ -347,9 +378,9 @@ class Form extends React.PureComponent {
                     <FieldContainer width="40%">
                       <Field
                         label="วันทีใบขอซื้อ"
-                        name="date_po"
+                        name="request_date"
                         component={InputDateItem}
-                        value={moment(props.values.date_po)}
+                        value={moment(props.values.request_date)}
                         allowClear={false}
                         disabled={true}
                         onBlur={null}
@@ -441,7 +472,8 @@ export default connect(
   {
     GetRequestForPO,
     InsertPO,
-    UpdatePO
+    UpdatePO,
+    DeletePO
   }
 )(Form);
 
@@ -500,8 +532,8 @@ const HeaderForm = styled.div`
 `;
 
 const TableContainer = styled.div`
-  paddingleft: 15px;
-  paddingtop: 10px;
-  overflowy: scroll;
-  maxheight: 50vh;
+  padding-left: 15px;
+  padding-top: 10px;
+  overflow-y: scroll;
+  max-height: 50vh;
 `;
