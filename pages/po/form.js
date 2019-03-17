@@ -222,7 +222,10 @@ class Form extends React.PureComponent {
   }
 
   ChanegDate(props, e) {
-    if (e >= props.values.request_date) props.setFieldValue("date", e);
+    const newDate = moment(e);
+    const oldDate = moment(props.values.po_date);
+    const compareDays = newDate.diff(oldDate, "days");
+    if (compareDays >= 0) props.setFieldValue("date", e);
     else alert("cannot set po date less than rfq date");
   }
 
