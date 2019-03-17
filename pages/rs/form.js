@@ -9,13 +9,13 @@ import {
   SelectOption,
   DocStatus
 } from "<components>";
-import { GetPOForRS, InsertRS, UpdateRS, GetPOById, DeleteRS } from "<actions>";
+import { GetPOForRS, InsertRS, UpdateRS, GetRSById, DeleteRS } from "<actions>";
 import { Formik, Field } from "formik";
 import styled from "styled-components";
 import Router from "next/router";
 import { actionTypes } from "<action_types>";
 import moment from "moment";
-import { Table, Input, Icon, Modal, DatePicker } from "antd";
+import { Table, Input, Icon, Modal } from "antd";
 import uuidv4 from "uuid";
 import { isEmpty } from "lodash";
 
@@ -75,14 +75,14 @@ class Form extends React.PureComponent {
             วันหมดอายุ(วัน)<LabelRequire>*</LabelRequire>
           </FlexContainer>
         ),
-        dataIndex: "expire_date",
+        dataIndex: "expire_date_count",
         width: "10%",
         render: (text, record, index) => {
           return (
             <Input
-              value={record.expire_date}
+              value={record.expire_date_count}
               onChange={value => this.ChangeExpireDate(value, index)}
-              // disabled={this.state.document.status === 2 ? true : false}
+              disabled={this.state.document.status === 2 ? true : false}
             />
           );
         }
@@ -124,14 +124,15 @@ class Form extends React.PureComponent {
   }
 
   componentWillMount() {
-    const { formId, po } = this.props;
+    const { formId, rs } = this.props;
     if (formId) {
-      const { document, lines } = po;
-      this.setState({
-        document,
-        lines,
-        show_modal: false
-      });
+      const { document, lines } = rs;
+      console.log(rs);
+      // this.setState({
+      //   document,
+      //   lines,
+      //   show_modal: false
+      // });
     }
   }
 
@@ -149,7 +150,7 @@ class Form extends React.PureComponent {
 
       const lines_state = lines.map(line => {
         line.po_qty = !formId ? line.qty : line.po_qty;
-        line.expire_date = 0;
+        line.expire_date_count = 0;
         line.uuid = uuidv4();
         return line;
       });
@@ -217,18 +218,17 @@ class Form extends React.PureComponent {
     let lines = [...this.state.lines];
     const newValue = Math.floor(e.target.value);
 
-    lines[index].expire_date = newValue;
+    lines[index].expire_date_count = newValue;
 
     this.setState({ lines });
   }
 
   ChanegDate(props, e) {
-    const newDate = moment(e);
-    const oldDate = moment(props.values.po_date);
-    const compareDays = newDate.diff(oldDate, "days");
+    const newDate = moment(e).format("YYYY-MM-DD");
+    const oldDate = moment(props.values.po_date).format("YYYY-MM-DD");
 
-    if (compareDays >= 0) props.setFieldValue("date", e);
-    else alert("cannot set po date less than rfq date");
+    if (newDate >= oldDate) props.setFieldValue("date", e);
+    else alert("cannot set rs date less than po date");
   }
 
   async onSubmit(values) {
@@ -239,7 +239,7 @@ class Form extends React.PureComponent {
 
     const unitprice_empty = lines.find(line => line.unit_price === 0);
 
-    const expiredate_empty = lines.find(line => line.expire_date === 0);
+    const expiredate_empty = lines.find(line => line.expire_date_count === 0);
 
     if (lines_empty) {
       alert("lines cannot empty");
@@ -261,7 +261,6 @@ class Form extends React.PureComponent {
       lines
     };
 
-    console.log(saveData);
     const { status, id } = formId
       ? await this.props.UpdateRS(formId, saveData)
       : await this.props.InsertRS(saveData);
@@ -475,7 +474,8 @@ export default connect(
     GetPOForRS,
     InsertRS,
     UpdateRS,
-    DeleteRS
+    DeleteRS,
+    GetRSById
   }
 )(Form);
 
