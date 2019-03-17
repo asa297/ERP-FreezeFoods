@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
 import { authInitialProps, checkUserRole } from "<utils>/auth";
-import { GetPO, ClearPO } from "<actions>";
+import { GetPO, ClearRS } from "<actions>";
 import { Table, Icon } from "antd";
 import styled from "styled-components";
 import Link from "next/link";
@@ -15,7 +15,7 @@ class List extends React.PureComponent {
   };
 
   componentWillMount() {
-    this.props.ClearPO();
+    this.props.ClearRS();
     this.props.GetPO(this.state.page);
   }
 
@@ -120,7 +120,7 @@ List.getInitialProps = async ctx => {
 
 export default connect(
   ({ POReducer }) => ({ POReducer }),
-  { GetPO, ClearPO }
+  { GetPO, ClearRS }
 )(List);
 
 const Container = styled.div`

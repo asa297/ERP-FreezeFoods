@@ -6,6 +6,7 @@ import ContactReducer from "./ContactReducer";
 import ItemReducer from "./ItemReducer";
 import RequestReducer from "./RequestReducer";
 import POReducer from "./POReducer";
+import RSReducer from "./RSReducer";
 
 export default combineReducers({
   ItemCategoryReducer,
@@ -13,5 +14,6 @@ export default combineReducers({
   ContactReducer,
   ItemReducer,
   RequestReducer,
-  POReducer
+  POReducer,
+  RSReducer
 });
