@@ -47,7 +47,7 @@ class Form extends React.PureComponent {
             <SelectOption
               data={this.props.ItemReducer.List}
               value={record.item_id}
-              onChange={value => this.ChangeItemCode(value, index)}
+              onChange={value => this.ChangeItem(value, index)}
               disabled={this.state.status === 2 ? true : false}
               fieldread="id"
             />
@@ -57,7 +57,18 @@ class Form extends React.PureComponent {
       {
         title: "ชื่อสินค้า",
         dataIndex: "item_name",
-        width: "20%"
+        width: "20%",
+        render: (text, record, index) => {
+          return (
+            <SelectOption
+              data={this.props.ItemReducer.List}
+              value={record.item_id}
+              onChange={value => this.ChangeItem(value, index)}
+              disabled={this.state.status === 2 ? true : false}
+              fieldread="name"
+            />
+          );
+        }
       },
       {
         title: (filters, sortOrder) => (
@@ -276,7 +287,7 @@ class Form extends React.PureComponent {
     this.setState({ data });
   }
 
-  ChangeItemCode(id, index) {
+  ChangeItem(id, index) {
     const { ItemReducer } = this.props;
     const item = ItemReducer.List.find(item => item.id === id);
 
