@@ -41,7 +41,7 @@ class List extends React.PureComponent {
       {
         title: "วันที่",
         dataIndex: "date",
-        width: "20%",
+        width: "15%",
         render: (text, record, index) => {
           return <div> {moment(record.date).format("DD/MM/YYYY")}</div>;
         }
@@ -49,22 +49,24 @@ class List extends React.PureComponent {
       {
         title: "สถานะเอกสาร",
         dataIndex: "status",
-        width: "20%",
+        width: "15%",
         render: (text, record, index) => {
           return <DocStatus status={record.status} nomargin={true} />;
         }
       },
-      {
-        title: "หมายเหตุ",
-        dataIndex: "remark",
-        width: "20%"
-      },
+
       {
         title: "ผู้สร้าง",
         dataIndex: "create_by",
         width: "20%"
       },
 
+      {
+        title: "หมายเหตุ",
+        dataIndex: "remark",
+        width: "20%"
+      },
+      { title: "ใบขอซื้อ", dataIndex: "request_code", width: "15%" },
       {
         title: "",
         dataIndex: "",

@@ -103,8 +103,8 @@ module.exports = (app, client) => {
     const { page } = req.params;
 
     const data = await client.query(
-      `SELECT * from po order by id OFFSET ${(page - 1) *
-        30} ROWS FETCH NEXT 30 ROWS ONLY;`
+      `SELECT po.*, request.code AS request_code from po left join request on po.ref_doc_id = request.id 
+      order by po.id OFFSET ${(page - 1) * 30} ROWS FETCH NEXT 30 ROWS ONLY;`
     );
 
     const result = {
