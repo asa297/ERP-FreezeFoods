@@ -68,51 +68,61 @@ export const MenuManage = ({ UserRole }) => {
             </span>
           }
         >
-          <MenuItem routeform={GetFormPath(CategoryPage)}>
-            <span
-              onClick={
-                GetListPath(CategoryPage)
-                  ? () => Router.push(GetListPath(CategoryPage))
-                  : null
-              }
-            >
-              หมวดสินค้า
-            </span>
-          </MenuItem>
-          <MenuItem routeform={GetFormPath(ItemPage)}>
-            <span
-              onClick={
-                GetListPath(ItemPage)
-                  ? () => Router.push(GetListPath(ItemPage))
-                  : null
-              }
-            >
-              สินค้า
-            </span>
-          </MenuItem>
+          {CategoryPage.length ? (
+            <MenuItem routeform={GetFormPath(CategoryPage)}>
+              <span
+                onClick={
+                  GetListPath(CategoryPage)
+                    ? () => Router.push(GetListPath(CategoryPage))
+                    : null
+                }
+              >
+                หมวดสินค้า
+              </span>
+            </MenuItem>
+          ) : null}
 
-          <MenuItem routeform={GetFormPath(UnitPage)}>
-            <span
-              onClick={
-                GetListPath(UnitPage)
-                  ? () => Router.push(GetListPath(UnitPage))
-                  : null
-              }
-            >
-              หน่วยสินค้า
-            </span>
-          </MenuItem>
-          <MenuItem routeform={GetFormPath(ContactPage)}>
-            <span
-              onClick={
-                GetListPath(ContactPage)
-                  ? () => Router.push(GetListPath(ContactPage))
-                  : null
-              }
-            >
-              บริษัท
-            </span>
-          </MenuItem>
+          {ItemPage.length ? (
+            <MenuItem routeform={GetFormPath(ItemPage)}>
+              <span
+                onClick={
+                  GetListPath(ItemPage)
+                    ? () => Router.push(GetListPath(ItemPage))
+                    : null
+                }
+              >
+                สินค้า
+              </span>
+            </MenuItem>
+          ) : null}
+
+          {UnitPage.length ? (
+            <MenuItem routeform={GetFormPath(UnitPage)}>
+              <span
+                onClick={
+                  GetListPath(UnitPage)
+                    ? () => Router.push(GetListPath(UnitPage))
+                    : null
+                }
+              >
+                หน่วยสินค้า
+              </span>
+            </MenuItem>
+          ) : null}
+
+          {ContactPage.length !== 0 ? (
+            <MenuItem routeform={GetFormPath(ContactPage)}>
+              <span
+                onClick={
+                  GetListPath(ContactPage)
+                    ? () => Router.push(GetListPath(ContactPage))
+                    : null
+                }
+              >
+                บริษัท
+              </span>
+            </MenuItem>
+          ) : null}
         </SubMenu>
       ) : null}
 
@@ -126,29 +136,33 @@ export const MenuManage = ({ UserRole }) => {
             </span>
           }
         >
-          <MenuItem routeform={GetFormPath(RequestPage)}>
-            <span
-              onClick={
-                GetListPath(RequestPage)
-                  ? () => Router.push(GetListPath(RequestPage))
-                  : null
-              }
-            >
-              ใบขอซื้อ
-            </span>
-          </MenuItem>
+          {RequestPage.length !== 0 ? (
+            <MenuItem routeform={GetFormPath(RequestPage)}>
+              <span
+                onClick={
+                  GetListPath(RequestPage)
+                    ? () => Router.push(GetListPath(RequestPage))
+                    : null
+                }
+              >
+                ใบขอซื้อ
+              </span>
+            </MenuItem>
+          ) : null}
 
-          <MenuItem routeform={GetFormPath(PurchasePage)}>
-            <span
-              onClick={
-                GetListPath(PurchasePage)
-                  ? () => Router.push(GetListPath(PurchasePage))
-                  : null
-              }
-            >
-              ใบสั่งซื้อ
-            </span>
-          </MenuItem>
+          {PurchasePage.length !== 0 ? (
+            <MenuItem routeform={GetFormPath(PurchasePage)}>
+              <span
+                onClick={
+                  GetListPath(PurchasePage)
+                    ? () => Router.push(GetListPath(PurchasePage))
+                    : null
+                }
+              >
+                ใบสั่งซื้อ
+              </span>
+            </MenuItem>
+          ) : null}
         </SubMenu>
       ) : null}
 

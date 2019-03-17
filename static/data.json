@@ -83,6 +83,20 @@
       "type": "Form",
       "page": "Purchase",
       "role": [1]
+    },
+    {
+      "path": "/rs/list",
+      "sub": "document",
+      "type": "List",
+      "page": "ReceiveSuppier",
+      "role": [1]
+    },
+    {
+      "path": "/rs/form",
+      "sub": "document",
+      "type": "Form",
+      "page": "ReceiveSuppier",
+      "role": [1]
     }
   ]
 }

@@ -5,7 +5,6 @@ import { Table } from "antd";
 import styled from "styled-components";
 import Link from "next/link";
 import InfiniteScroll from "react-infinite-scroller";
-import { actionTypes } from "<action_types>";
 import { DocStatus } from "<components>";
 import moment from "moment";
 

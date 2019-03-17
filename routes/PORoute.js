@@ -115,18 +115,6 @@ module.exports = (app, client) => {
     res.send(result);
   });
 
-  // app.get("/api/item/list", isAuthenticated, async (req, res) => {
-  //   const data = await client.query(
-  //     `SELECT id, name, item_category_id, item_category_name ,remark from item order by id`
-  //   );
-
-  //   const result = {
-  //     data: data.rows,
-  //     HasMore: false
-  //   };
-  //   res.send(result);
-  // });
-
   app.get("/api/po/form/:id", isAuthenticated, async (req, res) => {
     const { id } = req.params;
 
