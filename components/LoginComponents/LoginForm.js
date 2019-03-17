@@ -11,10 +11,12 @@ const LoginForm = () => {
       <LoginContainer>
         <H1TextCenter>เข้าสู่ระบบ</H1TextCenter>
         <Formik
-          initialValues={{
-            username: "god",
-            password: "admin"
-          }}
+          initialValues={
+            {
+              // username: "god",
+              // password: "admin"
+            }
+          }
           onSubmit={(values, actions) => {
             const { username, password } = values;
             loginUser(username, password)
