@@ -78,7 +78,10 @@ const InputContainer = styled.div`
 const SelectForm = styled(Select)`
   width: 100%;
 
-  border: ${props => props.border || "1px solid #ccc"};
+  .ant-select-selection {
+    border: ${props => (props.border ? props.border : "1px solid #d9d9d9")};
+  }
+
   border-radius: 5px;
 `;
 
