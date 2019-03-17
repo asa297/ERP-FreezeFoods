@@ -431,7 +431,7 @@ class Form extends React.PureComponent {
                         requireStar="true"
                         onChange={e => props.setFieldValue("date", e)}
                         allowClear={false}
-                        disabled={formId ? true : false}
+                        disabled={this.state.status === 2 ? true : false}
                       />
                     </FieldContainer>
 
