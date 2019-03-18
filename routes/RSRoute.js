@@ -266,4 +266,17 @@ module.exports = (app, client) => {
 
     res.send();
   });
+
+  app.post("/api/rs/itemdn", isAuthenticated, async (req, res) => {
+    let { date } = req.body;
+    date = moment(date).format("YYYY-MM-DD");
+
+    const text = `select rs_line.* , rs.code as rs_code from rs_line
+    left join rs on rs_line.rs_id = rs.id
+    where rs_line.create_time <= '${date}' AND rs_line.remain_qty > 0`;
+
+    const { rows: rs_lines } = await client.query(text);
+
+    res.send(rs_lines);
+  });
 };

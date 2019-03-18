@@ -484,6 +484,7 @@ class Form extends React.PureComponent {
                       loading={this.state.loading}
                       OnDelete={() => this.OnDelete()}
                       DisabledSave={this.state.status === 2 ? true : false}
+                      DisabledAction={this.state.status === 2}
                       onSubmit={props.handleSubmit}
                     />
                   </FlexCenter>

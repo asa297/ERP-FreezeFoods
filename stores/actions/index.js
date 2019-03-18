@@ -121,6 +121,14 @@ export const GetContact = page => async dispatch => {
   return { status: res.status === 200 };
 };
 
+export const GetAllContact = () => async dispatch => {
+  const res = await axios.get("/api/contact/list").catch(e => null);
+  if (!res) return { status: false };
+  const { data } = res;
+  dispatch({ type: actionTypes.CONTACT.FETCH_LIST_ALL, payload: data });
+  return { status: res.status === 200 };
+};
+
 export const DeleteContact = id => async (dispatch, currentState) => {
   const res = await axios.delete(`/api/contact/${id}`).catch(e => null);
   if (!res) return { status: false };
@@ -142,7 +150,7 @@ export const UpdateContact = (id, value) => async dispatch => {
   return { status: res.status === 200 };
 };
 
-export const CleaerContact = () => async dispatch => {
+export const ClearContact = () => async dispatch => {
   dispatch({ type: actionTypes.CONTACT.RESET });
 };
 
@@ -353,6 +361,14 @@ export const UpdateRS = (id, value) => async dispatch => {
 
 export const ClearRS = () => async dispatch => {
   dispatch({ type: actionTypes.RS.RESET });
+};
+
+export const GetItemDN = date => async dispatch => {
+  const res = await axios.post("/api/rs/itemdn", { date }).catch(e => null);
+  if (!res) return { status: false };
+  const { data } = res;
+  dispatch({ type: actionTypes.RS.FETCH_LIST_ALL, payload: data });
+  return { status: res.status === 200 };
 };
 
 //#endregion RS Action

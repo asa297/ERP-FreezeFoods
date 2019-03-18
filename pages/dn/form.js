@@ -1,23 +1,23 @@
 import { connect } from "react-redux";
 import { authInitialProps, checkUserRole } from "<utils>/auth";
-import { POFormSchema } from "<utils>/validatior";
+import { DNFormSchema } from "<utils>/validatior";
 import {
   InputItem,
   InputTextArea,
   ActionForm,
   InputDateItem,
   SelectOption,
+  SelectItem,
   DocStatus
 } from "<components>";
-import { GetPOForRS, InsertRS, UpdateRS, GetRSById, DeleteRS } from "<actions>";
+import { GetItemDN, GetAllContact, ClearContact, InsertDN } from "<actions>";
 import { Formik, Field } from "formik";
 import styled from "styled-components";
 import Router from "next/router";
 import { actionTypes } from "<action_types>";
 import moment from "moment";
-import { Table, Input, Icon, Modal } from "antd";
+import { Table, Input, Modal, Icon } from "antd";
 import uuidv4 from "uuid";
-import { isEmpty } from "lodash";
 
 const confirm = Modal.confirm;
 
@@ -28,13 +28,33 @@ class Form extends React.PureComponent {
       {
         title: "รหัสสินค้า",
         dataIndex: "item_id",
-        width: "15%",
+        width: "10%",
         align: "center"
       },
       {
-        title: "ชื่อสินค้า",
+        title: (filters, sortOrder) => (
+          <FlexContainer>
+            ชื่อสินค้า<LabelRequire>*</LabelRequire>
+          </FlexContainer>
+        ),
         dataIndex: "item_name",
-        width: "20%"
+        width: "20%",
+        render: (text, record, index) => {
+          return (
+            <SelectOption
+              data={this.state.Item_Select}
+              value={record.item_name}
+              onChange={value => this.ChangeItem(value, index)}
+              disabled={this.state.status === 2 ? true : false}
+              fieldread="value"
+            />
+          );
+        }
+      },
+      {
+        title: "รหัสใบรับของ",
+        dataIndex: "rs_code",
+        width: "15%"
       },
       {
         title: (filters, sortOrder) => (
@@ -56,36 +76,9 @@ class Form extends React.PureComponent {
         }
       },
       {
-        title: (filters, sortOrder) => (
-          <FlexContainer>
-            ราคาต่อหน่วย<LabelRequire>*</LabelRequire>
-          </FlexContainer>
-        ),
-        dataIndex: "unit_price",
-        width: "10%"
-      },
-      {
         title: "หน่วยสินค้า",
         dataIndex: "unit_name",
         width: "10%"
-      },
-      {
-        title: (filters, sortOrder) => (
-          <FlexContainer>
-            วันหมดอายุ(วัน)<LabelRequire>*</LabelRequire>
-          </FlexContainer>
-        ),
-        dataIndex: "expire_date_count",
-        width: "10%",
-        render: (text, record, index) => {
-          return (
-            <Input
-              value={record.expire_date_count}
-              onChange={value => this.ChangeExpireDate(value, index)}
-              disabled={this.props.formId ? true : false}
-            />
-          );
-        }
       },
       {
         title: "หมายเหตุ",
@@ -100,6 +93,28 @@ class Form extends React.PureComponent {
             />
           );
         }
+      },
+      {
+        title: "",
+        dataIndex: "",
+        width: "10%",
+        render: (text, record, index) => {
+          if (this.state.status === 2) return;
+          return (
+            <div>
+              <a href="#" onClick={() => this.DeleteRow(index)}>
+                <Icon type="minus" />
+              </a>
+              <a
+                href="#"
+                onClick={() => this.AddNewRow()}
+                style={{ paddingLeft: "5px" }}
+              >
+                <Icon type="plus" />
+              </a>
+            </div>
+          );
+        }
       }
     ];
 
@@ -111,71 +126,67 @@ class Form extends React.PureComponent {
         date: moment(),
         status: 0,
         create_by: this.props.auth.user.name,
-        po_code: null,
-        po_date: moment(),
         remark: "",
         refDocId: 0
       },
       lines: [],
-      show_modal: true,
-      found: true
+      Item_Select: []
     };
   }
 
   componentWillMount() {
+    const { date } = this.state.document;
+    this.props.GetAllContact();
+    this.props.GetItemDN(date);
     const { formId, rs } = this.props;
     if (formId) {
       const { document, lines } = rs;
-
       this.setState({
         document,
-        lines,
-        show_modal: false
+        lines
       });
+    } else {
+      this.AddNewRow();
     }
   }
 
-  componentWillReceiveProps({ POReducer, formId, rs }) {
-    const { Item } = POReducer;
-    if ((!formId && !isEmpty(Item)) || (formId && rs)) {
-      const { document, lines } = !formId ? Item : po;
-
-      let document_state = { ...this.state.document };
-      document_state.po_code = !formId ? document.code : document.po_code;
-      document_state.po_date = !formId
-        ? moment(document.date)
-        : moment(document.po_date);
-      document_state.refDocId = !formId ? document.id : document.ref_doc_id;
-
-      const lines_state = lines.map(line => {
-        line.po_qty = !formId ? line.qty : line.po_qty;
-        line.expire_date_count = 0;
-        line.uuid = uuidv4();
-        return line;
+  componentWillReceiveProps({ RSReducer }) {
+    const { List } = RSReducer;
+    if (List) {
+      const Item_Select = List.map(item => {
+        return this.SetItemSelect(item);
       });
-      this.setState({
-        document: document_state,
-        lines: lines_state,
-        show_modal: false,
-        found: true
-      });
-    } else if (!formId) {
-      this.setState({
-        document: {
-          code: "####",
-          date: moment(),
-          status: 0,
-          create_by: this.props.auth.user.name,
-          po_code: null,
-          po_date: moment(),
-          remark: "",
-          refDocId: 0
-        },
-        lines: [],
-        show_modal: true,
-        found: true
-      });
+      this.setState({ Item_Select });
     }
+  }
+
+  componentWillUnmount() {
+    this.props.ClearContact();
+    //Need to Clear ItemCategory Reducer
+  }
+
+  SetItemSelect(item) {
+    const {
+      id,
+      item_id,
+      item_name,
+      remain_qty,
+      rs_id,
+      rs_code,
+      unit_id,
+      unit_name
+    } = item;
+    return {
+      id: item_id,
+      name: item_name,
+      remain_qty,
+      rs_id,
+      rs_line_id: id,
+      rs_code,
+      unit_id,
+      unit_name,
+      value: `${item_id} : ${item_name} (${rs_code})`
+    };
   }
 
   async OnDelete() {
@@ -190,19 +201,69 @@ class Form extends React.PureComponent {
     const { status } = await this.props.DeleteRS(formId, { data });
     if (status) {
       alert("Delete Done");
-      Router.push(`/rs/list`);
+      Router.push(`/dn/list`);
     } else {
       alert("fail");
     }
   }
 
+  AddNewRow() {
+    let lines = [...this.state.lines];
+
+    const newRow = {
+      id: 0,
+      item_id: null,
+      item_name: null,
+      qty: 0,
+      unit_id: null,
+      unit_name: null,
+      remark: null,
+      uuid: uuidv4()
+    };
+    lines.push(newRow);
+
+    this.setState({ lines });
+  }
+
+  DeleteRow(index) {
+    let lines = [...this.state.lines];
+    let Item_Select = [...this.state.Item_Select];
+    const { RSReducer } = this.props;
+    const { item_id } = lines[index];
+    const item = RSReducer.List.find(item => item.item_id === item_id);
+    const newItem = this.SetItemSelect(item);
+    Item_Select.unshift(newItem);
+
+    lines.splice(index, 1);
+
+    this.setState({ lines, Item_Select });
+  }
+
+  ChangeItem(id, index) {
+    let Item_Select = [...this.state.Item_Select];
+    let lines = [...this.state.lines];
+    const item = Item_Select.find(item => item.id === id);
+
+    lines[index].item_id = item.id;
+    lines[index].item_name = item.name;
+    lines[index].rs_id = item.rs_id;
+    lines[index].rs_line_id = item.rs_line_id;
+    lines[index].rs_code = item.rs_code;
+    lines[index].unit_id = item.unit_id;
+    lines[index].unit_name = item.unit_name;
+    lines[index].qty = lines[index].remain_qty = item.remain_qty;
+
+    Item_Select.splice(index, 1);
+    this.setState({ lines, Item_Select });
+  }
+
   ChangeQTY(e, index) {
     let lines = [...this.state.lines];
     const newValue = Math.floor(e.target.value);
-    if (newValue <= lines[index].po_qty) {
+    if (newValue <= lines[index].remain_qty) {
       lines[index].qty = newValue;
     } else {
-      lines[index].qty = lines[index].po_qty;
+      lines[index].qty = lines[index].remain_qty;
     }
     this.setState({ lines });
   }
@@ -213,43 +274,51 @@ class Form extends React.PureComponent {
     this.setState({ lines });
   }
 
-  ChangeExpireDate(e, index) {
-    let lines = [...this.state.lines];
-    const newValue = Math.floor(e.target.value);
-
-    lines[index].expire_date_count = newValue;
-
-    this.setState({ lines });
+  onChangeContact(id, props) {
+    const contact = this.props.ContactReducer.List.find(
+      contact => contact.id === id
+    );
+    props.setFieldValue("contact", contact);
   }
 
   ChanegDate(props, e) {
-    const newDate = moment(e).format("YYYY-MM-DD");
-    const oldDate = moment(props.values.po_date).format("YYYY-MM-DD");
-
-    if (newDate >= oldDate) props.setFieldValue("date", e);
-    else alert("cannot set rs date less than po date");
+    const binding_this = this;
+    confirm({
+      title: "ยืนยันการเปลี่ยนวันที่",
+      content: "ถ้ายืนยันระบบจะลบรายการทั้งหมดของเอกสารนี้",
+      async onOk() {
+        props.setFieldValue("date", e);
+        await binding_this.setState({ lines: [] });
+        binding_this.AddNewRow();
+        const newDate = moment(e).format("YYYY-MM-DD");
+        binding_this.props.GetItemDN(newDate);
+      },
+      onCancel() {
+        return false;
+      }
+    });
   }
 
   async onSubmit(values) {
     const { formId } = this.props;
-    const { lines } = this.state;
+    let { lines } = this.state;
 
     const lines_empty = lines.length === 0;
 
-    const unitprice_empty = lines.find(line => line.unit_price === 0);
+    const qty_empty = lines.find(line => line.qty === 0);
 
-    const expiredate_empty = lines.find(line => line.expire_date_count === 0);
+    const item_id_empty = lines.find(line => line.item_id === null);
 
+    if (item_id_empty) {
+      alert("item cannot empty");
+      return;
+    }
     if (lines_empty) {
       alert("lines cannot empty");
       return;
     }
-    if (expiredate_empty) {
-      alert("expire date cannot empty");
-      return;
-    }
-    if (unitprice_empty) {
-      alert("unit price cannot empty");
+    if (qty_empty) {
+      alert("qty cannot empty");
       return;
     }
 
@@ -259,36 +328,26 @@ class Form extends React.PureComponent {
       document: values,
       lines
     };
+    console.log(saveData);
+    // const { status, id } = formId
+    //   ? await this.props.UpdateRS(formId, saveData)
+    //   : await this.props.InsertDN(saveData);
 
-    const { status, id } = formId
-      ? await this.props.UpdateRS(formId, saveData)
-      : await this.props.InsertRS(saveData);
-
-    if (formId) {
-      alert(status ? "Save Done" : "fail");
-    } else {
-      alert(status ? "Add Done" : "fail");
-      if (status) {
-        window.location.href = `/rs/list`;
-      }
-    }
+    // if (formId) {
+    //   alert(status ? "Save Done" : "fail");
+    // } else {
+    //   alert(status ? "Add Done" : "fail");
+    //   if (status) {
+    //     window.location.href = `/dn/list`;
+    //   }
+    // }
 
     this.setState({ loading: false });
   }
 
-  async GetPO(code) {
-    const { status: found } = await this.props.GetPOForRS(code);
-    if (found) {
-      this.setState({ show_modal: false });
-    }
-
-    this.setState({ found });
-  }
-
   render() {
-    const { formId } = this.props;
-    const { lines, columns, document, loading, found } = this.state;
-
+    const { formId, ContactReducer } = this.props;
+    const { lines, columns, document, loading } = this.state;
     return (
       <MasterContanier>
         <Container>
@@ -302,13 +361,11 @@ class Form extends React.PureComponent {
                 code: document.code,
                 date: document.date,
                 create_by: document.create_by,
-                po_code: document.po_code,
-                po_date: document.po_date,
                 remark: document.remark,
                 refDocId: document.refDocId
               }}
               enableReinitialize={true}
-              validationSchema={POFormSchema}
+              validationSchema={DNFormSchema}
               onSubmit={async (values, actions) => {
                 const binding_this = this;
                 confirm({
@@ -325,7 +382,7 @@ class Form extends React.PureComponent {
               render={props => (
                 <form>
                   <FlexContainer>
-                    <FieldContainer width="40%">
+                    <FieldContainer width="25%">
                       <Field
                         label="รหัส"
                         type="text"
@@ -336,7 +393,7 @@ class Form extends React.PureComponent {
                         padding={true}
                       />
                     </FieldContainer>
-                    <FieldContainer width="30%">
+                    <FieldContainer width="25%">
                       <Field
                         label="วันที่"
                         name="date"
@@ -350,7 +407,7 @@ class Form extends React.PureComponent {
                       />
                     </FieldContainer>
 
-                    <FieldContainer width="30%">
+                    <FieldContainer width="25%">
                       <Field
                         label="โดย"
                         type="text"
@@ -361,43 +418,52 @@ class Form extends React.PureComponent {
                         padding={true}
                       />
                     </FieldContainer>
-                  </FlexContainer>
 
-                  <FlexContainer>
-                    <FieldContainer width="40%">
+                    <FieldContainer width="25%">
                       <Field
-                        label="รหัสใบสั่งซื้อ"
-                        type="text"
-                        name="po_code"
-                        component={InputItem}
-                        value={props.values.po_code}
-                        disabled={true}
-                        padding={true}
-                      />
-                    </FieldContainer>
-                    <FieldContainer width="40%">
-                      <Field
-                        label="วันทีใบสั่งซื้อ"
-                        name="po_date"
-                        component={InputDateItem}
-                        value={moment(props.values.po_date)}
-                        allowClear={false}
-                        disabled={true}
-                        onBlur={null}
+                        label="บริษัท"
+                        name="contact"
+                        component={SelectItem}
+                        value={
+                          props.values.contact ? props.values.contact.org : ""
+                        }
+                        data={ContactReducer.List}
+                        onChange={e => this.onChangeContact(e, props)}
+                        requireStar="true"
+                        fieldread="org"
                       />
                     </FieldContainer>
                   </FlexContainer>
 
                   <RemarkContainer>
-                    <Field
-                      label="หมายเหตุ"
-                      name="remark"
-                      component={InputTextArea}
-                      value={props.values.remark}
-                      onChange={e =>
-                        props.setFieldValue("remark", e.target.value)
-                      }
-                    />
+                    <FieldContainer width="50%">
+                      <Field
+                        label="หมายเหตุ"
+                        name="remark"
+                        component={InputTextArea}
+                        value={props.values.remark}
+                        onChange={e =>
+                          props.setFieldValue("remark", e.target.value)
+                        }
+                      />
+                    </FieldContainer>
+                    <div style={{ paddingLeft: "15px" }} />
+                    <FieldContainer width="50%">
+                      <Field
+                        label="ที่อยู่บริษัท"
+                        name="contact_address"
+                        component={InputTextArea}
+                        value={
+                          props.values.contact
+                            ? props.values.contact.address
+                            : ""
+                        }
+                        onChange={e =>
+                          props.setFieldValue("contact_address", e.target.value)
+                        }
+                        disabled={true}
+                      />
+                    </FieldContainer>
                   </RemarkContainer>
 
                   <TableContainer>
@@ -415,6 +481,7 @@ class Form extends React.PureComponent {
                       loading={loading}
                       OnDelete={() => this.OnDelete()}
                       DisabledSave={document.status === 2 ? true : false}
+                      DisabledAction={document.status === 2}
                       onSubmit={props.handleSubmit}
                     />
                   </FlexCenter>
@@ -423,21 +490,6 @@ class Form extends React.PureComponent {
             />
           </FormContainer>
         </Container>
-
-        <Modal
-          title="ค้นหาเอกสารใบสั่งซื้อ"
-          onCancel={() => this.setState({ show_modal: false })}
-          visible={this.state.show_modal}
-          footer={null}
-        >
-          <InputSearch
-            placeholder="รหัสเอกสารใบสั่งซื้อ"
-            prefix={<Icon type="search" />}
-            onPressEnter={e => this.GetPO(e.target.value)}
-            found={found.toString()}
-          />
-          {!found ? <label className="error">RS Not found</label> : null}
-        </Modal>
       </MasterContanier>
     );
   }
@@ -466,24 +518,17 @@ Form.getInitialProps = async ctx => {
 };
 
 export default connect(
-  ({ POReducer }) => ({
-    POReducer
+  ({ RSReducer, ContactReducer }) => ({
+    RSReducer,
+    ContactReducer
   }),
   {
-    GetPOForRS,
-    InsertRS,
-    UpdateRS,
-    DeleteRS,
-    GetRSById
+    GetItemDN,
+    GetAllContact,
+    ClearContact,
+    InsertDN
   }
 )(Form);
-
-const InputSearch = styled(Input)`
-  .ant-input {
-    border: ${props =>
-      props.found === "false" ? "1px solid red" : "1px solid #d9d9d9"};
-  }
-`;
 
 const MasterContanier = styled.div`
   display: flex;
@@ -518,6 +563,7 @@ const FieldContainer = styled.div`
 `;
 
 const RemarkContainer = styled.div`
+  display: flex;
   padding-left: 15px;
 `;
 

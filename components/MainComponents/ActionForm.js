@@ -9,7 +9,8 @@ const ActionForm = ({
   formId,
   loading = false,
   OnDelete,
-  DisabledSave = false
+  DisabledSave = false,
+  DisabledAction = false
 }) => {
   const submit = async () => {
     onSubmit();
@@ -32,27 +33,31 @@ const ActionForm = ({
     <div>
       {formId ? (
         <div>
-          {!DisabledSave ? (
-            <ButtonSave
-              type="primary"
-              icon="save"
-              loading={loading}
-              disabled={loading}
-              onClick={() => submit()}
-            >
-              บันทึก
-            </ButtonSave>
-          ) : null}
+          {!DisabledAction ? (
+            <div>
+              {!DisabledSave ? (
+                <ButtonSave
+                  type="primary"
+                  icon="save"
+                  loading={loading}
+                  disabled={loading}
+                  onClick={() => submit()}
+                >
+                  บันทึก
+                </ButtonSave>
+              ) : null}
 
-          <ButtonDelete
-            type="primary"
-            icon="delete"
-            loading={loading}
-            disabled={loading}
-            onClick={() => Delete()}
-          >
-            ลบ
-          </ButtonDelete>
+              <ButtonDelete
+                type="primary"
+                icon="delete"
+                loading={loading}
+                disabled={loading}
+                onClick={() => Delete()}
+              >
+                ลบ
+              </ButtonDelete>
+            </div>
+          ) : null}
         </div>
       ) : (
         <ButtonSave

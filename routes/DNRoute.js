@@ -1,5 +1,6 @@
 const isAuthenticated = require("../middlewares/Authenticated");
 const moment = require("moment");
+const { map, join, uniq } = require("lodash");
 
 module.exports = (app, client) => {
   app.post("/api/dn", isAuthenticated, async (req, res) => {
@@ -7,17 +8,17 @@ module.exports = (app, client) => {
     const { document, lines } = req.body;
 
     const LastDocument = await client.query(
-      `SELECT setval('rs_id_seq',nextval('rs_id_seq')-1) AS id;`
+      `SELECT setval('dn_id_seq',nextval('rs_id_seq')-1) AS id;`
     );
 
     const newId = parseInt(LastDocument.rows[0].id) + 1;
-    //#region RS
-    const promise_docRS_update = new Promise(async (resolve, reject) => {
-      const text_document = `INSERT INTO rs(code, date, remark , ref_doc_id, status , create_by,
+    //#region DN
+    const promise_docDN_update = new Promise(async (resolve, reject) => {
+      const text_document = `INSERT INTO dn(code, date, remark , status , create_by,
         create_time, last_modify_by, last_modify_time)
         VALUES($1, $2, $3, $4, $5,$6, $7 , $8, $9) RETURNING id `;
 
-      const generateCode = `RS-${newId}`;
+      const generateCode = `DN-${newId}`;
 
       const values = [
         generateCode,
@@ -25,7 +26,6 @@ module.exports = (app, client) => {
           .utcOffset(7)
           .format("YYYY-MM-DDTHH:mm:ss.SSS"),
         document.remark,
-        document.refDocId,
         1, //Save
         UserName,
         new Date(),
@@ -37,12 +37,12 @@ module.exports = (app, client) => {
       resolve();
     });
 
-    const promise_linesRS_query = lines.map(line => {
+    const promise_linesDN_query = lines.map(line => {
       return new Promise(async (resolve, reject) => {
-        const text_lines = `INSERT INTO rs_line (rs_id, item_id, item_name , qty , remain_qty
+        const text_lines = `INSERT INTO dn_line (rs_id, item_id, item_name , qty , remain_qty
           ,unit_id ,unit_name, unit_price , remark, ref_doc_id, ref_line_id
-          ,create_by, create_time, last_modify_by, last_modify_time, uuid, expire_date_count, expire_date)
-          VALUES($1, $2, $3, $4, $5,$6, $7 , $8 ,$9 , $10, $11, $12, $13, $14, $15, $16, $17, $18)`;
+          ,create_by, create_time, last_modify_by, last_modify_time, uuid)
+          VALUES($1, $2, $3, $4, $5,$6, $7 , $8 ,$9 , $10, $11, $12, $13, $14, $15, $16)`;
         const values = [
           newId,
           line.item_id,
@@ -53,18 +53,13 @@ module.exports = (app, client) => {
           line.unit_name,
           line.unit_price,
           line.remark,
-          line.po_id,
-          line.id,
+          line.rs_id,
+          line.rs_line_id,
           UserName,
           new Date(),
           UserName,
           new Date(),
-          line.uuid,
-          line.expire_date_count,
-          moment(document.date)
-            .add(line.expire_date_count, "d")
-            .utcOffset(7)
-            .format("YYYY-MM-DDTHH:mm:ss.SSS")
+          line.uuid
         ];
 
         await client.query(text_lines, values);
@@ -73,17 +68,18 @@ module.exports = (app, client) => {
       });
     });
 
-    //#endregion RS
+    //#endregion DN
 
-    //#region PO
+    //#region RS
 
-    const promise_docPO_update = new Promise(async (resolve, reject) => {
-      const text = `UPDATE PO SET status = 2 Where id = ${document.refDocId}`;
+    const promise_docRS_update = new Promise(async (resolve, reject) => {
+      const groupRSDocId = join(uniq(map(lines, "rs_id")));
+      const text = `UPDATE rs SET status = 2 Where id IN (${groupRSDocId})`;
       await client.query(text);
       resolve();
     });
 
-    const promise_linesPO_update = lines.map(line => {
+    const promise_linesRS_update = lines.map(line => {
       return new Promise(async (resolve, reject) => {
         const text = `UPDATE po_line SET remain_qty = remain_qty - ${
           line.qty
@@ -95,7 +91,7 @@ module.exports = (app, client) => {
       });
     });
 
-    //#endregion RFQ
+    //#endregion RS
 
     //#region Item
 

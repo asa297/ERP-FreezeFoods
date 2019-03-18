@@ -9,6 +9,7 @@ export {
 } from "./FormItems/InputTextAreaInline";
 export { default as InputTextArea } from "./FormItems/InputTextArea";
 export { default as SelectItem } from "./FormItems/SelectItem";
+export { default as SelectItemInline } from "./FormItems/SelectItemInline";
 
 export { default as InputDateItem } from "./FormItems/InputDateItem";
 export {

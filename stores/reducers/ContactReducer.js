@@ -8,6 +8,11 @@ const initState = {
 
 export default function(state = initState, action) {
   switch (action.type) {
+    case actionTypes.CONTACT.FETCH_LIST_ALL:
+      return Object.assign({}, state, {
+        List: [...action.payload.data],
+        HasMore: action.payload.HasMore
+      });
     case actionTypes.CONTACT.FETCH_LIST:
       return Object.assign({}, state, {
         List: [...state.List, ...action.payload.data],

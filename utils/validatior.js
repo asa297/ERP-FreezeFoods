@@ -29,3 +29,14 @@ export const POFormSchema = Yup.object().shape({
   // date: Yup.date().required("Required"),
   // create_by: Yup.string().required("Required")
 });
+
+export const RSFormSchema = Yup.object().shape({
+  // code: Yup.string().required("Required"),
+  // date: Yup.date().required("Required"),
+  // create_by: Yup.string().required("Required")
+});
+
+export const DNFormSchema = Yup.object().shape({
+  date: Yup.date().required("Required"),
+  contact: Yup.object().required("Required")
+});

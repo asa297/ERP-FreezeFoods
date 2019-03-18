@@ -46,6 +46,18 @@ module.exports = (app, client) => {
     res.send(result);
   });
 
+  app.get("/api/contact/list", isAuthenticated, async (req, res) => {
+    const data = await client.query(
+      `SELECT id , name, phone, org, remark, address from contact order by id`
+    );
+
+    const result = {
+      data: data.rows,
+      HasMore: false
+    };
+    res.send(result);
+  });
+
   app.get("/api/contact/form/:id", isAuthenticated, async (req, res) => {
     const { id } = req.params;
 

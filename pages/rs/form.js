@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
 import { authInitialProps, checkUserRole } from "<utils>/auth";
-import { POFormSchema } from "<utils>/validatior";
+import { RSFormSchema } from "<utils>/validatior";
 import {
   InputItem,
   InputTextArea,
@@ -308,7 +308,7 @@ class Form extends React.PureComponent {
                 refDocId: document.refDocId
               }}
               enableReinitialize={true}
-              validationSchema={POFormSchema}
+              validationSchema={RSFormSchema}
               onSubmit={async (values, actions) => {
                 const binding_this = this;
                 confirm({
@@ -415,6 +415,7 @@ class Form extends React.PureComponent {
                       loading={loading}
                       OnDelete={() => this.OnDelete()}
                       DisabledSave={document.status === 2 ? true : false}
+                      DisabledAction={document.status === 2}
                       onSubmit={props.handleSubmit}
                     />
                   </FlexCenter>

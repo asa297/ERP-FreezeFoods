@@ -4,7 +4,7 @@ import { ItemFormSchema } from "<utils>/validatior";
 import {
   InputItemInline,
   InputTextArea,
-  SelectItem,
+  SelectItemInline,
   ActionForm
 } from "<components>";
 import {
@@ -134,7 +134,7 @@ class Form extends React.PureComponent {
                       <Field
                         label="หมวดสินค้า"
                         name="category"
-                        component={SelectItem}
+                        component={SelectItemInline}
                         value={
                           props.values.category
                             ? props.values.category.name
