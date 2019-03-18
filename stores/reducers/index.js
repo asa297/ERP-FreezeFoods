@@ -7,6 +7,7 @@ import ItemReducer from "./ItemReducer";
 import RequestReducer from "./RequestReducer";
 import POReducer from "./POReducer";
 import RSReducer from "./RSReducer";
+import DNReducer from "./DNReducer";
 
 export default combineReducers({
   ItemCategoryReducer,
@@ -15,5 +16,6 @@ export default combineReducers({
   ItemReducer,
   RequestReducer,
   POReducer,
-  RSReducer
+  RSReducer,
+  DNReducer
 });

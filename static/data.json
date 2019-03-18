@@ -97,6 +97,20 @@
       "type": "Form",
       "page": "ReceiveSuppier",
       "role": [1]
+    },
+    {
+      "path": "/dn/list",
+      "sub": "document",
+      "type": "List",
+      "page": "DeliveryNote",
+      "role": [1]
+    },
+    {
+      "path": "/dn/form",
+      "sub": "document",
+      "type": "Form",
+      "page": "DeliveryNote",
+      "role": [1]
     }
   ]
 }

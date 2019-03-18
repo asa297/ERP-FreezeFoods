@@ -46,6 +46,7 @@ nextApp
     require("./routes/RequestRoute")(app, client);
     require("./routes/PORoute")(app, client);
     require("./routes/RSRoute")(app, client);
+    require("./routes/DNRoute")(app, client);
 
     app.get("*", (req, res) => {
       return handle(req, res);
