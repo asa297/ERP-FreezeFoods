@@ -45,7 +45,7 @@ class Form extends React.PureComponent {
         render: (text, record, index) => {
           return (
             <SelectOption
-              data={this.props.ItemReducer.List}
+              data={this.state.Item_Select}
               value={record.item_id}
               onChange={value => this.ChangeItem(value, index)}
               disabled={this.state.status === 2 ? true : false}
@@ -61,11 +61,11 @@ class Form extends React.PureComponent {
         render: (text, record, index) => {
           return (
             <SelectOption
-              data={this.props.ItemReducer.List}
+              data={this.state.Item_Select}
               value={record.item_id}
               onChange={value => this.ChangeItem(value, index)}
               disabled={this.state.status === 2 ? true : false}
-              fieldread="name"
+              fieldread="value"
             />
           );
         }
@@ -105,24 +105,9 @@ class Form extends React.PureComponent {
         }
       },
       {
-        title: (filters, sortOrder) => (
-          <FlexContainer>
-            หน่วยสินค้า<LabelRequire>*</LabelRequire>
-          </FlexContainer>
-        ),
+        title: "หน่วยสินค้า",
         dataIndex: "unit_name",
-        width: "15%",
-        render: (text, record, index) => {
-          return (
-            <SelectOption
-              data={this.props.ItemUnitReducer.List}
-              value={record.unit_name}
-              onChange={value => this.ChangeItemUnit(value, index)}
-              disabled={this.state.status === 2 ? true : false}
-              fieldread="name"
-            />
-          );
-        }
+        width: "15%"
       },
       {
         title: "หมายเหตุ",
@@ -172,7 +157,6 @@ class Form extends React.PureComponent {
         date: moment(),
         create_by: this.props.auth.user.name
       },
-
       data: [
         {
           id: 0,
@@ -186,7 +170,8 @@ class Form extends React.PureComponent {
           uuid: uuidv4()
         }
       ],
-      deleted_data: []
+      deleted_data: [],
+      Item_Select: []
     };
   }
 
@@ -200,7 +185,13 @@ class Form extends React.PureComponent {
     }
   }
 
-  componentWillReceiveProps({ formId, request, auth }) {
+  componentWillReceiveProps({ formId, request, auth, ItemReducer }) {
+    if (ItemReducer.List) {
+      const Item_Select = ItemReducer.List.map(item => {
+        return this.SetItemSelect(item);
+      });
+      this.setState({ Item_Select });
+    }
     if (!formId) {
       let [data, deleted_data] = [...this.state.data, this.state.deleted_data];
       data = [
@@ -242,6 +233,15 @@ class Form extends React.PureComponent {
   componentWillUnmount() {
     this.props.ClearItem();
     this.props.ClearItemUnit();
+  }
+
+  SetItemSelect(item) {
+    const { id, name, item_unit_name } = item;
+    return {
+      id,
+      name,
+      value: `${id} : ${name} (${item_unit_name})`
+    };
   }
 
   async OnDelete() {
@@ -294,6 +294,8 @@ class Form extends React.PureComponent {
     let data = [...this.state.data];
     data[index].item_id = item.id;
     data[index].item_name = item.name;
+    data[index].unit_id = item.item_unit_id;
+    data[index].unit_name = item.item_unit_name;
     this.setState({ data });
   }
 
@@ -306,16 +308,6 @@ class Form extends React.PureComponent {
   ChangeUnitPrice(e, index) {
     let data = [...this.state.data];
     data[index].unit_price = e.target.value;
-    this.setState({ data });
-  }
-
-  ChangeItemUnit(id, index) {
-    const { ItemUnitReducer } = this.props;
-    const unit = ItemUnitReducer.List.find(unit => unit.id === id);
-
-    let data = [...this.state.data];
-    data[index].unit_id = unit.id;
-    data[index].unit_name = unit.name;
     this.setState({ data });
   }
 

@@ -269,7 +269,9 @@ module.exports = (app, client) => {
 
   app.post("/api/rs/itemdn", isAuthenticated, async (req, res) => {
     let { date } = req.body;
-    date = moment(date).format("YYYY-MM-DD");
+    date = moment(date)
+      .add(1, "d")
+      .format("YYYY-MM-DD");
 
     const text = `select rs_line.* , rs.code as rs_code from rs_line
     left join rs on rs_line.rs_id = rs.id
