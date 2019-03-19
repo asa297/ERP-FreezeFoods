@@ -328,10 +328,10 @@ class Form extends React.PureComponent {
       document: values,
       lines
     };
-    console.log(saveData);
-    // const { status, id } = formId
-    //   ? await this.props.UpdateRS(formId, saveData)
-    //   : await this.props.InsertDN(saveData);
+    // console.log(saveData);
+    const { status, id } = formId
+      ? await this.props.UpdateRS(formId, saveData)
+      : await this.props.InsertDN(saveData);
 
     // if (formId) {
     //   alert(status ? "Save Done" : "fail");

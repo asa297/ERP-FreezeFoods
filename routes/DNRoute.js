@@ -7,6 +7,9 @@ module.exports = (app, client) => {
     const { name: UserName } = req.user;
     const { document, lines } = req.body;
 
+    // console.log(req.body )
+    // res.send()
+
     const LastDocument = await client.query(
       `SELECT setval('dn_id_seq',nextval('rs_id_seq')-1) AS id;`
     );
@@ -83,7 +86,7 @@ module.exports = (app, client) => {
       return new Promise(async (resolve, reject) => {
         const text = `UPDATE po_line SET remain_qty = remain_qty - ${
           line.qty
-        } Where id = ${line.id} AND po_id = ${line.po_id}`;
+        } Where id = ${line.rs_id} AND rs_id = ${line.rs_line_id}`;
 
         await client.query(text);
 
@@ -95,17 +98,17 @@ module.exports = (app, client) => {
 
     //#region Item
 
-    const promise_linesItem_query = lines.map(line => {
-      return new Promise(async (resolve, reject) => {
-        const text = `UPDATE item SET qty = qty + ${line.qty} Where id = ${
-          line.item_id
-        }`;
+    // const promise_linesItem_query = lines.map(line => {
+    //   return new Promise(async (resolve, reject) => {
+    //     const text = `UPDATE item SET qty = qty - ${line.qty} Where id = ${
+    //       line.item_id
+    //     }`;
 
-        await client.query(text);
+    //     await client.query(text);
 
-        resolve();
-      });
-    });
+    //     resolve();
+    //   });
+    // });
 
     //#endregion Item
     Promise.all([
