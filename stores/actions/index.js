@@ -42,7 +42,7 @@ export const GetItemById = id => async dispatch => {
 export const UpdateItem = (id, value) => async dispatch => {
   const res = await axios.put("/api/item/" + id, value).catch(e => null);
   if (!res) return { status: false };
-  dispatch({ type: actionTypes.ITEM.UPDATE, payload: value });
+  // dispatch({ type: actionTypes.ITEM.UPDATE, payload: value });
   return { status: res.status === 200 };
 };
 
@@ -96,7 +96,7 @@ export const UpdateItemCategory = (id, value) => async dispatch => {
     .put("/api/itemcategory/" + id, value)
     .catch(e => null);
   if (!res) return { status: false };
-  dispatch({ type: actionTypes.CATEGORY.UPDATE, payload: value });
+  // dispatch({ type: actionTypes.CATEGORY.UPDATE, payload: value });
   return { status: res.status === 200 };
 };
 
@@ -146,7 +146,7 @@ export const GetContactById = id => async dispatch => {
 export const UpdateContact = (id, value) => async dispatch => {
   const res = await axios.put("/api/contact/" + id, value).catch(e => null);
   if (!res) return { status: false };
-  dispatch({ type: actionTypes.CONTACT.UPDATE, payload: value });
+  // dispatch({ type: actionTypes.CONTACT.UPDATE, payload: value });
   return { status: res.status === 200 };
 };
 
@@ -175,7 +175,7 @@ export const GetItemUnit = page => async dispatch => {
   const res = await axios.get("/api/unit/list/" + page).catch(e => null);
   if (!res) return { status: false };
   const { data } = res;
-  dispatch({ type: actionTypes.UNIT.FETCH_LIST, payload: data });
+  // dispatch({ type: actionTypes.UNIT.FETCH_LIST, payload: data });
   return { status: res.status === 200 };
 };
 

@@ -1,19 +1,16 @@
 import { connect } from "react-redux";
 import { authInitialProps, checkUserRole } from "<utils>/auth";
 import { ItemFormSchema } from "<utils>/validatior";
-import {
-  InputItemInline,
-  InputTextArea,
-  SelectItemInline,
-  ActionForm
-} from "<components>";
+import { InputItem, InputTextArea, SelectItem, ActionForm } from "<components>";
 import {
   InsertItem,
   GetItemCategoryAll,
+  GetAllItemUnit,
   GetItemById,
   UpdateItem,
   DeleteItem,
-  CleaerItemCategory
+  CleaerItemCategory,
+  ClearItemUnit
 } from "<actions>";
 import { Formik, Field } from "formik";
 import styled from "styled-components";
@@ -31,6 +28,7 @@ class Form extends React.PureComponent {
   componentWillMount() {
     const { formId } = this.props;
     this.props.GetItemCategoryAll();
+    this.props.GetAllItemUnit();
     if (formId) this.props.GetItemById(formId);
   }
 
@@ -41,6 +39,13 @@ class Form extends React.PureComponent {
     props.setFieldValue("category", itemcategory);
   }
 
+  onChangeItemUnit(id, props) {
+    const itemunit = this.props.ItemUnitReducer.List.find(
+      unit => unit.id === id
+    );
+    props.setFieldValue("unit", itemunit);
+  }
+
   setInitialDataForm(formId, { Item }) {
     if (!formId) return {};
     return {
@@ -49,12 +54,17 @@ class Form extends React.PureComponent {
       category: {
         id: Item.item_category_id,
         name: Item.item_category_name
+      },
+      unit: {
+        id: Item.item_unit_id,
+        name: Item.item_unit_name
       }
     };
   }
 
   componentWillUnmount() {
     this.props.CleaerItemCategory();
+    this.props.ClearItemUnit();
     //Need to Clear ItemCategory Reducer
   }
   async OnDelete() {
@@ -90,7 +100,12 @@ class Form extends React.PureComponent {
   }
 
   render() {
-    const { ItemCategoryReducer, ItemReducer, formId } = this.props;
+    const {
+      ItemCategoryReducer,
+      ItemReducer,
+      ItemUnitReducer,
+      formId
+    } = this.props;
     return (
       <MasterContanier>
         <Container>
@@ -116,25 +131,26 @@ class Form extends React.PureComponent {
               render={props => (
                 <form>
                   <FlexContainer>
-                    <FieldContainer width="100%">
+                    <FieldContainer width="30%">
                       <Field
                         label="ชื่อ"
                         type="text"
                         name="name"
-                        component={InputItemInline}
+                        component={InputItem}
                         value={props.values.name}
                         requireStar="true"
+                        padding={true}
                         onChange={e =>
                           props.setFieldValue("name", e.target.value)
                         }
                       />
                     </FieldContainer>
 
-                    <FieldContainer width="100%">
+                    <FieldContainer width="35%">
                       <Field
                         label="หมวดสินค้า"
                         name="category"
-                        component={SelectItemInline}
+                        component={SelectItem}
                         value={
                           props.values.category
                             ? props.values.category.name
@@ -143,6 +159,20 @@ class Form extends React.PureComponent {
                         requireStar="true"
                         data={ItemCategoryReducer.List}
                         onChange={e => this.onChangeItemCategory(e, props)}
+                        fieldread="name"
+                      />
+                    </FieldContainer>
+
+                    <FieldContainer width="35%">
+                      <Field
+                        label="หน่วยสินค้า"
+                        name="unit"
+                        component={SelectItem}
+                        value={props.values.unit ? props.values.unit.name : ""}
+                        requireStar="true"
+                        data={ItemUnitReducer.List}
+                        onChange={e => this.onChangeItemUnit(e, props)}
+                        fieldread="name"
                       />
                     </FieldContainer>
                   </FlexContainer>
@@ -191,9 +221,10 @@ Form.getInitialProps = async ctx => {
 };
 
 export default connect(
-  ({ ItemCategoryReducer, ItemReducer }) => ({
+  ({ ItemCategoryReducer, ItemReducer, ItemUnitReducer }) => ({
     ItemCategoryReducer,
-    ItemReducer
+    ItemReducer,
+    ItemUnitReducer
   }),
   {
     InsertItem,
@@ -201,7 +232,9 @@ export default connect(
     GetItemById,
     UpdateItem,
     DeleteItem,
-    CleaerItemCategory
+    CleaerItemCategory,
+    GetAllItemUnit,
+    ClearItemUnit
   }
 )(Form);
 

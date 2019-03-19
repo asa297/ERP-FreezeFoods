@@ -41,7 +41,7 @@ const LabelRequire = styled.div`
 
 const InputForm = styled(Input)`
   width: 100%;
-  height: 35px;
+
   border: ${props => props.border || "1px solid #ccc"};
   padding: 5px 15px;
 `;

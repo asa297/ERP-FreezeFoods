@@ -3,13 +3,16 @@ const isAuthenticated = require("../middlewares/Authenticated");
 module.exports = (app, client) => {
   app.post("/api/item", isAuthenticated, async (req, res) => {
     const { name: UserName } = req.user;
-    const { name, category, remark } = req.body;
-    const text =
-      "INSERT INTO item(name, item_category_id, item_category_name ,remark, create_by, create_time, last_modify_by, last_modify_time) VALUES($1, $2, $3, $4, $5,$6, $7 , $8) RETURNING id";
+    const { name, category, unit, remark } = req.body;
+    const text = `INSERT INTO item(name, item_category_id, item_category_name  ,item_unit_id
+        , item_unit_name ,remark, create_by, create_time, last_modify_by, last_modify_time) 
+        VALUES($1, $2, $3, $4, $5,$6, $7 , $8, $9, $10) RETURNING id`;
     const values = [
       name,
       category.id,
       category.name,
+      unit.id,
+      unit.name,
       remark,
       UserName,
       new Date(),
@@ -31,9 +34,10 @@ module.exports = (app, client) => {
     const { page } = req.params;
 
     const data = await client.query(
-      `SELECT id, name, item_category_id, item_category_name ,qty ,remark from item order by last_modify_time desc OFFSET ${(page -
-        1) *
-        30} ROWS FETCH NEXT 30 ROWS ONLY;`
+      `SELECT id, name, item_category_id, item_category_name , item_unit_id
+        ,item_unit_name ,qty ,remark from item order by last_modify_time desc OFFSET ${(page -
+          1) *
+          30} ROWS FETCH NEXT 30 ROWS ONLY;`
     );
 
     const result = {
@@ -45,7 +49,8 @@ module.exports = (app, client) => {
 
   app.get("/api/item/list", isAuthenticated, async (req, res) => {
     const data = await client.query(
-      `SELECT id, name, item_category_id, item_category_name ,remark from item order by id`
+      `SELECT id, name, item_category_id, item_category_name ,item_unit_id
+      , item_unit_name,remark from item order by id`
     );
 
     const result = {
@@ -59,7 +64,8 @@ module.exports = (app, client) => {
     const { id } = req.params;
 
     const data = await client.query(
-      `SELECT id, name, item_category_id, item_category_name ,remark from item WHERE id = ${id}`
+      `SELECT id, name, item_category_id, item_category_name ,item_unit_id
+      , item_unit_name,remark from item WHERE id = ${id}`
     );
 
     res.send({ result: data.rows[0] });
@@ -77,12 +83,16 @@ module.exports = (app, client) => {
   app.put("/api/item/:id", isAuthenticated, async (req, res) => {
     const { id } = req.params;
     const { name: UserName } = req.user;
-    const { name, category, remark } = req.body;
-    const text = `UPDATE item SET name = $1, item_category_id = $2, item_category_name = $3 ,remark = $4, last_modify_by = $5, last_modify_time = $6 Where id = ${id}`;
+    const { name, category, unit, remark } = req.body;
+    const text = `UPDATE item SET name = $1, item_category_id = $2, item_category_name = $3 , 
+    item_unit_id = $4, 
+    item_unit_name = $5 ,remark = $6, last_modify_by = $7, last_modify_time = $8 Where id = ${id}`;
     const values = [
       name,
       category.id,
       category.name,
+      unit.id,
+      unit.name,
       remark,
       UserName,
       new Date()
