@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
 import { authInitialProps, checkUserRole } from "<utils>/auth";
-import { GetRS, ClearRS } from "<actions>";
+import { GetDN, ClearDN } from "<actions>";
 import { Table, Icon } from "antd";
 import styled from "styled-components";
 import Link from "next/link";
@@ -15,8 +15,8 @@ class List extends React.PureComponent {
   };
 
   componentWillMount() {
-    this.props.ClearRS();
-    this.props.GetRS(this.state.page);
+    this.props.ClearDN();
+    this.props.GetDN(this.state.page);
   }
 
   async LoadListMore(page) {
@@ -24,7 +24,7 @@ class List extends React.PureComponent {
     const { HasMore } = this.props.RSReducer;
     if (HasMore && page !== 1 && !loading) {
       this.setState({ page, loading: true });
-      await this.props.GetRS(page);
+      await this.props.GetDN(page);
 
       this.setState({ loading: false });
     }
@@ -56,24 +56,22 @@ class List extends React.PureComponent {
       },
 
       {
-        title: "ผู้สร้าง",
-        dataIndex: "create_by",
+        title: "บริษัท",
+        dataIndex: "contact_org",
         width: "20%"
       },
-
       {
         title: "หมายเหตุ",
         dataIndex: "remark",
         width: "20%"
       },
-      { title: "ใบสั่งซื้อ", dataIndex: "po_code", width: "15%" },
       {
         title: "",
         dataIndex: "",
         render: (text, record) => {
           return (
             <Link
-              href={{ pathname: "/rs/form", query: { id: record.id } }}
+              href={{ pathname: "/dn/form", query: { id: record.id } }}
               prefetch
             >
               <a onClick={() => this.setState({ loading: true })}>
@@ -84,7 +82,6 @@ class List extends React.PureComponent {
         }
       }
     ];
-
     return (
       <ListContainer>
         <Container>
@@ -100,7 +97,7 @@ class List extends React.PureComponent {
             >
               <Table
                 columns={columns}
-                dataSource={this.props.RSReducer.List}
+                dataSource={this.props.DNReducer.List}
                 pagination={false}
                 rowKey={record => record.id}
               />
@@ -121,8 +118,8 @@ List.getInitialProps = async ctx => {
 };
 
 export default connect(
-  ({ RSReducer }) => ({ RSReducer }),
-  { GetRS, ClearRS }
+  ({ DNReducer }) => ({ DNReducer }),
+  { GetDN, ClearDN }
 )(List);
 
 const Container = styled.div`

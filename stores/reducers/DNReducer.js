@@ -8,17 +8,17 @@ const initState = {
 
 export default function(state = initState, action) {
   switch (action.type) {
-    case actionTypes.RS.FETCH_LIST:
+    case actionTypes.DN.FETCH_LIST:
       return Object.assign({}, state, {
         List: [...state.List, ...action.payload.data],
         HasMore: action.payload.HasMore
       });
-    case actionTypes.RS.FETCH:
-    case actionTypes.RS.UPDATE:
+    case actionTypes.DN.FETCH:
+    case actionTypes.DN.UPDATE:
       return Object.assign({}, state, {
         Item: action.payload
       });
-    case actionTypes.RS.RESET:
+    case actionTypes.DN.RESET:
       return { ...initState };
 
     default:

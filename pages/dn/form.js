@@ -10,7 +10,15 @@ import {
   SelectItem,
   DocStatus
 } from "<components>";
-import { GetItemDN, GetAllContact, ClearContact, InsertDN } from "<actions>";
+import {
+  GetItemDN,
+  GetAllContact,
+  ClearContact,
+  InsertDN,
+  GetDNById,
+  UpdateDN,
+  DeleteDN
+} from "<actions>";
 import { Formik, Field } from "formik";
 import styled from "styled-components";
 import Router from "next/router";
@@ -45,7 +53,7 @@ class Form extends React.PureComponent {
               data={this.state.Item_Select}
               value={record.item_name}
               onChange={value => this.ChangeItem(value, index)}
-              disabled={this.state.status === 2 ? true : false}
+              disabled={this.props.formId ? true : false}
               fieldread="value"
             />
           );
@@ -99,7 +107,7 @@ class Form extends React.PureComponent {
         dataIndex: "",
         width: "10%",
         render: (text, record, index) => {
-          if (this.state.status === 2) return;
+          if (this.props.formId) return;
           return (
             <div>
               <a href="#" onClick={() => this.DeleteRow(index)}>
@@ -138,9 +146,9 @@ class Form extends React.PureComponent {
     const { date } = this.state.document;
     this.props.GetAllContact();
     this.props.GetItemDN(date);
-    const { formId, rs } = this.props;
+    const { formId, dn } = this.props;
     if (formId) {
-      const { document, lines } = rs;
+      const { document, lines } = dn;
       this.setState({
         document,
         lines
@@ -150,13 +158,44 @@ class Form extends React.PureComponent {
     }
   }
 
-  componentWillReceiveProps({ RSReducer }) {
+  componentWillReceiveProps({ RSReducer, dn, formId }) {
     const { List } = RSReducer;
     if (List) {
       const Item_Select = List.map(item => {
         return this.SetItemSelect(item);
       });
       this.setState({ Item_Select });
+    }
+
+    if (dn && formId) {
+      const { document, lines } = dn;
+      this.setState({
+        document,
+        lines
+      });
+    } else if (!formId) {
+      this.setState({
+        document: {
+          code: "####",
+          date: moment(),
+          status: 0,
+          create_by: this.props.auth.user.name,
+          remark: "",
+          refDocId: 0
+        },
+        lines: [
+          {
+            id: 0,
+            item_id: null,
+            item_name: null,
+            qty: 0,
+            unit_id: null,
+            unit_name: null,
+            remark: null,
+            uuid: uuidv4()
+          }
+        ]
+      });
     }
   }
 
@@ -185,7 +224,7 @@ class Form extends React.PureComponent {
       rs_code,
       unit_id,
       unit_name,
-      value: `${item_id} : ${item_name} (${rs_code})`
+      value: `${item_id} : ${item_name} (${unit_name}) (${rs_code})`
     };
   }
 
@@ -198,7 +237,7 @@ class Form extends React.PureComponent {
       lines
     };
 
-    const { status } = await this.props.DeleteRS(formId, { data });
+    const { status } = await this.props.DeleteDN(formId, { data });
     if (status) {
       alert("Delete Done");
       Router.push(`/dn/list`);
@@ -307,12 +346,6 @@ class Form extends React.PureComponent {
 
     const qty_empty = lines.find(line => line.qty === 0);
 
-    const item_id_empty = lines.find(line => line.item_id === null);
-
-    if (item_id_empty) {
-      alert("item cannot empty");
-      return;
-    }
     if (lines_empty) {
       alert("lines cannot empty");
       return;
@@ -328,19 +361,19 @@ class Form extends React.PureComponent {
       document: values,
       lines
     };
-    // console.log(saveData);
+
     const { status, id } = formId
-      ? await this.props.UpdateRS(formId, saveData)
+      ? await this.props.UpdateDN(formId, saveData)
       : await this.props.InsertDN(saveData);
 
-    // if (formId) {
-    //   alert(status ? "Save Done" : "fail");
-    // } else {
-    //   alert(status ? "Add Done" : "fail");
-    //   if (status) {
-    //     window.location.href = `/dn/list`;
-    //   }
-    // }
+    if (formId) {
+      alert(status ? "Save Done" : "fail");
+    } else {
+      alert(status ? "Add Done" : "fail");
+      if (status) {
+        window.location.href = `/dn/list`;
+      }
+    }
 
     this.setState({ loading: false });
   }
@@ -348,6 +381,7 @@ class Form extends React.PureComponent {
   render() {
     const { formId, ContactReducer } = this.props;
     const { lines, columns, document, loading } = this.state;
+
     return (
       <MasterContanier>
         <Container>
@@ -362,7 +396,11 @@ class Form extends React.PureComponent {
                 date: document.date,
                 create_by: document.create_by,
                 remark: document.remark,
-                refDocId: document.refDocId
+                contact: {
+                  id: document.contact_id,
+                  org: document.contact_org,
+                  address: document.contact_address
+                }
               }}
               enableReinitialize={true}
               validationSchema={DNFormSchema}
@@ -497,7 +535,7 @@ class Form extends React.PureComponent {
 
 Form.getInitialProps = async ctx => {
   let formId;
-  let rs = {
+  let dn = {
     document: {},
     lines: []
   };
@@ -508,13 +546,13 @@ Form.getInitialProps = async ctx => {
 
     if (query.id) {
       formId = query.id;
-      rs = await ctx.reduxStore.dispatch(GetRSById(formId, ctx));
+      dn = await ctx.reduxStore.dispatch(GetDNById(formId, ctx));
     } else {
       await ctx.reduxStore.dispatch({ type: actionTypes.PO.RESET });
     }
   }
 
-  return { auth, formId, rs };
+  return { auth, formId, dn };
 };
 
 export default connect(
@@ -526,7 +564,9 @@ export default connect(
     GetItemDN,
     GetAllContact,
     ClearContact,
-    InsertDN
+    InsertDN,
+    UpdateDN,
+    DeleteDN
   }
 )(Form);
 
