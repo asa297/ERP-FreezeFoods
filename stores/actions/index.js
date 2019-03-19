@@ -417,3 +417,48 @@ export const ClearDN = () => async dispatch => {
 };
 
 //#endregion DN Action
+
+//#region RN Action
+export const InsertRN = value => async dispatch => {
+  const res = await axios.post("/api/rn", value);
+  if (!res) return { status: false };
+  return { status: res.status === 200, id: res.data.id };
+};
+
+export const GetRN = page => async dispatch => {
+  const res = await axios.get("/api/rn/list/" + page).catch(e => null);
+  if (!res) return { status: false };
+  const { data } = res;
+  dispatch({ type: actionTypes.RN.FETCH_LIST, payload: data });
+  return { status: res.status === 200 };
+};
+
+export const DeleteRN = (id, value) => async (dispatch, currentState) => {
+  const res = await axios.delete(`/api/rn/${id}`, value).catch(e => null);
+  if (!res) return { status: false };
+  return { status: res.status === 200 };
+};
+
+export const GetRNById = (id, { req }) => async dispatch => {
+  // const res = await axios.get("/api/request/form/" + id).catch(e => null);
+  const baseUrl = req ? `${req.protocol}://${req.get("Host")}` : "";
+
+  const res = await axios.get(baseUrl + "/api/rn/form/" + id).catch(e => null);
+
+  if (!res) return { status: false };
+  const { data } = res;
+
+  return data;
+};
+
+export const UpdateRN = (id, value) => async dispatch => {
+  const res = await axios.put("/api/rn/" + id, value).catch(e => null);
+  if (!res) return { status: false };
+  return { status: res.status === 200 };
+};
+
+export const ClearRN = () => async dispatch => {
+  dispatch({ type: actionTypes.RN.RESET });
+};
+
+//#endregion RN Action

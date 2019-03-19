@@ -70,5 +70,14 @@ export const actionTypes = {
     DELETE: "DELETE_DN",
     UPDATE: "UPDATE_DN",
     RESET: "RESET_DN"
+  },
+  RN: {
+    CREATE: "CREATE_RN",
+    FETCH_LIST: "FETCH_LIST_RN",
+    FETCH_LIST_ALL: "FETCH_LIST_ALL_RN",
+    FETCH: "FETCH_RN",
+    DELETE: "DELETE_RN",
+    UPDATE: "UPDATE_RN",
+    RESET: "RESET_RN"
   }
 };
