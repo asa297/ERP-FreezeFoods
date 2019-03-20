@@ -591,7 +591,7 @@ Form.getInitialProps = async ctx => {
       formId = query.id;
       dn = await ctx.reduxStore.dispatch(GetDNById(formId, ctx));
     } else {
-      await ctx.reduxStore.dispatch({ type: actionTypes.PO.RESET });
+      await ctx.reduxStore.dispatch({ type: actionTypes.DN.RESET });
     }
   }
 

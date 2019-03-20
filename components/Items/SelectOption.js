@@ -2,7 +2,7 @@ import { Select, Form } from "antd";
 
 const Option = Select.Option;
 
-const SelectOption = ({ data, fieldread, ...props }) => {
+const SelectOption = ({ data = [], fieldread = "name", ...props }) => {
   return (
     <Select
       {...props}

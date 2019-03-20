@@ -416,6 +416,16 @@ export const ClearDN = () => async dispatch => {
   dispatch({ type: actionTypes.DN.RESET });
 };
 
+export const GetDNForRN = code => async dispatch => {
+  const res = await axios.get("/api/dn/getDNtoRN/" + code).catch(e => null);
+
+  const { data } = res;
+  if (!data) return { status: false };
+
+  dispatch({ type: actionTypes.DN.FETCH, payload: data });
+  return { status: true };
+};
+
 //#endregion DN Action
 
 //#region RN Action

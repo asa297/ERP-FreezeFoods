@@ -63,6 +63,10 @@ export const MenuManage = ({ UserRole }) => {
       route.page === "DeliveryNote" &&
       route.role.find(role => role === UserRole)
   );
+  const ReceiveNotePage = RoleMappingRoute.filter(
+    route =>
+      route.page === "ReceiveNote" && route.role.find(role => role === UserRole)
+  );
 
   return (
     <Menu theme="dark" mode="inline">
@@ -202,6 +206,20 @@ export const MenuManage = ({ UserRole }) => {
                 }
               >
                 ใบส่งของ
+              </SpanPointer>
+            </MenuItem>
+          ) : null}
+
+          {ReceiveNotePage.length !== 0 ? (
+            <MenuItem routeform={GetFormPath(ReceiveNotePage)}>
+              <SpanPointer
+                onClick={
+                  GetListPath(ReceiveNotePage)
+                    ? () => Router.push(GetListPath(ReceiveNotePage))
+                    : null
+                }
+              >
+                ใบรับของคืน
               </SpanPointer>
             </MenuItem>
           ) : null}

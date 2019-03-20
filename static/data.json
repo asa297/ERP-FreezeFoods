@@ -111,6 +111,20 @@
       "type": "Form",
       "page": "DeliveryNote",
       "role": [1]
+    },
+    {
+      "path": "/rn/list",
+      "sub": "document",
+      "type": "List",
+      "page": "ReceiveNote",
+      "role": [1]
+    },
+    {
+      "path": "/rn/form",
+      "sub": "document",
+      "type": "Form",
+      "page": "ReceiveNote",
+      "role": [1]
     }
   ]
 }
