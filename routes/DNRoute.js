@@ -1,6 +1,6 @@
 const isAuthenticated = require("../middlewares/Authenticated");
 const moment = require("moment");
-const { map, join, uniq } = require("lodash");
+const { map, join, uniq, sumBy } = require("lodash");
 
 module.exports = (app, client) => {
   app.post("/api/dn", isAuthenticated, async (req, res) => {
@@ -15,9 +15,12 @@ module.exports = (app, client) => {
 
     //#region DN
     const promise_docDN_update = new Promise(async (resolve, reject) => {
-      const text_document = `INSERT INTO dn(code, date, remark , status , contact_address , contact_id , contact_org , create_by,
-        create_time, last_modify_by, last_modify_time)
-        VALUES($1, $2, $3, $4, $5,$6, $7 , $8, $9 , $10 , $11) RETURNING id `;
+      const amount = sumBy(lines, line => {
+        return line.qty * line.unit_price;
+      });
+      const text_document = `INSERT INTO dn(code, date, remark , status , contact_address , contact_id , contact_org
+        , amount , create_by, create_time, last_modify_by, last_modify_time)
+        VALUES($1, $2, $3, $4, $5,$6, $7 , $8, $9 , $10 , $11, $12) RETURNING id `;
 
       const generateCode = `DN-${newId}`;
 
@@ -31,6 +34,7 @@ module.exports = (app, client) => {
         document.contact.address,
         document.contact.id,
         document.contact.org,
+        amount,
         UserName,
         new Date(),
         UserName,
@@ -44,9 +48,9 @@ module.exports = (app, client) => {
     const promise_linesDN_query = lines.map(line => {
       return new Promise(async (resolve, reject) => {
         const text_lines = `INSERT INTO dn_line (dn_id, item_id, item_name , qty , remain_qty
-          ,unit_id ,unit_name, remark, ref_doc_id, ref_line_id
+          ,unit_id ,unit_name, unit_price, remark, ref_doc_id, ref_line_id
           ,create_by, create_time, last_modify_by, last_modify_time, uuid)
-          VALUES($1, $2, $3, $4, $5,$6, $7 , $8 ,$9 , $10, $11, $12, $13, $14, $15)`;
+          VALUES($1, $2, $3, $4, $5,$6, $7 , $8 ,$9 , $10, $11, $12, $13, $14, $15, $16)`;
         const values = [
           newId,
           line.item_id,
@@ -55,6 +59,7 @@ module.exports = (app, client) => {
           line.qty,
           line.unit_id,
           line.unit_name,
+          line.unit_price,
           line.remark,
           line.rs_id,
           line.rs_line_id,

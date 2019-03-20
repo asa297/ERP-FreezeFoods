@@ -26,6 +26,7 @@ import { actionTypes } from "<action_types>";
 import moment from "moment";
 import { Table, Input, Modal, Icon } from "antd";
 import uuidv4 from "uuid";
+import { sumBy } from "lodash";
 
 const confirm = Modal.confirm;
 
@@ -46,7 +47,7 @@ class Form extends React.PureComponent {
           </FlexContainer>
         ),
         dataIndex: "item_name",
-        width: "20%",
+        width: "25%",
         render: (text, record, index) => {
           return (
             <SelectOption
@@ -62,7 +63,7 @@ class Form extends React.PureComponent {
       {
         title: "รหัสใบรับของ",
         dataIndex: "rs_code",
-        width: "15%"
+        width: "10%"
       },
       {
         title: (filters, sortOrder) => (
@@ -87,6 +88,25 @@ class Form extends React.PureComponent {
         title: "หน่วยสินค้า",
         dataIndex: "unit_name",
         width: "10%"
+      },
+      {
+        title: (filters, sortOrder) => (
+          <FlexContainer>
+            ราคาต่อหน่วย<LabelRequire>*</LabelRequire>
+          </FlexContainer>
+        ),
+        dataIndex: "unit_price",
+        width: "10%",
+        render: (text, record, index) => {
+          return (
+            <Input
+              type="number"
+              value={record.unit_price}
+              onChange={value => this.ChangeUnitPrice(value, index)}
+              disabled={this.props.formId ? true : false}
+            />
+          );
+        }
       },
       {
         title: "หมายเหตุ",
@@ -134,8 +154,7 @@ class Form extends React.PureComponent {
         date: moment(),
         status: 0,
         create_by: this.props.auth.user.name,
-        remark: "",
-        refDocId: 0
+        remark: ""
       },
       lines: [],
       Item_Select: []
@@ -180,8 +199,7 @@ class Form extends React.PureComponent {
           date: moment(),
           status: 0,
           create_by: this.props.auth.user.name,
-          remark: "",
-          refDocId: 0
+          remark: ""
         },
         lines: [
           {
@@ -191,6 +209,7 @@ class Form extends React.PureComponent {
             qty: 0,
             unit_id: null,
             unit_name: null,
+            unit_price: 0,
             remark: null,
             uuid: uuidv4()
           }
@@ -256,6 +275,7 @@ class Form extends React.PureComponent {
       qty: 0,
       unit_id: null,
       unit_name: null,
+      unit_price: 0,
       remark: null,
       uuid: uuidv4()
     };
@@ -307,6 +327,12 @@ class Form extends React.PureComponent {
     this.setState({ lines });
   }
 
+  ChangeUnitPrice(e, index) {
+    let lines = [...this.state.lines];
+    lines[index].unit_price = e.target.value;
+    this.setState({ lines });
+  }
+
   ChangeRemark(e, index) {
     let lines = [...this.state.lines];
     lines[index].remark = e.target.value;
@@ -346,12 +372,18 @@ class Form extends React.PureComponent {
 
     const qty_empty = lines.find(line => line.qty === 0);
 
+    const unitprice_empty = lines.find(line => line.unit_price === 0);
+
     if (lines_empty) {
       alert("lines cannot empty");
       return;
     }
     if (qty_empty) {
       alert("qty cannot empty");
+      return;
+    }
+    if (unitprice_empty) {
+      alert("unit price cannot empty");
       return;
     }
 
@@ -396,11 +428,13 @@ class Form extends React.PureComponent {
                 date: document.date,
                 create_by: document.create_by,
                 remark: document.remark,
-                contact: {
-                  id: document.contact_id,
-                  org: document.contact_org,
-                  address: document.contact_address
-                }
+                contact: document.contact_id
+                  ? {
+                      id: document.contact_id,
+                      org: document.contact_org,
+                      address: document.contact_address
+                    }
+                  : ""
               }}
               enableReinitialize={true}
               validationSchema={DNFormSchema}
@@ -513,6 +547,15 @@ class Form extends React.PureComponent {
                     />
                   </TableContainer>
 
+                  <GrandTotalContainer>
+                    <h2 style={{ margin: "0px" }}>Grand Total :</h2>
+                    <label style={{ paddingLeft: "5px", fontSize: "20px" }}>
+                      {sumBy(this.state.lines, line => {
+                        return line.qty * line.unit_price;
+                      }).toLocaleString()}
+                    </label>
+                  </GrandTotalContainer>
+
                   <FlexCenter>
                     <ActionForm
                       formId={formId}
@@ -623,4 +666,10 @@ const TableContainer = styled.div`
   padding-top: 10px;
   overflow-y: scroll;
   max-height: 50vh;
+`;
+
+const GrandTotalContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
 `;
