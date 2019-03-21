@@ -258,7 +258,7 @@ class Form extends React.PureComponent {
 
     const { status } = await this.props.DeleteDN(formId, { data });
     if (status) {
-      alert("Delete Done");
+      alert("ลบเอกสารสำเร็จ");
       Router.push(`/dn/list`);
     } else {
       alert("fail");
@@ -375,15 +375,15 @@ class Form extends React.PureComponent {
     const unitprice_empty = lines.find(line => line.unit_price === 0);
 
     if (lines_empty) {
-      alert("lines cannot empty");
+      alert("รายการสินค้าไม่สามารถว่างได้");
       return;
     }
     if (qty_empty) {
-      alert("qty cannot empty");
+      alert("จำนวนสินค้าไม่สามารถว่างได้");
       return;
     }
     if (unitprice_empty) {
-      alert("unit price cannot empty");
+      alert("ราคาต่อหน่วยไม่ได้สามารถว่างได้");
       return;
     }
 
@@ -399,9 +399,9 @@ class Form extends React.PureComponent {
       : await this.props.InsertDN(saveData);
 
     if (formId) {
-      alert(status ? "Save Done" : "fail");
+      alert(status ? "บันทึกเอกสารสำเร็จ" : "fail");
     } else {
-      alert(status ? "Add Done" : "fail");
+      alert(status ? "เพิ่มเอกสารสำเร็จ" : "fail");
       if (status) {
         window.location.href = `/dn/list`;
       }

@@ -202,7 +202,7 @@ class Form extends React.PureComponent {
 
     const { status } = await this.props.DeleteRN(formId, { data });
     if (status) {
-      alert("Delete Done");
+      alert("ลบเอกสารสำเร็จ");
       Router.push(`/rn/list`);
     } else {
       alert("fail");
@@ -239,7 +239,10 @@ class Form extends React.PureComponent {
     const oldDate = moment(props.values.dn_date).format("YYYY-MM-DD");
 
     if (newDate >= oldDate) props.setFieldValue("date", e);
-    else alert("cannot set rn date less than dn date");
+    else
+      alert(
+        " ต้องเลือกวันที่ของเอกสารใบรับของคืนก่อนหรือเท่ากับวันที่ของใบเอกสารส่งของ"
+      );
   }
 
   async onSubmit(values) {
@@ -251,11 +254,11 @@ class Form extends React.PureComponent {
     const qty_empty = lines.find(line => line.qty === 0);
 
     if (lines_empty) {
-      alert("lines cannot empty");
+      alert("รายการสินค้าไม่สามารถว่างได้");
       return;
     }
     if (qty_empty) {
-      alert("qty cannot empty");
+      alert("จำนวนสินค้าไม่สามรถว่างได้");
       return;
     }
 
@@ -271,9 +274,9 @@ class Form extends React.PureComponent {
       : await this.props.InsertRN(saveData);
 
     if (formId) {
-      alert(status ? "Save Done" : "fail");
+      alert(status ? "บันทึกเอกสารสำเร็จ" : "fail");
     } else {
-      alert(status ? "Add Done" : "fail");
+      alert(status ? "เพิ่มเอกสารสำเร็จ" : "fail");
       if (status) {
         window.location.href = `/rn/list`;
       }

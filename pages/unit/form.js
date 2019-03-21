@@ -39,7 +39,7 @@ class Form extends React.PureComponent {
     const { formId } = this.props;
     const { status } = await this.props.DeleteItemUnit(formId);
     if (status) {
-      alert("Delete Done");
+      alert("ลบเอกสารสำเร็จ");
       Router.push(`/unit/list`);
     } else {
       alert("fail");
@@ -56,9 +56,9 @@ class Form extends React.PureComponent {
       : await this.props.InsertItemUnit(values);
 
     if (formId) {
-      alert(status ? "Save Done" : "fail");
+      alert(status ? "บันทึกเอกสารสำเร็จ" : "fail");
     } else {
-      alert(status ? "Add Done" : "fail");
+      alert(status ? "เพิ่มเอกสารสำเร็จ" : "fail");
       if (status) {
         window.location.href = `/unit/list`;
       }

@@ -191,7 +191,7 @@ class Form extends React.PureComponent {
 
     const { status } = await this.props.DeletePO(formId, { data });
     if (status) {
-      alert("Delete Done");
+      alert("ลบเอกสารสำเร็จ");
       Router.push(`/po/list`);
     } else {
       alert("fail");
@@ -226,7 +226,10 @@ class Form extends React.PureComponent {
     const oldDate = moment(props.values.request_date).format("YYYY-MM-DD");
 
     if (newDate >= oldDate) props.setFieldValue("date", e);
-    else alert("cannot set po date less than rfq date");
+    else
+      alert(
+        "ต้องเลือกวันที่ของเอกสารใบสั่งซื้อก่อนหรือเท่ากับวันที่ของใบเอกสารขอซื้อ"
+      );
   }
 
   async onSubmit(values) {
@@ -243,11 +246,11 @@ class Form extends React.PureComponent {
       return;
     }
     if (lines_empty) {
-      alert("lines cannot empty");
+      alert("รายการไม่สามารถว่างได้");
       return;
     }
     if (unitprice_empty) {
-      alert("unit price cannot empty");
+      alert("ราคาต่อหน่วยไม่สามารถว่างได้");
       return;
     }
 
@@ -263,9 +266,9 @@ class Form extends React.PureComponent {
       : await this.props.InsertPO(saveData);
 
     if (formId) {
-      alert(status ? "Save Done" : "fail");
+      alert(status ? "บันทึกเอกสารสำเร็จ" : "fail");
     } else {
-      alert(status ? "Add Done" : "fail");
+      alert(status ? "เพิ่มเอกสารสำเร็จ" : "fail");
       if (status) {
         window.location.href = `/po/list`;
       }

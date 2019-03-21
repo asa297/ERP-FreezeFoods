@@ -248,7 +248,7 @@ class Form extends React.PureComponent {
     const { formId } = this.props;
     const { status } = await this.props.DeleteRequest(formId);
     if (status) {
-      alert("Delete Done");
+      alert("ลบเอกสารสำเร็จ");
       Router.push(`/request/list`);
     } else {
       alert("fail");
@@ -327,19 +327,19 @@ class Form extends React.PureComponent {
     const line_empty = data.length === 0;
 
     if (item_code_empty) {
-      alert("item code cannot empty");
+      alert("รหัสสินค้าไม่สามารถว่างได้");
       return;
     }
     if (qty_empty) {
-      alert("qty cannot empty");
+      alert("จำนวนสินค้าไม่สามารถว่างได้");
       return;
     }
     if (line_empty) {
-      alert("lines cannot empty");
+      alert("รายการสินค้าไม่สามารถว่างได้");
       return;
     }
     if (unit_empty) {
-      alert("unit cannot empty");
+      alert("ราคาต่อหน่วยไม่สามารถว่างได้");
       return;
     }
 
@@ -356,9 +356,9 @@ class Form extends React.PureComponent {
       : await this.props.InsertRequest(saveData);
 
     if (formId) {
-      alert(status ? "Save Done" : "fail");
+      alert(status ? "บันทึกเอกสารสำเร็จ" : "fail");
     } else {
-      alert(status ? "Add Done" : "fail");
+      alert(status ? "เพิ่มเอกสารสำเร็จ" : "fail");
       if (status) {
         window.location.href = `/request/list`;
       }
