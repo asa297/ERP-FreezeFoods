@@ -68,6 +68,17 @@ export const MenuManage = ({ UserRole }) => {
       route.page === "ReceiveNote" && route.role.find(role => role === UserRole)
   );
 
+  const ReportModule = RoleMappingRoute.filter(
+    route =>
+      route.sub === "Report" && route.role.find(role => role === UserRole)
+  );
+
+  const ExpireItemReport = RoleMappingRoute.find(
+    route =>
+      route.page === "ExpireItemReport" &&
+      route.role.find(role => role === UserRole)
+  );
+
   return (
     <Menu theme="dark" mode="inline">
       <Menu.Item key="1" onClick={() => Router.push("/")}>
@@ -222,6 +233,26 @@ export const MenuManage = ({ UserRole }) => {
                 ใบรับของคืน
               </SpanPointer>
             </MenuItem>
+          ) : null}
+        </SubMenu>
+      ) : null}
+
+      {ReportModule.length > 0 ? (
+        <SubMenu
+          key="sub3"
+          title={
+            <span>
+              <Icon type="solution" />
+              <span>รายงาน</span>
+            </span>
+          }
+        >
+          {ExpireItemReport ? (
+            <Menu.Item>
+              <SpanPointer onClick={() => Router.push(ExpireItemReport.path)}>
+                วันหมดอายุสินค้า
+              </SpanPointer>
+            </Menu.Item>
           ) : null}
         </SubMenu>
       ) : null}

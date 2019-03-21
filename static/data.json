@@ -125,6 +125,13 @@
       "type": "Form",
       "page": "ReceiveNote",
       "role": [1]
+    },
+    {
+      "path": "/report/expireitem",
+      "sub": "Report",
+      "type": "Report",
+      "page": "ExpireItemReport",
+      "role": [1]
     }
   ]
 }
