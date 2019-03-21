@@ -58,7 +58,12 @@ class List extends React.PureComponent {
       {
         title: "บริษัท",
         dataIndex: "contact_org",
-        width: "20%"
+        width: "15%"
+      },
+      {
+        title: "รหัสใบส่งของ",
+        dataIndex: "dn_code",
+        width: "10%"
       },
       {
         title: "หมายเหตุ",
