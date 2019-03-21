@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
 import { authInitialProps, checkUserRole } from "<utils>/auth";
-import { GetContact, CleaerContact } from "<actions>";
+import { GetContact, ClearContact } from "<actions>";
 import { Table, Icon } from "antd";
 import styled from "styled-components";
 // import { Link } from "<routes>";
@@ -15,7 +15,7 @@ class List extends React.PureComponent {
   };
 
   componentWillMount() {
-    this.props.CleaerContact();
+    this.props.ClearContact();
     this.props.GetContact(this.state.page);
   }
 
@@ -118,7 +118,7 @@ List.getInitialProps = async ctx => {
 
 export default connect(
   ({ ContactReducer }) => ({ ContactReducer }),
-  { GetContact, CleaerContact }
+  { GetContact, ClearContact }
 )(List);
 
 const Container = styled.div`
