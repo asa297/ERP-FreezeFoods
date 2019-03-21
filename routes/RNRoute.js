@@ -84,13 +84,6 @@ module.exports = (app, client) => {
 
     //#region DN
 
-    const promise_docDN_update = new Promise(async (resolve, reject) => {
-      const groupDNDocId = join(uniq(map(lines, "dn_id")));
-      const text = `UPDATE dn SET status = 2 Where id IN (${groupDNDocId})`;
-      await client.query(text);
-      resolve();
-    });
-
     const promise_linesDN_update = lines.map(line => {
       return new Promise(async (resolve, reject) => {
         const text = `UPDATE dn_line SET remain_qty = remain_qty - ${
@@ -136,20 +129,30 @@ module.exports = (app, client) => {
     });
 
     //#endregion Item
-    Promise.all([
+    await Promise.all([
       promise_docRN_update,
       promise_linesRN_query,
-      promise_docDN_update,
       promise_linesDN_update,
       promise_linesRS_update,
       promise_linesItem_query
-    ])
-      .then(() => {
-        res.send({ id: newId });
-      })
-      .catch(error => {
-        res.send(error);
-      });
+    ]);
+
+    const groupDNDocId = join(uniq(map(lines, "dn_id")));
+
+    const text = `SELECT dn_id , SUM(qty) as SUM_QTY , SUM(remain_qty) as SUM_REMAIN from dn_line where dn_id in (${groupDNDocId}) group by dn_id`;
+    const { rows: DNLines } = await client.query(text);
+
+    const DNLinesRemainComplete = DNLines.filter(line => line.sum_remain == 0);
+
+    if (DNLinesRemainComplete.length !== 0) {
+      const DNLinesString = join(uniq(map(DNLinesRemainComplete, "dn_id")));
+
+      const text = `UPDATE dn SET status = 2 Where id in (${DNLinesString})`;
+
+      await client.query(text);
+    }
+
+    res.send({ id: newId });
   });
 
   app.get("/api/rn/list/:page", isAuthenticated, async (req, res) => {
@@ -224,6 +227,30 @@ module.exports = (app, client) => {
       });
     });
 
+    const promise_linesRS_update = lines.map(line => {
+      return new Promise(async (resolve, reject) => {
+        const text = `UPDATE rs_line rs
+        SET    remain_qty = rs.remain_qty - ${line.qty}
+        FROM   rn_line  rn
+        JOIN   dn_line dn ON dn.id = rn.ref_line_id
+        AND    dn.dn_id = rn.ref_doc_id					   
+        WHERE  rs.id = dn.ref_line_id AND rs.rs_id = dn.ref_doc_id AND rn.id = ${
+          line.id
+        }`;
+
+        await client.query(text);
+
+        resolve();
+      });
+    });
+
+    //UPDATE
+    await Promise.all([
+      promise_linesDN_updatequery,
+      promise_linesItem_updatequery,
+      promise_linesRS_update
+    ]);
+
     const promise_docDN_deletequery = new Promise(async (resolve, reject) => {
       const text = `DELETE from rn Where id = ${id}`;
 
@@ -238,12 +265,8 @@ module.exports = (app, client) => {
       resolve();
     });
 
-    await Promise.all([
-      promise_linesDN_updatequery,
-      promise_linesItem_updatequery,
-      promise_docDN_deletequery,
-      promise_linesDN_deletequery
-    ]);
+    //DELETE
+    await Promise.all([promise_docDN_deletequery, promise_linesDN_deletequery]);
 
     const groupDNDocId = join(uniq(map(lines, "ref_doc_id")));
 
@@ -272,16 +295,9 @@ module.exports = (app, client) => {
     const { document, lines } = req.body;
 
     const promise_doc_query = new Promise(async (resolve, reject) => {
-      const text = `UPDATE dn SET remark = $1, contact_address = $2 , contact_id = $3 , contact_org = $4 
-      ,last_modify_by = $5, last_modify_time = $6 Where id = ${id}`;
-      const values = [
-        document.remark,
-        document.contact.address,
-        document.contact.id,
-        document.contact.org,
-        UserName,
-        new Date()
-      ];
+      const text = `UPDATE rn SET date = $1, remark = $2 
+      ,last_modify_by = $3, last_modify_time = $4 Where id = ${id}`;
+      const values = [document.date, document.remark, UserName, new Date()];
 
       await client.query(text, values);
       resolve();
@@ -291,7 +307,7 @@ module.exports = (app, client) => {
 
     const promise_lines_updatequery = lines.map(line => {
       return new Promise(async (resolve, reject) => {
-        const text = `UPDATE dn_line SET remark = $1
+        const text = `UPDATE rn_line SET remark = $1
         ,last_modify_by = $2, last_modify_time = $3 Where id = ${line.id}`;
         const values = [line.remark, UserName, new Date()];
 

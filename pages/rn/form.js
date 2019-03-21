@@ -13,7 +13,7 @@ import {
   GetItemDN,
   InsertRN,
   GetRNById,
-  UpdateDN,
+  UpdateRN,
   DeleteRN,
   GetDNForRN
 } from "<actions>";
@@ -130,7 +130,8 @@ class Form extends React.PureComponent {
 
       this.setState({
         document,
-        lines
+        lines,
+        show_modal: false
       });
     }
   }
@@ -143,12 +144,14 @@ class Form extends React.PureComponent {
 
       let document_state = { ...this.state.document };
       document_state.dn_code = document.code;
+      document_state.dn_date = document.date;
       document_state.contact_id = document.contact_id;
       document_state.contact_org = document.contact_org;
       document_state.contact_address = document.contact_address;
       document_state.refDocId = document.id;
 
       const lines_state = lines.map(line => {
+        line.qty = line.remain_qty;
         line.uuid = uuidv4();
         return line;
       });
@@ -197,7 +200,6 @@ class Form extends React.PureComponent {
       lines
     };
 
-    console.log(data);
     const { status } = await this.props.DeleteRN(formId, { data });
     if (status) {
       alert("Delete Done");
@@ -234,10 +236,10 @@ class Form extends React.PureComponent {
 
   ChanegDate(props, e) {
     const newDate = moment(e).format("YYYY-MM-DD");
-    const oldDate = moment(props.values.request_date).format("YYYY-MM-DD");
+    const oldDate = moment(props.values.dn_date).format("YYYY-MM-DD");
 
     if (newDate >= oldDate) props.setFieldValue("date", e);
-    else alert("cannot set po date less than rfq date");
+    else alert("cannot set rn date less than dn date");
   }
 
   async onSubmit(values) {
@@ -265,17 +267,17 @@ class Form extends React.PureComponent {
     };
 
     const { status, id } = formId
-      ? await this.props.UpdateDN(formId, saveData)
+      ? await this.props.UpdateRN(formId, saveData)
       : await this.props.InsertRN(saveData);
 
-    // if (formId) {
-    //   alert(status ? "Save Done" : "fail");
-    // } else {
-    //   alert(status ? "Add Done" : "fail");
-    //   if (status) {
-    //     window.location.href = `/rn/list`;
-    //   }
-    // }
+    if (formId) {
+      alert(status ? "Save Done" : "fail");
+    } else {
+      alert(status ? "Add Done" : "fail");
+      if (status) {
+        window.location.href = `/rn/list`;
+      }
+    }
 
     this.setState({ loading: false });
   }
@@ -492,7 +494,7 @@ export default connect(
     GetItemDN,
     GetDNForRN,
     InsertRN,
-    UpdateDN,
+    UpdateRN,
     DeleteRN
   }
 )(Form);
