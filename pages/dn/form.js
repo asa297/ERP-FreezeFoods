@@ -183,7 +183,7 @@ class Form extends React.PureComponent {
       const Item_Select = List.map(item => {
         return this.SetItemSelect(item);
       });
-      this.setState({ Item_Select });
+      this.setState({ Item_Select, Set_Item_Select: false });
     }
 
     if (dn && formId) {
@@ -192,7 +192,7 @@ class Form extends React.PureComponent {
         document,
         lines
       });
-    } else if (!formId) {
+    } else if (!formId && !this.state.Set_Item_Select) {
       this.setState({
         document: {
           code: "####",
@@ -353,7 +353,7 @@ class Form extends React.PureComponent {
       content: "ถ้ายืนยันระบบจะลบรายการทั้งหมดของเอกสารนี้",
       async onOk() {
         props.setFieldValue("date", e);
-        await binding_this.setState({ lines: [] });
+        await binding_this.setState({ lines: [], Set_Item_Select: true });
         binding_this.AddNewRow();
         const newDate = moment(e).format("YYYY-MM-DD");
         binding_this.props.GetItemDN(newDate);
