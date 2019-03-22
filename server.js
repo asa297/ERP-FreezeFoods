@@ -48,6 +48,7 @@ nextApp
     require("./routes/RSRoute")(app, client);
     require("./routes/DNRoute")(app, client);
     require("./routes/RNRoute")(app, client);
+    require("./routes/ReportRoute")(app, client);
 
     app.get("*", (req, res) => {
       return handle(req, res);

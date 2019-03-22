@@ -9,6 +9,7 @@ import POReducer from "./POReducer";
 import RSReducer from "./RSReducer";
 import DNReducer from "./DNReducer";
 import RNReducer from "./RNReducer";
+import ReportReducer from "./ReportReducer";
 
 export default combineReducers({
   ItemCategoryReducer,
@@ -19,5 +20,6 @@ export default combineReducers({
   POReducer,
   RSReducer,
   DNReducer,
-  RNReducer
+  RNReducer,
+  ReportReducer
 });

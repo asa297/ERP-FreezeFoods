@@ -472,3 +472,21 @@ export const ClearRN = () => async dispatch => {
 };
 
 //#endregion RN Action
+
+//#region Report Action
+
+export const GetExpireItem = values => async dispatch => {
+  const res = await axios
+    .post("/api/report/ExpireItem", values)
+    .catch(e => null);
+  if (!res) return { status: false };
+  const { data } = res;
+  dispatch({ type: actionTypes.REPORT.EXPIRE_ITEM, payload: data });
+  return { status: res.status === 200 };
+};
+
+export const ClearReport = () => async dispatch => {
+  dispatch({ type: actionTypes.REPORT.RESET });
+};
+
+//#endregion Report Action

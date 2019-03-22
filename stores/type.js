@@ -79,5 +79,9 @@ export const actionTypes = {
     DELETE: "DELETE_RN",
     UPDATE: "UPDATE_RN",
     RESET: "RESET_RN"
+  },
+  REPORT: {
+    EXPIRE_ITEM: "EXPIRE_ITEM_REPORT",
+    RESET: "RESET_REPORT"
   }
 };
