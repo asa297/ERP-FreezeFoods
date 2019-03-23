@@ -239,12 +239,7 @@ class Form extends React.PureComponent {
     const lines_empty = lines.length === 0;
 
     const unitprice_empty = lines.find(line => line.unit_price === 0);
-    const request_date_isvalid = values.date < values.request_date;
 
-    if (request_date_isvalid) {
-      alert("วันที่ของใบสั่งซื้อ ไม่สามารถมากกว่า วันที่ของใบขอซื้อ ");
-      return;
-    }
     if (lines_empty) {
       alert("รายการไม่สามารถว่างได้");
       return;
