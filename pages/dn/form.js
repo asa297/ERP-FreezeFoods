@@ -235,7 +235,7 @@ class Form extends React.PureComponent {
       unit_name
     } = item;
     return {
-      id: item_id,
+      id,
       name: item_name,
       remain_qty,
       rs_id,
@@ -288,10 +288,10 @@ class Form extends React.PureComponent {
     let lines = [...this.state.lines];
     let Item_Select = [...this.state.Item_Select];
     const { RSReducer } = this.props;
-    const { item_id } = lines[index];
-    const item = RSReducer.List.find(item => item.item_id === item_id);
+    const { id } = lines[index];
+    const item = RSReducer.List.find(item => item.id === id);
     const newItem = this.SetItemSelect(item);
-    Item_Select.unshift(newItem);
+    Item_Select.push(newItem);
 
     lines.splice(index, 1);
 
@@ -299,12 +299,15 @@ class Form extends React.PureComponent {
   }
 
   ChangeItem(id, index) {
+    const oldValue = { ...this.state.lines[index] };
     let Item_Select = [...this.state.Item_Select];
     let lines = [...this.state.lines];
-    const item = Item_Select.find(item => item.id === id);
+    const { RSReducer } = this.props;
+    const item = RSReducer.List.find(item => item.id === id);
 
-    lines[index].item_id = item.id;
-    lines[index].item_name = item.name;
+    lines[index].id = item.id;
+    lines[index].item_id = item.item_id;
+    lines[index].item_name = item.item_name;
     lines[index].rs_id = item.rs_id;
     lines[index].rs_line_id = item.rs_line_id;
     lines[index].rs_code = item.rs_code;
@@ -312,7 +315,14 @@ class Form extends React.PureComponent {
     lines[index].unit_name = item.unit_name;
     lines[index].qty = lines[index].remain_qty = item.remain_qty;
 
-    Item_Select.splice(index, 1);
+    if (oldValue.id !== 0) {
+      let oldItem = RSReducer.List.find(item => item.id === oldValue.id);
+      oldItem = this.SetItemSelect(oldItem);
+      Item_Select.push(oldItem);
+    }
+    let newItemIndex = Item_Select.findIndex(item => item.id === id);
+    Item_Select.splice(newItemIndex, 1);
+
     this.setState({ lines, Item_Select });
   }
 
