@@ -181,11 +181,31 @@ const H1TextCenter = styled.h1`
 `;
 
 const HeaderContainer = styled.div`
-  height: 20vh;
+  @media (min-width: 768px) and (max-width: 1170px) {
+    height: 25vh;
+  }
+
+  @media (min-width: 1170px) and (max-width: 1600px) {
+    height: 20vh;
+  }
+
+  @media (min-width: 1600px) {
+    height: 20vh;
+  }
 `;
 
 const MainContainer = styled.div`
-  height: 78vh;
+  @media (min-width: 768px) and (max-width: 1170px) {
+    height: 73vh;
+  }
+
+  @media (min-width: 1170px) and (max-width: 1600px) {
+    height: 78vh;
+  }
+
+  @media (min-width: 1600px) {
+    height: 78vh;
+  }
 
   overflow-y: scroll;
 `;
