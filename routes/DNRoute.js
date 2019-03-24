@@ -158,7 +158,7 @@ module.exports = (app, client) => {
 
     const lines = new Promise(async (resolve, reject) => {
       const result = await client.query(
-        `SELECT * from dn_line where dn_id = ${id}
+        `SELECT dn_line.* , rs.code AS rs_code from dn_line left join rs on dn_line.ref_doc_id = rs.id where dn_line.dn_id = ${id}
         `
       );
       resolve(result);
