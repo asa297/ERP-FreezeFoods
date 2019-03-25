@@ -76,73 +76,72 @@ class Report extends React.PureComponent {
     const { ReportReducer } = this.props;
     return (
       <Container>
-        <HeaderContainer>
-          <H1TextCenter>Expire Item Report</H1TextCenter>
-          <Formik
-            initialValues={{
-              start_date: moment(),
-              end_date: moment().add(1, "d")
-            }}
-            // validationSchema={POFormSchema}
-            onSubmit={async (values, actions) => {
-              let { start_date, end_date } = values;
-              start_date = moment(start_date).format("YYYY-MM-DD");
-              end_date = moment(end_date).format("YYYY-MM-DD");
-              if (start_date <= end_date) {
-                this.setState({ loading: true });
-                await this.props.GetExpireItem(values);
-                this.setState({ loading: false });
-                // console.log(start_date, end_date);
-              } else {
-                alert("kuy");
-              }
+        <H1TextCenter>Expire Item Report</H1TextCenter>
+        <Formik
+          initialValues={{
+            start_date: moment(),
+            end_date: moment().add(1, "d")
+          }}
+          // validationSchema={POFormSchema}
+          onSubmit={async (values, actions) => {
+            let { start_date, end_date } = values;
+            start_date = moment(start_date).format("YYYY-MM-DD");
+            end_date = moment(end_date).format("YYYY-MM-DD");
+            if (start_date <= end_date) {
+              this.setState({ loading: true });
+              await this.props.GetExpireItem(values);
+              this.setState({ loading: false });
+              // console.log(start_date, end_date);
+            } else {
+              alert("kuy");
+            }
 
-              // console.log(values);
-            }}
-            render={props => (
-              <form>
-                <FlexCenter>
-                  <FieldContainer width="45%">
-                    <Field
-                      label="วันที่เริ่มต้น"
-                      name="start_date"
-                      component={InputDateItem}
-                      value={moment(props.values.start_date)}
-                      requireStar="true"
-                      onChange={e => props.setFieldValue("start_date", e)}
-                      allowClear={false}
-                      onBlur={null}
-                    />
-                  </FieldContainer>
-                  <FieldContainer width="45%">
-                    <Field
-                      label="วันที่สิ้นสุด"
-                      name="end_date"
-                      component={InputDateItem}
-                      value={moment(props.values.end_date)}
-                      requireStar="true"
-                      onChange={e => props.setFieldValue("end_date", e)}
-                      allowClear={false}
-                      onBlur={null}
-                    />
-                  </FieldContainer>
-                </FlexCenter>
+            // console.log(values);
+          }}
+          render={props => (
+            <form>
+              <FlexCenter>
+                <FieldContainer width="45%">
+                  <Field
+                    label="วันที่เริ่มต้น"
+                    name="start_date"
+                    component={InputDateItem}
+                    value={moment(props.values.start_date)}
+                    requireStar="true"
+                    onChange={e => props.setFieldValue("start_date", e)}
+                    allowClear={false}
+                    onBlur={null}
+                  />
+                </FieldContainer>
+                <FieldContainer width="45%">
+                  <Field
+                    label="วันที่สิ้นสุด"
+                    name="end_date"
+                    component={InputDateItem}
+                    value={moment(props.values.end_date)}
+                    requireStar="true"
+                    onChange={e => props.setFieldValue("end_date", e)}
+                    allowClear={false}
+                    onBlur={null}
+                  />
+                </FieldContainer>
+              </FlexCenter>
 
-                <FlexCenter>
-                  <ActionContainer>
-                    <Button
-                      type="primary"
-                      icon="snippets"
-                      onClick={() => props.handleSubmit()}
-                    >
-                      สร้าง
-                    </Button>
-                  </ActionContainer>
-                </FlexCenter>
-              </form>
-            )}
-          />
-        </HeaderContainer>
+              <FlexCenter>
+                <ActionContainer>
+                  <Button
+                    type="primary"
+                    icon="snippets"
+                    onClick={() => props.handleSubmit()}
+                  >
+                    สร้าง
+                  </Button>
+                </ActionContainer>
+              </FlexCenter>
+            </form>
+          )}
+        />
+
         <hr />
         <Loading className="loader" loading={loading} />
         <MainContainer>
@@ -180,33 +179,8 @@ const H1TextCenter = styled.h1`
   text-align: center;
 `;
 
-const HeaderContainer = styled.div`
-  @media (min-width: 768px) and (max-width: 1170px) {
-    height: 25vh;
-  }
-
-  @media (min-width: 1170px) and (max-width: 1600px) {
-    height: 20vh;
-  }
-
-  @media (min-width: 1600px) {
-    height: 20vh;
-  }
-`;
-
 const MainContainer = styled.div`
-  @media (min-width: 768px) and (max-width: 1170px) {
-    height: 73vh;
-  }
-
-  @media (min-width: 1170px) and (max-width: 1600px) {
-    height: 78vh;
-  }
-
-  @media (min-width: 1600px) {
-    height: 78vh;
-  }
-
+  height: 70vh;
   overflow-y: scroll;
 `;
 const Container = styled.div`
