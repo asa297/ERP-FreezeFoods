@@ -490,3 +490,15 @@ export const ClearReport = () => async dispatch => {
 };
 
 //#endregion Report Action
+
+//#region Notification Action
+
+export const GetNotification = values => async dispatch => {
+  const res = await axios.get("/api/getnoti").catch(e => null);
+  if (!res) return { status: false };
+  const { data } = res;
+  dispatch({ type: actionTypes.GET_NOTIFICATION, payload: data });
+  return { status: res.status === 200 };
+};
+
+//#endregion Notification Action

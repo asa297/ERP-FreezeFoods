@@ -10,6 +10,7 @@ import RSReducer from "./RSReducer";
 import DNReducer from "./DNReducer";
 import RNReducer from "./RNReducer";
 import ReportReducer from "./ReportReducer";
+import NotificationReducer from "./NotificationReducer";
 
 export default combineReducers({
   ItemCategoryReducer,
@@ -21,5 +22,6 @@ export default combineReducers({
   RSReducer,
   DNReducer,
   RNReducer,
-  ReportReducer
+  ReportReducer,
+  NotificationReducer
 });

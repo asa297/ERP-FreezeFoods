@@ -14,9 +14,9 @@ const mongoose = require("mongoose");
 const { Client } = require("pg");
 
 //require
-
 require("dotenv").config();
 require("./models/UserModel");
+require("./models/LogModel");
 
 mongoose.connect(`${process.env.DB}`);
 const client = new Client({
@@ -26,18 +26,14 @@ const client = new Client({
 
 client.connect();
 
+require("./schedule/noti")(client);
 app.use(express.json());
 app.use(cookieParser(process.env.COOKIE_SECRET));
 
 nextApp
   .prepare()
   .then(() => {
-    app.get("/contact/form/:id", (req, res) => {
-      const actualPage = "/contact/form";
-      const queryParams = { id: req.params.id };
-      nextApp.render(req, res, actualPage, queryParams);
-    });
-
+    require("./routes/GeneralRoute")(app);
     require("./routes/AuthRoute")(app);
     require("./routes/ItemCategoryRoute")(app, client);
     require("./routes/ItemUnitRoute")(app, client);

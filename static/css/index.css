@@ -47,3 +47,7 @@
     left: 100%;
   }
 }
+
+.ant-popover-inner > div:nth-child(1) {
+  overflow-y: scroll;
+}
