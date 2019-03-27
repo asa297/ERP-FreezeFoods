@@ -89,7 +89,7 @@ class List extends React.PureComponent {
     return (
       <ListContainer>
         <Container>
-          <H1TextCenter>รายการใบขอซื้อ</H1TextCenter>
+          <H1TextCenter>รายการใบสั่งซื้อ</H1TextCenter>
 
           <Loading className="loader" loading={this.state.loading} />
           <ListTable loading={this.state.loading}>

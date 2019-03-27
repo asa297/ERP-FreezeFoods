@@ -172,7 +172,7 @@ export const MenuManage = ({ UserRole }) => {
                     : null
                 }
               >
-                ใบขอซื้อ
+                ใบสั่งซื้อ
               </SpanPointer>
             </MenuItem>
           ) : null}
@@ -187,7 +187,7 @@ export const MenuManage = ({ UserRole }) => {
                     : null
                 }
               >
-                ใบสั่งซื้อ
+                ใบยืนยันคำสั่งซื้อ
                 <div>test</div>
               </SpanPointer>
             </MenuItem>
@@ -202,7 +202,7 @@ export const MenuManage = ({ UserRole }) => {
                     : null
                 }
               >
-                ใบรับของ
+                ใบรับสินค้า
               </SpanPointer>
             </MenuItem>
           ) : null}
@@ -216,7 +216,7 @@ export const MenuManage = ({ UserRole }) => {
                     : null
                 }
               >
-                ใบส่งของ
+                ใบส่งสินค้า
               </SpanPointer>
             </MenuItem>
           ) : null}
@@ -230,7 +230,7 @@ export const MenuManage = ({ UserRole }) => {
                     : null
                 }
               >
-                ใบรับของคืน
+                ใบรับสินค้าคืน
               </SpanPointer>
             </MenuItem>
           ) : null}

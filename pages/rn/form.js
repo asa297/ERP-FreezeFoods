@@ -302,7 +302,7 @@ class Form extends React.PureComponent {
       <MasterContanier>
         <Container>
           <HeaderForm>
-            <H1Text>ฟอร์มใบรับของคืน</H1Text>
+            <H1Text>ฟอร์มใบรับสินค้าคืน</H1Text>
             <DocStatus status={document.status} />
           </HeaderForm>
           <FormContainer>
