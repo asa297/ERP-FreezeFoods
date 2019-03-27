@@ -47,7 +47,7 @@ class Form extends React.PureComponent {
   }
 
   setInitialDataForm(formId, { Item }) {
-    if (!formId) return {};
+    if (!formId) return { expire_date: 0 };
     return {
       name: Item.name,
       remark: Item.remark,
@@ -58,7 +58,8 @@ class Form extends React.PureComponent {
       unit: {
         id: Item.item_unit_id,
         name: Item.item_unit_name
-      }
+      },
+      expire_date: Item.expire_date
     };
   }
 
@@ -131,7 +132,7 @@ class Form extends React.PureComponent {
               render={props => (
                 <form>
                   <FlexContainer>
-                    <FieldContainer width="30%">
+                    <FieldContainer width="25%">
                       <Field
                         label="ชื่อ"
                         type="text"
@@ -146,7 +147,7 @@ class Form extends React.PureComponent {
                       />
                     </FieldContainer>
 
-                    <FieldContainer width="35%">
+                    <FieldContainer width="25%">
                       <Field
                         label="หมวดสินค้า"
                         name="category"
@@ -163,7 +164,7 @@ class Form extends React.PureComponent {
                       />
                     </FieldContainer>
 
-                    <FieldContainer width="35%">
+                    <FieldContainer width="25%">
                       <Field
                         label="หน่วยสินค้า"
                         name="unit"
@@ -173,6 +174,21 @@ class Form extends React.PureComponent {
                         data={ItemUnitReducer.List}
                         onChange={e => this.onChangeItemUnit(e, props)}
                         fieldread="name"
+                      />
+                    </FieldContainer>
+
+                    <FieldContainer width="25%">
+                      <Field
+                        label="วันหมดอายุ (วัน)"
+                        type="number"
+                        name="expire_date"
+                        component={InputItem}
+                        value={props.values.expire_date}
+                        requireStar="true"
+                        padding={true}
+                        onChange={e =>
+                          props.setFieldValue("expire_date", e.target.value)
+                        }
                       />
                     </FieldContainer>
                   </FlexContainer>
