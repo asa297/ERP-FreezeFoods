@@ -145,10 +145,6 @@ class Form extends React.PureComponent {
 
   componentWillReceiveProps({ formId, request, auth }) {
     if (!formId) {
-      let [data, deleted_data] = [...this.state.data, this.state.deleted_data];
-      data = [];
-      deleted_data = [];
-
       this.setState({
         document: {
           code: "####",
@@ -156,8 +152,8 @@ class Form extends React.PureComponent {
           create_by: auth.user.name,
           remark: null
         },
-        data,
-        deleted_data,
+        data: [],
+        deleted_data: [],
         status: 0
       });
     } else {
@@ -247,25 +243,15 @@ class Form extends React.PureComponent {
     const { formId } = this.props;
     const { data, deleted_data } = this.state;
 
-    const item_code_empty = data.find(line => line.item_id === null);
     const qty_empty = data.find(line => line.qty === 0);
-    const unit_empty = data.find(line => line.unit_name === null);
     const line_empty = data.length === 0;
 
-    if (item_code_empty) {
-      alert("รหัสสินค้าไม่สามารถว่างได้");
-      return;
-    }
     if (qty_empty) {
       alert("จำนวนสินค้าไม่สามารถว่างได้");
       return;
     }
     if (line_empty) {
       alert("รายการสินค้าไม่สามารถว่างได้");
-      return;
-    }
-    if (unit_empty) {
-      alert("ราคาต่อหน่วยไม่สามารถว่างได้");
       return;
     }
 
