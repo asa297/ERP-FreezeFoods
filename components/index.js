@@ -20,3 +20,7 @@ export { default as MenuItem } from "./FormItems/MenuItem";
 export { default as SelectOption } from "./Items/SelectOption";
 
 export { default as DocStatus } from "./MainComponents/DocStatus";
+
+export {
+  default as ItemSelectionModal
+} from "./MainComponents/ItemSelectionModal";

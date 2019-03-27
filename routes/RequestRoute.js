@@ -10,9 +10,9 @@ module.exports = (app, client) => {
       `SELECT setval('request_id_seq',nextval('request_id_seq')-1) AS id;`
     );
 
-    const text_document = `INSERT INTO request(code, date, remark , status , create_by, 
+    const text_document = `INSERT INTO request(code, date, contact_id , contact_org , remark , status , create_by, 
         create_time, last_modify_by, last_modify_time) 
-        VALUES($1, $2, $3, $4, $5,$6, $7 , $8) RETURNING id `;
+        VALUES($1, $2, $3, $4, $5,$6, $7 , $8 ,$9 ,$10) RETURNING id `;
 
     const generateCode = `RFQ-${parseInt(LastDocument.rows[0].id) + 1}`;
 
@@ -21,6 +21,8 @@ module.exports = (app, client) => {
       moment(document.date)
         .utcOffset(7)
         .format("YYYY-MM-DDTHH:mm:ss.SSS"),
+      document.contact.id,
+      document.contact.org,
       document.remark,
       1, //Save
       UserName,
@@ -139,12 +141,15 @@ module.exports = (app, client) => {
     const { document, lines, deleted_data } = req.body;
 
     const promise_doc_query = new Promise(async (resolve, reject) => {
-      const text = `UPDATE request SET remark = $1, date = $2,  last_modify_by = $3, last_modify_time = $4 Where id = ${id}`;
+      const text = `UPDATE request SET remark = $1, date = $2, contact_id = $3 , contact_org = $4,
+        last_modify_by = $5, last_modify_time = $6 Where id = ${id}`;
       const values = [
         document.remark,
         moment(document.date)
           .utcOffset(7)
           .format("YYYY-MM-DDTHH:mm:ss.SSS"),
+        document.contact.id,
+        document.contact.org,
         UserName,
         new Date()
       ];

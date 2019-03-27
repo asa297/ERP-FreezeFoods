@@ -2,12 +2,13 @@ import { connect } from "react-redux";
 import { authInitialProps, checkUserRole } from "<utils>/auth";
 import { RequestFormSchema } from "<utils>/validatior";
 import {
-  InputItemInline,
+  InputItem,
   InputTextArea,
   ActionForm,
-  InputDateItemInline,
-  SelectOption,
-  DocStatus
+  InputDateItem,
+  DocStatus,
+  SelectItem,
+  ItemSelectionModal
 } from "<components>";
 import {
   InsertRequest,
@@ -15,16 +16,16 @@ import {
   DeleteRequest,
   UpdateRequest,
   GetAllItem,
-  GetAllItemUnit,
+  GetAllContact,
   ClearItem,
-  ClearItemUnit
+  ClearContact
 } from "<actions>";
 import { Formik, Field } from "formik";
 import styled from "styled-components";
 import Router from "next/router";
 import { actionTypes } from "<action_types>";
 import moment from "moment";
-import { Table, Input, Icon, Modal } from "antd";
+import { Table, Input, Icon, Modal, Button } from "antd";
 import uuidv4 from "uuid";
 
 const confirm = Modal.confirm;
@@ -41,34 +42,12 @@ class Form extends React.PureComponent {
         ),
         dataIndex: "item_id",
         width: "15%",
-        align: "center",
-        render: (text, record, index) => {
-          return (
-            <SelectOption
-              data={this.state.Item_Select}
-              value={record.item_id}
-              onChange={value => this.ChangeItem(value, index)}
-              disabled={this.state.status === 2 ? true : false}
-              fieldread="id"
-            />
-          );
-        }
+        align: "center"
       },
       {
         title: "ชื่อสินค้า",
         dataIndex: "item_name",
-        width: "20%",
-        render: (text, record, index) => {
-          return (
-            <SelectOption
-              data={this.state.Item_Select}
-              value={record.item_id}
-              onChange={value => this.ChangeItem(value, index)}
-              disabled={this.state.status === 2 ? true : false}
-              fieldread="value"
-            />
-          );
-        }
+        width: "20%"
       },
       {
         title: (filters, sortOrder) => (
@@ -131,18 +110,9 @@ class Form extends React.PureComponent {
         render: (text, record, index) => {
           if (this.state.status === 2) return;
           return (
-            <div>
-              <a href="#" onClick={() => this.DeleteRow(index)}>
-                <Icon type="minus" />
-              </a>
-              <a
-                href="#"
-                onClick={() => this.AddNewRow()}
-                style={{ paddingLeft: "5px" }}
-              >
-                <Icon type="plus" />
-              </a>
-            </div>
+            <a href="#" onClick={() => this.DeleteRow(index)}>
+              <Icon type="minus" />
+            </a>
           );
         }
       }
@@ -150,6 +120,7 @@ class Form extends React.PureComponent {
 
     this.state = {
       loading: false,
+      visible: false,
       columns,
       status: 0,
       document: {
@@ -157,56 +128,25 @@ class Form extends React.PureComponent {
         date: moment(),
         create_by: this.props.auth.user.name
       },
-      data: [
-        {
-          id: 0,
-          item_id: null,
-          item_name: null,
-          qty: 0,
-          unit_price: 0,
-          unit_id: null,
-          unit_name: null,
-          remark: null,
-          uuid: uuidv4()
-        }
-      ],
-      deleted_data: [],
-      Item_Select: []
+      data: [],
+      deleted_data: []
     };
   }
 
   componentWillMount() {
     const { formId } = this.props;
     this.props.GetAllItem();
-    this.props.GetAllItemUnit();
+    this.props.GetAllContact();
     if (formId) {
       const { document, lines } = this.props.request;
       this.setState({ document, data: lines, status: document.status });
     }
   }
 
-  componentWillReceiveProps({ formId, request, auth, ItemReducer }) {
-    if (ItemReducer.List) {
-      const Item_Select = ItemReducer.List.map(item => {
-        return this.SetItemSelect(item);
-      });
-      this.setState({ Item_Select });
-    }
+  componentWillReceiveProps({ formId, request, auth }) {
     if (!formId) {
       let [data, deleted_data] = [...this.state.data, this.state.deleted_data];
-      data = [
-        {
-          id: 0,
-          item_id: null,
-          item_name: null,
-          qty: 0,
-          unit_price: 0,
-          unit_id: null,
-          unit_name: null,
-          remark: null,
-          uuid: uuidv4()
-        }
-      ];
+      data = [];
       deleted_data = [];
 
       this.setState({
@@ -232,16 +172,7 @@ class Form extends React.PureComponent {
   }
   componentWillUnmount() {
     this.props.ClearItem();
-    this.props.ClearItemUnit();
-  }
-
-  SetItemSelect(item) {
-    const { id, name, item_unit_name } = item;
-    return {
-      id,
-      name,
-      value: `${id} : ${name} (${item_unit_name})`
-    };
+    this.props.ClearContact();
   }
 
   async OnDelete() {
@@ -253,23 +184,6 @@ class Form extends React.PureComponent {
     } else {
       alert("fail");
     }
-  }
-
-  AddNewRow() {
-    const { data } = this.state;
-
-    const newRow = {
-      id: 0,
-      item_id: null,
-      item_name: null,
-      qty: 0,
-      unit_price: 0,
-      unit_id: null,
-      unit_name: null,
-      remark: null,
-      uuid: uuidv4()
-    };
-    this.setState({ data: [...data, ...[newRow]] });
   }
 
   DeleteRow(index) {
@@ -284,18 +198,6 @@ class Form extends React.PureComponent {
       this.setState({ deleted_data: deleted_data_state });
     }
 
-    this.setState({ data });
-  }
-
-  ChangeItem(id, index) {
-    const { ItemReducer } = this.props;
-    const item = ItemReducer.List.find(item => item.id === id);
-
-    let data = [...this.state.data];
-    data[index].item_id = item.id;
-    data[index].item_name = item.name;
-    data[index].unit_id = item.item_unit_id;
-    data[index].unit_name = item.item_unit_name;
     this.setState({ data });
   }
 
@@ -317,6 +219,30 @@ class Form extends React.PureComponent {
     this.setState({ data });
   }
 
+  onChangeContact(id, props) {
+    const contact = this.props.ContactReducer.List.find(
+      contact => contact.id === id
+    );
+    props.setFieldValue("contact", contact);
+  }
+
+  AddItem(rows) {
+    const data = rows.map(row => {
+      row.item_id = row.id;
+      row.item_name = row.name;
+      row.qty = 0;
+      row.unit_price = 0;
+      row.unit_id = row.item_unit_id;
+      row.unit_name = row.item_unit_name;
+      row.remark = "";
+      row.uuid = uuidv4();
+      row.id = 0;
+
+      return row;
+    });
+
+    this.setState({ data: [...this.state.data, ...data] });
+  }
   async onSubmit(values) {
     const { formId } = this.props;
     const { data, deleted_data } = this.state;
@@ -368,8 +294,8 @@ class Form extends React.PureComponent {
   }
 
   render() {
-    const { formId } = this.props;
-
+    const { formId, ContactReducer, ItemReducer } = this.props;
+    const { document } = this.state;
     return (
       <MasterContanier>
         <Container>
@@ -381,10 +307,16 @@ class Form extends React.PureComponent {
           <FormContainer>
             <Formik
               initialValues={{
-                code: this.state.document.code,
-                date: this.state.document.date,
-                create_by: this.state.document.create_by,
-                remark: this.state.document.remark
+                code: document.code,
+                date: document.date,
+                create_by: document.create_by,
+                remark: document.remark,
+                contact: document.contact_id
+                  ? {
+                      id: document.contact_id,
+                      org: document.contact_org
+                    }
+                  : ""
               }}
               enableReinitialize={true}
               validationSchema={RequestFormSchema}
@@ -404,22 +336,23 @@ class Form extends React.PureComponent {
               render={props => (
                 <form>
                   <FlexContainer>
-                    <FieldContainer width="40%">
+                    <FieldContainer width="25%">
                       <Field
                         label="รหัส"
                         type="text"
                         name="code"
-                        component={InputItemInline}
+                        component={InputItem}
                         value={props.values.code}
                         requireStar="true"
+                        padding={true}
                         disabled={true}
                       />
                     </FieldContainer>
-                    <FieldContainer width="30%">
+                    <FieldContainer width="25%">
                       <Field
                         label="วันที่"
                         name="date"
-                        component={InputDateItemInline}
+                        component={InputDateItem}
                         value={moment(props.values.date)}
                         requireStar="true"
                         onChange={e => props.setFieldValue("date", e)}
@@ -428,15 +361,31 @@ class Form extends React.PureComponent {
                       />
                     </FieldContainer>
 
-                    <FieldContainer width="30%">
+                    <FieldContainer width="25%">
                       <Field
                         label="โดย"
                         type="text"
                         name="create_by"
-                        component={InputItemInline}
+                        component={InputItem}
                         value={props.values.create_by}
                         requireStar="true"
+                        padding={true}
                         disabled={true}
+                      />
+                    </FieldContainer>
+
+                    <FieldContainer width="25%">
+                      <Field
+                        label="บริษัท"
+                        name="contact"
+                        component={SelectItem}
+                        value={
+                          props.values.contact ? props.values.contact.org : ""
+                        }
+                        data={ContactReducer.List}
+                        onChange={e => this.onChangeContact(e, props)}
+                        requireStar="true"
+                        fieldread="org"
                       />
                     </FieldContainer>
                   </FlexContainer>
@@ -453,6 +402,16 @@ class Form extends React.PureComponent {
                       disabled={this.state.status === 2 ? true : false}
                     />
                   </RemarkContainer>
+
+                  {this.state.status !== 2 ? (
+                    <AddItemButton
+                      key="button"
+                      onClick={() => this.setState({ visible: true })}
+                      icon="plus"
+                    >
+                      เพิ่มสินค้า
+                    </AddItemButton>
+                  ) : null}
 
                   <div
                     style={{
@@ -485,6 +444,12 @@ class Form extends React.PureComponent {
             />
           </FormContainer>
         </Container>
+        <ItemSelectionModal
+          visible={this.state.visible}
+          closemodal={() => this.setState({ visible: false })}
+          onSubmit={value => this.AddItem(value)}
+          data={ItemReducer.List}
+        />
       </MasterContanier>
     );
   }
@@ -513,18 +478,18 @@ Form.getInitialProps = async ctx => {
 };
 
 export default connect(
-  ({ ItemReducer, ItemUnitReducer }) => ({
+  ({ ItemReducer, ContactReducer }) => ({
     ItemReducer,
-    ItemUnitReducer
+    ContactReducer
   }),
   {
     InsertRequest,
     DeleteRequest,
     UpdateRequest,
     GetAllItem,
-    GetAllItemUnit,
-    ClearItem,
-    ClearItemUnit
+    GetAllContact,
+    ClearContact,
+    ClearItem
   }
 )(Form);
 
@@ -535,7 +500,7 @@ const MasterContanier = styled.div`
   margin-top: 10px;
 `;
 const Container = styled.div`
-  width: 80%;
+  width: 90%;
 `;
 
 const FormContainer = styled.div`
@@ -573,4 +538,8 @@ const HeaderForm = styled.div`
   justify-content: center;
   padding-top: 10px;
   align-items: center;
+`;
+
+const AddItemButton = styled(Button)`
+  margin: 5px 0px 0px 15px;
 `;
