@@ -15,7 +15,8 @@ import {
   GetPOById,
   DeletePO,
   GetRequestReadyToUse,
-  GetRequestById
+  GetRequestById,
+  ClearRequest
 } from "<actions>";
 import { Formik, Field } from "formik";
 import styled from "styled-components";
@@ -123,6 +124,7 @@ class Form extends React.PureComponent {
 
   componentWillMount() {
     const { formId, po } = this.props;
+    this.props.ClearRequest();
     this.props.GetRequestReadyToUse();
     if (formId) {
       let { document, lines } = po;
@@ -463,7 +465,8 @@ export default connect(
     GetRequestById,
     InsertPO,
     UpdatePO,
-    DeletePO
+    DeletePO,
+    ClearRequest
   }
 )(Form);
 
