@@ -6,9 +6,9 @@ import {
   InputTextArea,
   ActionForm,
   InputDateItem,
-  SelectOption,
   SelectItem,
-  DocStatus
+  DocStatus,
+  ItemDNSelectionModal
 } from "<components>";
 import {
   GetItemDN,
@@ -24,7 +24,7 @@ import styled from "styled-components";
 import Router from "next/router";
 import { actionTypes } from "<action_types>";
 import moment from "moment";
-import { Table, Input, Modal, Icon } from "antd";
+import { Table, Input, Modal, Icon, Button } from "antd";
 import uuidv4 from "uuid";
 import { sumBy } from "lodash";
 
@@ -41,29 +41,14 @@ class Form extends React.PureComponent {
         align: "center"
       },
       {
-        title: (filters, sortOrder) => (
-          <FlexContainer>
-            ชื่อสินค้า<LabelRequire>*</LabelRequire>
-          </FlexContainer>
-        ),
+        title: "ชื่อสินค้า",
         dataIndex: "item_name",
-        width: "25%",
-        render: (text, record, index) => {
-          return (
-            <SelectOption
-              data={this.state.Item_Select}
-              value={record.item_name}
-              onChange={value => this.ChangeItem(value, index)}
-              disabled={this.props.formId ? true : false}
-              fieldread="value"
-            />
-          );
-        }
+        width: "20%"
       },
       {
         title: "รหัสใบรับของ",
         dataIndex: "rs_code",
-        width: "10%"
+        width: "15%"
       },
       {
         title: (filters, sortOrder) => (
@@ -92,11 +77,13 @@ class Form extends React.PureComponent {
       {
         title: (filters, sortOrder) => (
           <FlexContainer>
-            ราคาต่อหน่วย<LabelRequire>*</LabelRequire>
+            <label style={{ whiteSpace: "nowrap" }}>
+              วันหมดอายุ(วัน) <LabelRequire>*</LabelRequire>
+            </label>
           </FlexContainer>
         ),
         dataIndex: "unit_price",
-        width: "10%",
+        width: "15%",
         render: (text, record, index) => {
           return (
             <Input
@@ -125,22 +112,13 @@ class Form extends React.PureComponent {
       {
         title: "",
         dataIndex: "",
-        width: "10%",
+        width: "5%",
         render: (text, record, index) => {
           if (this.props.formId) return;
           return (
-            <div>
-              <a href="#" onClick={() => this.DeleteRow(index)}>
-                <Icon type="minus" />
-              </a>
-              <a
-                href="#"
-                onClick={() => this.AddNewRow()}
-                style={{ paddingLeft: "5px" }}
-              >
-                <Icon type="plus" />
-              </a>
-            </div>
+            <a href="#" onClick={() => this.DeleteRow(index)}>
+              <Icon type="minus" />
+            </a>
           );
         }
       }
@@ -148,6 +126,7 @@ class Form extends React.PureComponent {
 
     this.state = {
       loading: false,
+      visible: false,
       columns,
       document: {
         code: "####",
@@ -156,8 +135,7 @@ class Form extends React.PureComponent {
         create_by: this.props.auth.user.name,
         remark: ""
       },
-      lines: [],
-      Item_Select: []
+      lines: []
     };
   }
 
@@ -172,20 +150,10 @@ class Form extends React.PureComponent {
         document,
         lines
       });
-    } else {
-      this.AddNewRow();
     }
   }
 
-  componentWillReceiveProps({ RSReducer, dn, formId }) {
-    const { List } = RSReducer;
-    if (List) {
-      const Item_Select = List.map(item => {
-        return this.SetItemSelect(item);
-      });
-      this.setState({ Item_Select, Set_Item_Select: false });
-    }
-
+  componentWillReceiveProps({ dn, formId }) {
     if (dn && formId) {
       const { document, lines } = dn;
       this.setState({
@@ -201,19 +169,7 @@ class Form extends React.PureComponent {
           create_by: this.props.auth.user.name,
           remark: ""
         },
-        lines: [
-          {
-            id: 0,
-            item_id: null,
-            item_name: null,
-            qty: 0,
-            unit_id: null,
-            unit_name: null,
-            unit_price: 0,
-            remark: null,
-            uuid: uuidv4()
-          }
-        ]
+        lines: []
       });
     }
   }
@@ -221,30 +177,6 @@ class Form extends React.PureComponent {
   componentWillUnmount() {
     this.props.ClearContact();
     //Need to Clear ItemCategory Reducer
-  }
-
-  SetItemSelect(item) {
-    const {
-      id,
-      item_id,
-      item_name,
-      remain_qty,
-      rs_id,
-      rs_code,
-      unit_id,
-      unit_name
-    } = item;
-    return {
-      id,
-      name: item_name,
-      remain_qty,
-      rs_id,
-      rs_line_id: id,
-      rs_code,
-      unit_id,
-      unit_name,
-      value: `${item_id} : ${item_name} (${unit_name}) (${rs_code})`
-    };
   }
 
   async OnDelete() {
@@ -265,65 +197,11 @@ class Form extends React.PureComponent {
     }
   }
 
-  AddNewRow() {
-    let lines = [...this.state.lines];
-
-    const newRow = {
-      id: 0,
-      item_id: null,
-      item_name: null,
-      qty: 0,
-      unit_id: null,
-      unit_name: null,
-      unit_price: 0,
-      remark: null,
-      uuid: uuidv4()
-    };
-    lines.push(newRow);
-
-    this.setState({ lines });
-  }
-
   DeleteRow(index) {
     let lines = [...this.state.lines];
-    let Item_Select = [...this.state.Item_Select];
-    const { RSReducer } = this.props;
-    const { id } = lines[index];
-    const item = RSReducer.List.find(item => item.id === id);
-    const newItem = this.SetItemSelect(item);
-    Item_Select.push(newItem);
-
     lines.splice(index, 1);
 
-    this.setState({ lines, Item_Select });
-  }
-
-  ChangeItem(id, index) {
-    const oldValue = { ...this.state.lines[index] };
-    let Item_Select = [...this.state.Item_Select];
-    let lines = [...this.state.lines];
-    const { RSReducer } = this.props;
-    const item = RSReducer.List.find(item => item.id === id);
-
-    lines[index].id = item.id;
-    lines[index].item_id = item.item_id;
-    lines[index].item_name = item.item_name;
-    lines[index].rs_id = item.rs_id;
-    lines[index].rs_line_id = item.rs_line_id;
-    lines[index].rs_code = item.rs_code;
-    lines[index].unit_id = item.unit_id;
-    lines[index].unit_name = item.unit_name;
-    lines[index].qty = lines[index].remain_qty = item.remain_qty;
-
-    if (oldValue.id !== 0) {
-      let oldItem = RSReducer.List.find(item => item.id === oldValue.id);
-      oldItem = this.SetItemSelect(oldItem);
-      Item_Select.push(oldItem);
-    }
-    let newItemIndex = Item_Select.findIndex(item => item.id === id);
-    Item_Select.splice(newItemIndex, 1);
-
-    this.setState({ lines, Item_Select });
+    this.setState({ lines });
   }
 
   ChangeQTY(e, index) {
@@ -364,7 +242,6 @@ class Form extends React.PureComponent {
       async onOk() {
         props.setFieldValue("date", e);
         await binding_this.setState({ lines: [], Set_Item_Select: true });
-        binding_this.AddNewRow();
         const newDate = moment(e).format("YYYY-MM-DD");
         binding_this.props.GetItemDN(newDate);
       },
@@ -420,8 +297,27 @@ class Form extends React.PureComponent {
     this.setState({ loading: false });
   }
 
+  AddItem(rows) {
+    const lines = rows.map(line => {
+      line.id = line.id;
+      line.item_id = line.item_id;
+      line.item_name = line.item_name;
+      line.rs_id = line.rs_id;
+      line.rs_line_id = line.rs_line_id;
+      line.rs_code = line.rs_code;
+      line.unit_id = line.unit_id;
+      line.unit_name = line.unit_name;
+      line.qty = line.remain_qty = line.remain_qty;
+      line.uuid = uuidv4();
+
+      return line;
+    });
+
+    this.setState({ lines: [...this.state.lines, ...lines] });
+  }
+
   render() {
-    const { formId, ContactReducer } = this.props;
+    const { formId, ContactReducer, RSReducer } = this.props;
     const { lines, columns, document, loading } = this.state;
 
     return (
@@ -548,6 +444,16 @@ class Form extends React.PureComponent {
                     </FieldContainer>
                   </RemarkContainer>
 
+                  {this.state.status !== 2 ? (
+                    <AddItemButton
+                      key="button"
+                      onClick={() => this.setState({ visible: true })}
+                      icon="plus"
+                    >
+                      เพิ่มสินค้า
+                    </AddItemButton>
+                  ) : null}
+
                   <TableContainer>
                     <Table
                       columns={columns}
@@ -581,6 +487,14 @@ class Form extends React.PureComponent {
             />
           </FormContainer>
         </Container>
+
+        <ItemDNSelectionModal
+          visible={this.state.visible}
+          closemodal={() => this.setState({ visible: false })}
+          onSubmit={value => this.AddItem(value)}
+          data={RSReducer.List}
+          lines={this.state.lines}
+        />
       </MasterContanier>
     );
   }
@@ -630,7 +544,7 @@ const MasterContanier = styled.div`
   margin-top: 10px;
 `;
 const Container = styled.div`
-  width: 80%;
+  width: 90%;
 `;
 
 const FormContainer = styled.div`
@@ -660,7 +574,7 @@ const RemarkContainer = styled.div`
   padding-left: 15px;
 `;
 
-const LabelRequire = styled.div`
+const LabelRequire = styled.label`
   color: red;
 `;
 
@@ -682,4 +596,8 @@ const GrandTotalContainer = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: flex-end;
+`;
+
+const AddItemButton = styled(Button)`
+  margin: 5px 0px 0px 15px;
 `;
