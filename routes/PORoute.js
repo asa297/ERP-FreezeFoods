@@ -257,7 +257,7 @@ module.exports = (app, client) => {
     else {
       const { id } = document[0];
       const { rows: lines } = await client.query(
-        `SELECT * from po_line WHERE po_id = ${id}`
+        `SELECT po_line.*, item.expire_date as expire_date_count from po_line join item on po_line.item_id = item.id WHERE po_line.po_id = ${id}`
       );
       const data = {
         document: document[0],

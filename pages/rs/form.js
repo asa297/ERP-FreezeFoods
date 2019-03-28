@@ -43,7 +43,7 @@ class Form extends React.PureComponent {
           </FlexContainer>
         ),
         dataIndex: "qty",
-        width: "10%",
+        width: "15%",
         render: (text, record, index) => {
           return (
             <Input
@@ -55,15 +55,7 @@ class Form extends React.PureComponent {
           );
         }
       },
-      {
-        title: (filters, sortOrder) => (
-          <FlexContainer>
-            ราคาต่อหน่วย<LabelRequire>*</LabelRequire>
-          </FlexContainer>
-        ),
-        dataIndex: "unit_price",
-        width: "10%"
-      },
+
       {
         title: "หน่วยสินค้า",
         dataIndex: "unit_name",
@@ -72,11 +64,13 @@ class Form extends React.PureComponent {
       {
         title: (filters, sortOrder) => (
           <FlexContainer>
-            วันหมดอายุ(วัน)<LabelRequire>*</LabelRequire>
+            <label style={{ whiteSpace: "nowrap" }}>
+              วันหมดอายุ(วัน) <LabelRequire>*</LabelRequire>
+            </label>
           </FlexContainer>
         ),
         dataIndex: "expire_date_count",
-        width: "10%",
+        width: "15%",
         render: (text, record, index) => {
           return (
             <Input
@@ -149,7 +143,6 @@ class Form extends React.PureComponent {
 
       const lines_state = lines.map(line => {
         line.po_qty = !formId ? line.qty : line.po_qty;
-        line.expire_date_count = 0;
         line.uuid = uuidv4();
         return line;
       });
@@ -496,7 +489,7 @@ const MasterContanier = styled.div`
   margin-top: 10px;
 `;
 const Container = styled.div`
-  width: 80%;
+  width: 90%;
 `;
 
 const FormContainer = styled.div`
@@ -525,7 +518,7 @@ const RemarkContainer = styled.div`
   padding-left: 15px;
 `;
 
-const LabelRequire = styled.div`
+const LabelRequire = styled.label`
   color: red;
 `;
 
