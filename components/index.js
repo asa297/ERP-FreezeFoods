@@ -24,3 +24,7 @@ export { default as DocStatus } from "./MainComponents/DocStatus";
 export {
   default as ItemSelectionModal
 } from "./MainComponents/ItemSelectionModal";
+
+export {
+  default as RFQSelectionModal
+} from "./MainComponents/RFQSelectionModal";

@@ -84,17 +84,21 @@ module.exports = (app, client) => {
     res.send(result);
   });
 
-  // app.get("/api/item/list", isAuthenticated, async (req, res) => {
-  //   const data = await client.query(
-  //     `SELECT id, name, item_category_id, item_category_name ,remark from item order by id`
-  //   );
+  app.get(
+    "/api/request/RequestReadyToUse/",
+    isAuthenticated,
+    async (req, res) => {
+      const data = await client.query(
+        `Select * from request where status = 1 order by id desc`
+      );
 
-  //   const result = {
-  //     data: data.rows,
-  //     HasMore: false
-  //   };
-  //   res.send(result);
-  // });
+      const result = {
+        data: data.rows
+      };
+
+      res.send(result);
+    }
+  );
 
   app.get("/api/request/form/:id", isAuthenticated, async (req, res) => {
     const { id } = req.params;

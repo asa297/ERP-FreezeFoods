@@ -220,25 +220,35 @@ export const GetRequest = page => async dispatch => {
   return { status: res.status === 200 };
 };
 
+export const GetRequestReadyToUse = page => async dispatch => {
+  const res = await axios
+    .get("/api/request/RequestReadyToUse")
+    .catch(e => null);
+  if (!res) return { status: false };
+  const { data } = res;
+  dispatch({ type: actionTypes.REQUEST.FETCH_LIST, payload: data });
+  return { status: res.status === 200 };
+};
+
 export const DeleteRequest = id => async (dispatch, currentState) => {
   const res = await axios.delete(`/api/request/${id}`).catch(e => null);
   if (!res) return { status: false };
   return { status: res.status === 200 };
 };
 
-export const GetRequestById = (id, { req }) => async dispatch => {
-  // const res = await axios.get("/api/request/form/" + id).catch(e => null);
-  const baseUrl = req ? `${req.protocol}://${req.get("Host")}` : "";
-
-  const res = await axios
-    .get(baseUrl + "/api/request/form/" + id)
-    .catch(e => null);
+export const GetRequestById = (id, ctx) => async dispatch => {
+  let req, baseUrl, res;
+  if (ctx) {
+    req = ctx.req;
+    baseUrl = req ? `${req.protocol}://${req.get("Host")}` : "";
+    res = await axios.get(baseUrl + "/api/request/form/" + id).catch(e => null);
+  } else {
+    res = await axios.get("/api/request/form/" + id).catch(e => null);
+  }
 
   if (!res) return { status: false };
   const { data } = res;
 
-  // dispatch({ type: actionTypes.REQUEST.FETCH, payload: data });
-  // console.log("dispatch" , );
   return data;
 };
 
