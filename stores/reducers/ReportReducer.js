@@ -8,6 +8,7 @@ const initState = {
 export default function(state = initState, action) {
   switch (action.type) {
     case actionTypes.REPORT.EXPIRE_ITEM:
+    case actionTypes.REPORT.DAILY_FLOW_ITEM:
       return Object.assign({}, state, {
         List: [...action.payload]
       });

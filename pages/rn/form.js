@@ -125,7 +125,6 @@ class Form extends React.PureComponent {
   componentWillMount() {
     const { formId, rn } = this.props;
     if (formId) {
-      console.log(rn);
       let { document, lines } = rn;
 
       this.setState({

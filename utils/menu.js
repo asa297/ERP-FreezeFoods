@@ -79,6 +79,12 @@ export const MenuManage = ({ UserRole }) => {
       route.role.find(role => role === UserRole)
   );
 
+  const FlowDailyItemReport = RoleMappingRoute.find(
+    route =>
+      route.page === "FlowDailyItemReport" &&
+      route.role.find(role => role === UserRole)
+  );
+
   return (
     <Menu theme="dark" mode="inline">
       <Menu.Item key="1" onClick={() => Router.push("/")}>
@@ -251,6 +257,16 @@ export const MenuManage = ({ UserRole }) => {
             <Menu.Item>
               <SpanPointer onClick={() => Router.push(ExpireItemReport.path)}>
                 วันหมดอายุสินค้า
+              </SpanPointer>
+            </Menu.Item>
+          ) : null}
+
+          {FlowDailyItemReport ? (
+            <Menu.Item>
+              <SpanPointer
+                onClick={() => Router.push(FlowDailyItemReport.path)}
+              >
+                ความเคลื่อนไหวสินค้า
               </SpanPointer>
             </Menu.Item>
           ) : null}

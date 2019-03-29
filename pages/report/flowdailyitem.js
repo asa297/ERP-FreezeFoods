@@ -6,7 +6,7 @@ import { Table, Icon, Button } from "antd";
 import styled from "styled-components";
 import { Formik, Field } from "formik";
 import { actionTypes } from "<action_types>";
-import { GetExpireItem } from "<actions>";
+import { FlowDailyItem } from "<actions>";
 
 class Report extends React.PureComponent {
   constructor(props) {
@@ -25,43 +25,33 @@ class Report extends React.PureComponent {
         width: "15%"
       },
       {
-        title: "รหัสใบรับของ",
-        dataIndex: "rs_code",
+        title: "รับเข้า",
+        dataIndex: "inbound",
         width: "10%"
       },
       {
-        title: "จำนวน",
-        dataIndex: "remain_qty",
+        title: "ส่งออก",
+        dataIndex: "outbound",
+        width: "10%"
+      },
+      {
+        title: "รับคืน",
+        dataIndex: "return",
+        width: "10%"
+      },
+      {
+        title: "คงเหลือ ณ ช่วงเวลา",
+        // dataIndex: "remark",
         width: "15%",
-        align: "center"
-      },
-
-      {
-        title: "หน่วยสินค้า",
-        dataIndex: "unit_name",
-        width: "10%",
-        align: "center"
-      },
-      {
-        title: "วันที่รับของ",
-        dataIndex: "rs_date",
-        width: "10%",
         render: (text, record, index) => {
-          return <span>{moment(text).format("YYYY-MM-DD")}</span>;
+          return (
+            <span>
+              {parseInt(record.inbound) -
+                parseInt(record.outbound) +
+                parseInt(record.return)}
+            </span>
+          );
         }
-      },
-      {
-        title: "วันหมดอายุ",
-        dataIndex: "expire_date",
-        width: "10%",
-        render: (text, record, index) => {
-          return <span>{moment(text).format("YYYY-MM-DD")}</span>;
-        }
-      },
-      {
-        title: "หมายเหตุ",
-        dataIndex: "remark",
-        width: "20%"
       }
     ];
 
@@ -74,9 +64,10 @@ class Report extends React.PureComponent {
   render() {
     const { columns, loading } = this.state;
     const { ReportReducer } = this.props;
+
     return (
       <Container>
-        <H1TextCenter>รายงานวันหมดอายุสินค้า</H1TextCenter>
+        <H1TextCenter>รายงานความเคลื่อนไหวสินค้า</H1TextCenter>
         <Formik
           initialValues={{
             start_date: moment(),
@@ -88,7 +79,7 @@ class Report extends React.PureComponent {
             end_date = moment(end_date).format("YYYY-MM-DD");
             if (start_date <= end_date) {
               this.setState({ loading: true });
-              await this.props.GetExpireItem(values);
+              await this.props.FlowDailyItem(values);
               this.setState({ loading: false });
             }
           }}
@@ -144,7 +135,6 @@ class Report extends React.PureComponent {
             dataSource={ReportReducer.List}
             pagination={false}
             rowKey={record => record.id}
-            // scroll={{ y: 500 }}
           />
         </MainContainer>
       </Container>
@@ -164,7 +154,7 @@ Report.getInitialProps = async ctx => {
 
 export default connect(
   ({ ReportReducer }) => ({ ReportReducer }),
-  { GetExpireItem }
+  { FlowDailyItem }
 )(Report);
 
 const H1TextCenter = styled.h1`

@@ -83,6 +83,7 @@ export const actionTypes = {
   },
   REPORT: {
     EXPIRE_ITEM: "EXPIRE_ITEM_REPORT",
+    DAILY_FLOW_ITEM: "DAILY_FLOW_ITEM_REPORT",
     RESET: "RESET_REPORT"
   }
 };

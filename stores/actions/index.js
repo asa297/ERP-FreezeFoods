@@ -495,6 +495,16 @@ export const GetExpireItem = values => async dispatch => {
   return { status: res.status === 200 };
 };
 
+export const FlowDailyItem = values => async dispatch => {
+  const res = await axios
+    .post("/api/report/FlowDailyItem", values)
+    .catch(e => null);
+  if (!res) return { status: false };
+  const { data } = res;
+  dispatch({ type: actionTypes.REPORT.DAILY_FLOW_ITEM, payload: data });
+  return { status: res.status === 200 };
+};
+
 export const ClearReport = () => async dispatch => {
   dispatch({ type: actionTypes.REPORT.RESET });
 };

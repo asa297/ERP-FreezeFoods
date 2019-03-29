@@ -132,6 +132,13 @@
       "type": "Report",
       "page": "ExpireItemReport",
       "role": [1]
+    },
+    {
+      "path": "/report/flowdailyitem",
+      "sub": "Report",
+      "type": "Report",
+      "page": "FlowDailyItemReport",
+      "role": [1]
     }
   ]
 }
