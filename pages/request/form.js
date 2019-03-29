@@ -173,6 +173,7 @@ class Form extends React.PureComponent {
 
   async OnDelete() {
     const { formId } = this.props;
+    this.setState({ loading: true });
     const { status } = await this.props.DeleteRequest(formId);
     if (status) {
       alert("ลบเอกสารสำเร็จ");
@@ -180,6 +181,7 @@ class Form extends React.PureComponent {
     } else {
       alert("fail");
     }
+    this.setState({ loading: false });
   }
 
   DeleteRow(index) {

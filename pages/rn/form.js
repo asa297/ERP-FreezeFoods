@@ -199,7 +199,7 @@ class Form extends React.PureComponent {
       document,
       lines
     };
-
+    this.setState({ loading: true });
     const { status } = await this.props.DeleteRN(formId, { data });
     if (status) {
       alert("ลบเอกสารสำเร็จ");
@@ -207,6 +207,7 @@ class Form extends React.PureComponent {
     } else {
       alert("fail");
     }
+    this.setState({ loading: false });
   }
 
   DeleteRow(index) {
