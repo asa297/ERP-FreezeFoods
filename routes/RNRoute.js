@@ -96,6 +96,15 @@ module.exports = (app, client) => {
       });
     });
 
+    const promise_DocDN_update = new Promise(async (resolve, reject) => {
+      const groupDNDocId = join(uniq(map(lines, "dn_id")));
+
+      const text = `UPDATE dn SET status = 2 Where id in (${groupDNDocId})`;
+      await client.query(text);
+
+      resolve();
+    });
+
     //#endregion DN
 
     //#region RS
@@ -133,24 +142,25 @@ module.exports = (app, client) => {
       promise_docRN_update,
       promise_linesRN_query,
       promise_linesDN_update,
+      promise_DocDN_update,
       promise_linesRS_update,
       promise_linesItem_query
     ]);
 
-    const groupDNDocId = join(uniq(map(lines, "dn_id")));
+    // const groupDNDocId = join(uniq(map(lines, "dn_id")));
 
-    const text = `SELECT dn_id , SUM(qty) as SUM_QTY , SUM(remain_qty) as SUM_REMAIN from dn_line where dn_id in (${groupDNDocId}) group by dn_id`;
-    const { rows: DNLines } = await client.query(text);
+    // const text = `SELECT dn_id , SUM(qty) as SUM_QTY , SUM(remain_qty) as SUM_REMAIN from dn_line where dn_id in (${groupDNDocId}) group by dn_id`;
+    // const { rows: DNLines } = await client.query(text);
 
-    const DNLinesRemainComplete = DNLines.filter(line => line.sum_remain == 0);
+    // const DNLinesRemainComplete = DNLines.filter(line => line.sum_remain == 0);
 
-    if (DNLinesRemainComplete.length !== 0) {
-      const DNLinesString = join(uniq(map(DNLinesRemainComplete, "dn_id")));
+    // if (DNLinesRemainComplete.length !== 0) {
+    //   const DNLinesString = join(uniq(map(DNLinesRemainComplete, "dn_id")));
 
-      const text = `UPDATE dn SET status = 2 Where id in (${DNLinesString})`;
+    //   const text = `UPDATE dn SET status = 2 Where id in (${DNLinesString})`;
 
-      await client.query(text);
-    }
+    //   await client.query(text);
+    // }
 
     res.send({ id: newId });
   });
