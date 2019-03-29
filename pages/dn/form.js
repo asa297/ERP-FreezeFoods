@@ -78,11 +78,11 @@ class Form extends React.PureComponent {
         title: (filters, sortOrder) => (
           <FlexContainer>
             <label style={{ whiteSpace: "nowrap" }}>
-              วันหมดอายุ(วัน) <LabelRequire>*</LabelRequire>
+              ราคาต่อหน่วย <LabelRequire>*</LabelRequire>
             </label>
           </FlexContainer>
         ),
-        dataIndex: "unit_price",
+        dataIndex: "expire_date_count",
         width: "15%",
         render: (text, record, index) => {
           return (
@@ -299,15 +299,8 @@ class Form extends React.PureComponent {
 
   AddItem(rows) {
     const lines = rows.map(line => {
-      line.id = line.id;
-      line.item_id = line.item_id;
-      line.item_name = line.item_name;
-      line.rs_id = line.rs_id;
-      line.rs_line_id = line.rs_line_id;
-      line.rs_code = line.rs_code;
-      line.unit_id = line.unit_id;
-      line.unit_name = line.unit_name;
       line.qty = line.remain_qty = line.remain_qty;
+      line.unit_price = 0;
       line.uuid = uuidv4();
 
       return line;
@@ -444,7 +437,7 @@ class Form extends React.PureComponent {
                     </FieldContainer>
                   </RemarkContainer>
 
-                  {this.state.status !== 2 ? (
+                  {this.state.document.status === 0 ? (
                     <AddItemButton
                       key="button"
                       onClick={() => this.setState({ visible: true })}

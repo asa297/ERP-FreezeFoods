@@ -62,7 +62,7 @@ module.exports = (app, client) => {
           line.unit_price,
           line.remark,
           line.rs_id,
-          line.rs_line_id,
+          line.id,
           UserName,
           new Date(),
           UserName,
@@ -91,7 +91,7 @@ module.exports = (app, client) => {
       return new Promise(async (resolve, reject) => {
         const text = `UPDATE rs_line SET remain_qty = remain_qty - ${
           line.qty
-        } Where id = ${line.rs_line_id} AND rs_id = ${line.rs_id}`;
+        } Where id = ${line.id} AND rs_id = ${line.rs_id}`;
 
         await client.query(text);
 
