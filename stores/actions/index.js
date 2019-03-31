@@ -406,6 +406,14 @@ export const GetDN = page => async dispatch => {
   return { status: res.status === 200 };
 };
 
+export const GetDNReadyToUse = page => async dispatch => {
+  const res = await axios.get("/api/po/DNReadyToUse").catch(e => null);
+  if (!res) return { status: false };
+  const { data } = res;
+  dispatch({ type: actionTypes.DN.FETCH_LIST, payload: data });
+  return { status: res.status === 200 };
+};
+
 export const DeleteDN = (id, value) => async (dispatch, currentState) => {
   const res = await axios.delete(`/api/dn/${id}`, value).catch(e => null);
   if (!res) return { status: false };
@@ -438,10 +446,10 @@ export const GetDNForRN = code => async dispatch => {
   const res = await axios.get("/api/dn/getDNtoRN/" + code).catch(e => null);
 
   const { data } = res;
-  if (!data) return { status: false };
 
-  dispatch({ type: actionTypes.DN.FETCH, payload: data });
-  return { status: true };
+  if (!res) return { status: false };
+
+  return data;
 };
 
 //#endregion DN Action

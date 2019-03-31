@@ -304,4 +304,16 @@ module.exports = (app, client) => {
       res.send(data);
     }
   });
+
+  app.get("/api/po/DNReadyToUse", isAuthenticated, async (req, res) => {
+    const data = await client.query(
+      `Select * from dn where status = 1 order by id desc`
+    );
+
+    const result = {
+      data: data.rows
+    };
+
+    res.send(result);
+  });
 };

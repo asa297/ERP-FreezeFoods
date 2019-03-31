@@ -7,7 +7,8 @@ import {
   ActionForm,
   InputDateItem,
   SelectItem,
-  DocStatus
+  DocStatus,
+  DNSelectionModal
 } from "<components>";
 import {
   GetItemDN,
@@ -15,14 +16,16 @@ import {
   GetRNById,
   UpdateRN,
   DeleteRN,
-  GetDNForRN
+  GetDNForRN,
+  ClearDN,
+  GetDNReadyToUse
 } from "<actions>";
 import { Formik, Field } from "formik";
 import styled from "styled-components";
 import Router from "next/router";
 import { actionTypes } from "<action_types>";
 import moment from "moment";
-import { Table, Input, Modal, Icon } from "antd";
+import { Table, Input, Modal, Icon, Button } from "antd";
 import { isEmpty } from "lodash";
 import uuidv4 from "uuid";
 
@@ -88,24 +91,25 @@ class Form extends React.PureComponent {
             />
           );
         }
-      },
-      {
-        title: "",
-        dataIndex: "",
-        width: "10%",
-        render: (text, record, index) => {
-          if (this.props.formId) return;
-          return (
-            <a href="#" onClick={() => this.DeleteRow(index)}>
-              <Icon type="minus" />
-            </a>
-          );
-        }
       }
+      // {
+      //   title: "",
+      //   dataIndex: "",
+      //   width: "10%",
+      //   render: (text, record, index) => {
+      //     if (this.props.formId) return;
+      //     return (
+      //       <a href="#" onClick={() => this.DeleteRow(index)}>
+      //         <Icon type="minus" />
+      //       </a>
+      //     );
+      //   }
+      // }
     ];
 
     this.state = {
       loading: false,
+      visible: false,
       columns,
       document: {
         code: "####",
@@ -116,78 +120,46 @@ class Form extends React.PureComponent {
         remark: "",
         refDocId: 0
       },
-      lines: [],
-      show_modal: true,
-      found: true
+      lines: []
     };
   }
 
   componentWillMount() {
     const { formId, rn } = this.props;
+    this.props.ClearDN();
+    this.props.GetDNReadyToUse();
     if (formId) {
       let { document, lines } = rn;
 
       this.setState({
         document,
-        lines,
-        show_modal: false
+        lines
       });
     }
   }
 
-  componentWillReceiveProps({ DNReducer, rn, formId }) {
-    const { Item } = DNReducer;
-
-    if (!isEmpty(Item)) {
-      const { document, lines } = Item;
-
-      let document_state = { ...this.state.document };
-      document_state.dn_code = document.code;
-      document_state.dn_date = document.date;
-      document_state.contact_id = document.contact_id;
-      document_state.contact_org = document.contact_org;
-      document_state.contact_address = document.contact_address;
-      document_state.refDocId = document.id;
-
-      const lines_state = lines.map(line => {
-        line.qty = line.remain_qty;
-        line.uuid = uuidv4();
-        return line;
-      });
+  componentWillReceiveProps({ rn, formId }) {
+    if (rn && formId) {
+      const { document, lines } = rn;
 
       this.setState({
-        document: document_state,
-        lines: lines_state
+        document,
+        lines
+      });
+    } else if (!formId) {
+      this.setState({
+        document: {
+          code: "####",
+          date: moment(),
+          dn_date: moment(),
+          status: 0,
+          create_by: this.props.auth.user.name,
+          remark: "",
+          refDocId: 0
+        },
+        lines: []
       });
     }
-
-    // if (dn && formId) {
-    //   const { document, lines } = dn;
-
-    //   const lines_state = lines.map(line => {
-    //     line.uuid = uuidv4();
-    //     return line;
-    //   });
-
-    //   this.setState({
-    //     document,
-    //     lines: lines_state
-    //   });
-    // } else if (!formId) {
-    //   this.setState({
-    //     document: {
-    //       code: "####",
-    //       date: moment(),
-    //       status: 0,
-    //       create_by: this.props.auth.user.name,
-    //       remark: "",
-    //       refDocId: 0
-    //     },
-    //     lines: [],
-    //     show_modal: true,
-    //     found: true
-    //   });
-    // }
   }
 
   async OnDelete() {
@@ -207,14 +179,6 @@ class Form extends React.PureComponent {
       alert("fail");
     }
     this.setState({ loading: false });
-  }
-
-  DeleteRow(index) {
-    let lines = [...this.state.lines];
-
-    lines.splice(index, 1);
-
-    this.setState({ lines });
   }
 
   ChangeQTY(e, index) {
@@ -285,18 +249,35 @@ class Form extends React.PureComponent {
     this.setState({ loading: false });
   }
 
-  async GetDN(code) {
-    const { status: found } = await this.props.GetDNForRN(code);
-    if (found) {
-      this.setState({ show_modal: false });
-    }
+  async AddDN(dn) {
+    const result = await this.props.GetDNForRN(dn.code);
 
-    this.setState({ found });
+    const { document, lines } = result;
+
+    let document_state = { ...this.state.document };
+
+    document_state.dn_code = document.code;
+    document_state.dn_date = document.date;
+    document_state.contact_id = document.contact_id;
+    document_state.contact_org = document.contact_org;
+    document_state.contact_address = document.contact_address;
+    document_state.refDocId = document.id;
+
+    const lines_state = lines.map(line => {
+      line.qty = line.remain_qty;
+      line.uuid = uuidv4();
+      return line;
+    });
+
+    this.setState({
+      document: document_state,
+      lines: lines_state
+    });
   }
 
   render() {
-    const { formId } = this.props;
-    const { lines, columns, document, loading, found } = this.state;
+    const { formId, DNReducer } = this.props;
+    const { lines, columns, document, loading } = this.state;
 
     return (
       <MasterContanier>
@@ -423,6 +404,16 @@ class Form extends React.PureComponent {
                     </FieldContainer>
                   </RemarkContainer>
 
+                  {this.state.document.status === 0 ? (
+                    <AddItemButton
+                      key="button"
+                      onClick={() => this.setState({ visible: true })}
+                      icon="plus"
+                    >
+                      เลือกใบส่งสินค้า
+                    </AddItemButton>
+                  ) : null}
+
                   <TableContainer>
                     <Table
                       columns={columns}
@@ -448,20 +439,12 @@ class Form extends React.PureComponent {
           </FormContainer>
         </Container>
 
-        <Modal
-          title="ค้นหาเอกสารใบส่งของ"
-          onCancel={() => this.setState({ show_modal: false })}
-          visible={this.state.show_modal}
-          footer={null}
-        >
-          <InputSearch
-            placeholder="รหัสเอกสารใบส่งของ"
-            prefix={<Icon type="search" />}
-            onPressEnter={e => this.GetDN(e.target.value)}
-            found={found.toString()}
-          />
-          {!found ? <label className="error">DN Not found</label> : null}
-        </Modal>
+        <DNSelectionModal
+          visible={this.state.visible}
+          closemodal={() => this.setState({ visible: false })}
+          onSelect={value => this.AddDN(value)}
+          data={DNReducer.List}
+        />
       </MasterContanier>
     );
   }
@@ -498,16 +481,11 @@ export default connect(
     GetDNForRN,
     InsertRN,
     UpdateRN,
-    DeleteRN
+    DeleteRN,
+    ClearDN,
+    GetDNReadyToUse
   }
 )(Form);
-
-const InputSearch = styled(Input)`
-  .ant-input {
-    border: ${props =>
-      props.found === "false" ? "1px solid red" : "1px solid #d9d9d9"};
-  }
-`;
 
 const MasterContanier = styled.div`
   display: flex;
@@ -562,4 +540,8 @@ const TableContainer = styled.div`
   padding-top: 10px;
   overflow-y: scroll;
   max-height: 50vh;
+`;
+
+const AddItemButton = styled(Button)`
+  margin: 5px 0px 0px 15px;
 `;
