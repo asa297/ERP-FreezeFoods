@@ -275,7 +275,7 @@ module.exports = (app, client) => {
 
     const text = `select rs_line.* , rs.code as rs_code from rs_line
     left join rs on rs_line.rs_id = rs.id
-    where rs_line.create_time <= '${date}' AND rs_line.remain_qty > 0`;
+    where rs_line.create_time <= '${date}' AND rs_line.remain_qty > 0 order by rs_code desc `;
 
     const { rows: rs_lines } = await client.query(text);
 
