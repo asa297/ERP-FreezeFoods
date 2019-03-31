@@ -34,3 +34,6 @@ export {
 } from "./MainComponents/ItemDNSelectionModal";
 export { default as POSelectionModal } from "./MainComponents/POSelectionModal";
 export { default as DNSelectionModal } from "./MainComponents/DNSelectionModal";
+export {
+  default as DocDNSelectionModal
+} from "./MainComponents/DocDNSelectionModal";

@@ -1,7 +1,7 @@
 import { Table, Button, Icon, Modal } from "antd";
 import moment from "moment";
 
-class RFQSelectionModal extends React.PureComponent {
+class DNSelectionModal extends React.PureComponent {
   constructor(props) {
     super(props);
     const columns = [
@@ -81,4 +81,4 @@ class RFQSelectionModal extends React.PureComponent {
   }
 }
 
-export default RFQSelectionModal;
+export default DNSelectionModal;
