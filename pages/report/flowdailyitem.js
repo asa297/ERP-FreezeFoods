@@ -119,7 +119,7 @@ class Report extends React.PureComponent {
                     icon="snippets"
                     onClick={() => props.handleSubmit()}
                   >
-                    สร้าง
+                    เรียกดู
                   </Button>
                 </ActionContainer>
               </FlexCenter>

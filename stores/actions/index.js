@@ -289,13 +289,21 @@ export const GetPO = page => async dispatch => {
   return { status: res.status === 200 };
 };
 
+export const GetPOReadyToUse = page => async dispatch => {
+  const res = await axios.get("/api/po/POReadyToUse").catch(e => null);
+  if (!res) return { status: false };
+  const { data } = res;
+  dispatch({ type: actionTypes.PO.FETCH_LIST, payload: data });
+  return { status: res.status === 200 };
+};
+
 export const DeletePO = (id, value) => async (dispatch, currentState) => {
   const res = await axios.delete(`/api/po/${id}`, value).catch(e => null);
   if (!res) return { status: false };
   return { status: res.status === 200 };
 };
 
-export const GetPOById = (id, { req }) => async dispatch => {
+export const GetPOById = (id, ctx) => async dispatch => {
   // const res = await axios.get("/api/request/form/" + id).catch(e => null);
   const baseUrl = req ? `${req.protocol}://${req.get("Host")}` : "";
 
@@ -322,10 +330,10 @@ export const GetPOForRS = code => async dispatch => {
   const res = await axios.get("/api/po/findpobycode/" + code).catch(e => null);
 
   const { data } = res;
-  if (!data) return { status: false };
 
-  dispatch({ type: actionTypes.PO.FETCH, payload: data });
-  return { status: true };
+  if (!res) return { status: false };
+
+  return data;
 };
 
 //#endregion PO Action

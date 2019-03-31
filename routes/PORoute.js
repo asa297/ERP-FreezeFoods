@@ -267,4 +267,17 @@ module.exports = (app, client) => {
       res.send(data);
     }
   });
+
+  app.get("/api/po/POReadyToUse", isAuthenticated, async (req, res) => {
+    const data = await client.query(
+      `Select po.* , request.code AS request_code from po left join request on po.ref_doc_id = request.id 
+      where po.status = 1 order by id desc`
+    );
+
+    const result = {
+      data: data.rows
+    };
+
+    res.send(result);
+  });
 };

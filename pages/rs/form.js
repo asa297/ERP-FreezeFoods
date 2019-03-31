@@ -6,18 +6,25 @@ import {
   InputTextArea,
   ActionForm,
   InputDateItem,
-  SelectOption,
-  DocStatus
+  DocStatus,
+  POSelectionModal
 } from "<components>";
-import { GetPOForRS, InsertRS, UpdateRS, GetRSById, DeleteRS } from "<actions>";
+import {
+  GetPOForRS,
+  InsertRS,
+  UpdateRS,
+  GetRSById,
+  DeleteRS,
+  GetPOReadyToUse,
+  ClearPO
+} from "<actions>";
 import { Formik, Field } from "formik";
 import styled from "styled-components";
 import Router from "next/router";
 import { actionTypes } from "<action_types>";
 import moment from "moment";
-import { Table, Input, Icon, Modal } from "antd";
+import { Table, Input, Button, Modal } from "antd";
 import uuidv4 from "uuid";
-import { isEmpty } from "lodash";
 
 const confirm = Modal.confirm;
 
@@ -99,6 +106,7 @@ class Form extends React.PureComponent {
 
     this.state = {
       loading: false,
+      visible: false,
       columns,
       document: {
         code: "####",
@@ -110,47 +118,41 @@ class Form extends React.PureComponent {
         remark: "",
         refDocId: 0
       },
-      lines: [],
-      show_modal: true,
-      found: true
+      lines: []
     };
   }
 
   componentWillMount() {
     const { formId, rs } = this.props;
+    this.props.ClearPO();
+    this.props.GetPOReadyToUse();
     if (formId) {
       const { document, lines } = rs;
 
       this.setState({
         document,
-        lines,
-        show_modal: false
+        lines
       });
     }
   }
 
-  componentWillReceiveProps({ POReducer, formId, rs }) {
-    const { Item } = POReducer;
-    if ((!formId && !isEmpty(Item)) || (formId && rs)) {
-      const { document, lines } = !formId ? Item : po;
+  componentWillReceiveProps({ formId, rs }) {
+    if (formId && rs) {
+      const { document, lines } = rs;
 
       let document_state = { ...this.state.document };
-      document_state.po_code = !formId ? document.code : document.po_code;
-      document_state.po_date = !formId
-        ? moment(document.date)
-        : moment(document.po_date);
-      document_state.refDocId = !formId ? document.id : document.ref_doc_id;
+      document_state.po_code = document.po_code;
+      document_state.po_date = moment(document.po_date);
+      document_state.refDocId = document.ref_doc_id;
 
       const lines_state = lines.map(line => {
-        line.po_qty = !formId ? line.qty : line.po_qty;
+        line.po_qty = line.po_qty;
         line.uuid = uuidv4();
         return line;
       });
       this.setState({
         document: document_state,
-        lines: lines_state,
-        show_modal: false,
-        found: true
+        lines: lines_state
       });
     } else if (!formId) {
       this.setState({
@@ -164,9 +166,7 @@ class Form extends React.PureComponent {
           remark: "",
           refDocId: 0
         },
-        lines: [],
-        show_modal: true,
-        found: true
+        lines: []
       });
     }
   }
@@ -273,18 +273,31 @@ class Form extends React.PureComponent {
     this.setState({ loading: false });
   }
 
-  async GetPO(code) {
-    const { status: found } = await this.props.GetPOForRS(code);
-    if (found) {
-      this.setState({ show_modal: false });
-    }
+  async AddPO(po) {
+    const result = await this.props.GetPOForRS(po.code);
 
-    this.setState({ found });
+    const { document, lines } = result;
+
+    let document_state = { ...this.state.document };
+    document_state.po_code = document.code;
+    document_state.po_date = moment(document.date);
+    document_state.refDocId = document.id;
+
+    const lines_state = lines.map(line => {
+      line.po_qty = line.qty;
+
+      line.uuid = uuidv4();
+      return line;
+    });
+    this.setState({
+      document: document_state,
+      lines: lines_state
+    });
   }
 
   render() {
-    const { formId } = this.props;
-    const { lines, columns, document, loading, found } = this.state;
+    const { formId, POReducer } = this.props;
+    const { lines, columns, document, loading } = this.state;
 
     return (
       <MasterContanier>
@@ -372,7 +385,7 @@ class Form extends React.PureComponent {
                         padding={true}
                       />
                     </FieldContainer>
-                    <FieldContainer width="40%">
+                    <FieldContainer width="30%">
                       <Field
                         label="วันทีใบสั่งซื้อ"
                         name="po_date"
@@ -396,6 +409,16 @@ class Form extends React.PureComponent {
                       }
                     />
                   </RemarkContainer>
+
+                  {this.state.document.status === 0 ? (
+                    <AddItemButton
+                      key="button"
+                      onClick={() => this.setState({ visible: true })}
+                      icon="plus"
+                    >
+                      เลือกใบยืนยันคำสั่งซื้อ
+                    </AddItemButton>
+                  ) : null}
 
                   <TableContainer>
                     <Table
@@ -422,20 +445,12 @@ class Form extends React.PureComponent {
           </FormContainer>
         </Container>
 
-        <Modal
-          title="ค้นหาเอกสารใบสั่งซื้อ"
-          onCancel={() => this.setState({ show_modal: false })}
-          visible={this.state.show_modal}
-          footer={null}
-        >
-          <InputSearch
-            placeholder="รหัสเอกสารใบสั่งซื้อ"
-            prefix={<Icon type="search" />}
-            onPressEnter={e => this.GetPO(e.target.value)}
-            found={found.toString()}
-          />
-          {!found ? <label className="error">PO Not found</label> : null}
-        </Modal>
+        <POSelectionModal
+          visible={this.state.visible}
+          closemodal={() => this.setState({ visible: false })}
+          onSelect={value => this.AddPO(value)}
+          data={POReducer.List}
+        />
       </MasterContanier>
     );
   }
@@ -472,7 +487,9 @@ export default connect(
     InsertRS,
     UpdateRS,
     DeleteRS,
-    GetRSById
+    GetRSById,
+    GetPOReadyToUse,
+    ClearPO
   }
 )(Form);
 
@@ -535,4 +552,8 @@ const TableContainer = styled.div`
   padding-top: 10px;
   overflow-y: scroll;
   max-height: 50vh;
+`;
+
+const AddItemButton = styled(Button)`
+  margin: 5px 0px 0px 15px;
 `;
