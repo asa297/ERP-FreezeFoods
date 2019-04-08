@@ -8,7 +8,8 @@ import {
   InputDateItem,
   SelectItem,
   DocStatus,
-  DNSelectionModal
+  DNSelectionModal,
+  ListHeader
 } from "<components>";
 import {
   GetItemDN,
@@ -281,11 +282,13 @@ class Form extends React.PureComponent {
 
     return (
       <MasterContanier>
+        <ListHeader
+          title="ฟอร์มใบรับสินค้าคืน"
+          icon="file-text"
+          status={document.status}
+        />
+
         <Container>
-          <HeaderForm>
-            <H1Text>ฟอร์มใบรับสินค้าคืน</H1Text>
-            <DocStatus status={document.status} />
-          </HeaderForm>
           <FormContainer>
             <Formik
               initialValues={{
@@ -488,21 +491,18 @@ export default connect(
 )(Form);
 
 const MasterContanier = styled.div`
-  display: flex;
-  justify-content: center;
   width: 100%;
-  margin-top: 10px;
 `;
 const Container = styled.div`
-  width: 80%;
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
 `;
 
 const FormContainer = styled.div`
-  padding-top: 10px;
-`;
-
-const H1Text = styled.h1`
-  margin: 0px;
+  padding-top: 20px;
+  width: 80%;
 `;
 
 const FlexCenter = styled.div`

@@ -67,7 +67,8 @@ const Contanier = styled.div`
   display: flex;
   justify-content: center;
   width: 100%;
-  margin-top: 5%;
+  padding-top: 5%;
+  background-color: #5dbcd2;
 `;
 const LoginContainer = styled.div`
   width: 60%;

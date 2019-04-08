@@ -304,10 +304,14 @@ export const DeletePO = (id, value) => async (dispatch, currentState) => {
 };
 
 export const GetPOById = (id, ctx) => async dispatch => {
-  // const res = await axios.get("/api/request/form/" + id).catch(e => null);
-  const baseUrl = req ? `${req.protocol}://${req.get("Host")}` : "";
-
-  const res = await axios.get(baseUrl + "/api/po/form/" + id).catch(e => null);
+  let req, baseUrl, res;
+  if (ctx) {
+    req = ctx.req;
+    baseUrl = req ? `${req.protocol}://${req.get("Host")}` : "";
+    res = await axios.get(baseUrl + "/api/po/form/" + id).catch(e => null);
+  } else {
+    res = await axios.get("/api/po/form/" + id).catch(e => null);
+  }
 
   if (!res) return { status: false };
   const { data } = res;

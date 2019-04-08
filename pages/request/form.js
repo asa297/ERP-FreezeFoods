@@ -8,7 +8,8 @@ import {
   InputDateItem,
   DocStatus,
   SelectItem,
-  ItemSelectionModal
+  ItemSelectionModal,
+  ListHeader
 } from "<components>";
 import {
   InsertRequest,
@@ -286,12 +287,13 @@ class Form extends React.PureComponent {
     const { document } = this.state;
     return (
       <MasterContanier>
-        <Container>
-          <HeaderForm>
-            <H1Text>ฟอร์มใบสั่งซื้อ</H1Text>
-            <DocStatus status={this.state.status} />
-          </HeaderForm>
+        <ListHeader
+          title="ฟอร์มใบสั่งซื้อ"
+          icon="file-text"
+          status={document.status}
+        />
 
+        <Container>
           <FormContainer>
             <Formik
               initialValues={{
@@ -482,21 +484,18 @@ export default connect(
 )(Form);
 
 const MasterContanier = styled.div`
-  display: flex;
-  justify-content: center;
   width: 100%;
-  margin-top: 10px;
 `;
 const Container = styled.div`
-  width: 90%;
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
 `;
 
 const FormContainer = styled.div`
-  padding-top: 10px;
-`;
-
-const H1Text = styled.h1`
-  margin: 0px;
+  padding-top: 20px;
+  width: 80%;
 `;
 
 const FlexCenter = styled.div`

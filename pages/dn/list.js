@@ -5,7 +5,7 @@ import { Table, Icon } from "antd";
 import styled from "styled-components";
 import Link from "next/link";
 import InfiniteScroll from "react-infinite-scroller";
-import { DocStatus } from "<components>";
+import { DocStatus, ListHeader } from "<components>";
 import moment from "moment";
 
 class List extends React.PureComponent {
@@ -75,7 +75,7 @@ class List extends React.PureComponent {
               prefetch
             >
               <a onClick={() => this.setState({ loading: true })}>
-                <Icon type="snippets" />
+                <Icon type="form" style={{ fontSize: "22px" }} />
               </a>
             </Link>
           );
@@ -85,8 +85,7 @@ class List extends React.PureComponent {
     return (
       <ListContainer>
         <Container>
-          <H1TextCenter>รายการใบส่งสินค้า</H1TextCenter>
-
+          <ListHeader title="รายการใบส่งสินค้า" />
           <Loading className="loader" loading={this.state.loading} />
           <ListTable loading={this.state.loading}>
             <InfiniteScroll
@@ -130,18 +129,19 @@ const ListContainer = styled.div`
   display: flex;
   justify-content: center;
   width: 100%;
+
+  background: #faf6d0;
 `;
 
 const ListTable = styled.div`
   height: calc(90vh - ${props => (props.loading ? "5px" : "0px")});
   overflow-y: auto;
+
+  tbody[class*="ant-table-tbody"] {
+    background: white;
+  }
 `;
 
 const Loading = styled.div`
   display: ${props => (props.loading ? "block" : "none")};
-`;
-
-const H1TextCenter = styled.h1`
-  padding: 10px 0px;
-  text-align: center;
 `;
