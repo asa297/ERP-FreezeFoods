@@ -68,7 +68,7 @@ const Contanier = styled.div`
   justify-content: center;
   width: 100%;
   padding-top: 5%;
-  background-color: #5dbcd2;
+
 `;
 const LoginContainer = styled.div`
   width: 60%;
