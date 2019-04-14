@@ -18,10 +18,14 @@ export const GetAllItem = () => async dispatch => {
 };
 
 export const GetItem = page => async dispatch => {
+  dispatch({ type: actionTypes.ITEM.FECTHING_STATUS, payload: true });
+
   const res = await axios.get("/api/item/list/" + page).catch(e => null);
   if (!res) return { status: false };
   const { data } = res;
   dispatch({ type: actionTypes.ITEM.FETCH_LIST, payload: data });
+
+  dispatch({ type: actionTypes.ITEM.FECTHING_STATUS, payload: false });
   return { status: res.status === 200 };
 };
 
@@ -68,12 +72,15 @@ export const GetItemCategoryAll = () => async dispatch => {
 };
 
 export const GetItemCategory = page => async dispatch => {
+  dispatch({ type: actionTypes.CATEGORY.FECTHING_STATUS, payload: true });
   const res = await axios
     .get("/api/itemcategory/list/" + page)
     .catch(e => null);
   if (!res) return { status: false };
   const { data } = res;
   dispatch({ type: actionTypes.CATEGORY.FETCH_LIST, payload: data });
+
+  dispatch({ type: actionTypes.CATEGORY.FECTHING_STATUS, payload: false });
   return { status: res.status === 200 };
 };
 
@@ -114,10 +121,15 @@ export const InsertContact = value => async dispatch => {
 };
 
 export const GetContact = page => async dispatch => {
+  dispatch({ type: actionTypes.CONTACT.FECTHING_STATUS, payload: true });
+
   const res = await axios.get("/api/contact/list/" + page).catch(e => null);
   if (!res) return { status: false };
   const { data } = res;
   dispatch({ type: actionTypes.CONTACT.FETCH_LIST, payload: data });
+
+  dispatch({ type: actionTypes.CONTACT.FECTHING_STATUS, payload: false });
+
   return { status: res.status === 200 };
 };
 
@@ -172,10 +184,12 @@ export const GetAllItemUnit = () => async dispatch => {
 };
 
 export const GetItemUnit = page => async dispatch => {
+  dispatch({ type: actionTypes.UNIT.FECTHING_STATUS, payload: true });
   const res = await axios.get("/api/unit/list/" + page).catch(e => null);
   if (!res) return { status: false };
   const { data } = res;
-  // dispatch({ type: actionTypes.UNIT.FETCH_LIST, payload: data });
+  dispatch({ type: actionTypes.UNIT.FETCH_LIST, payload: data });
+  dispatch({ type: actionTypes.UNIT.FECTHING_STATUS, payload: false });
   return { status: res.status === 200 };
 };
 
@@ -213,10 +227,12 @@ export const InsertRequest = value => async dispatch => {
 };
 
 export const GetRequest = page => async dispatch => {
+  dispatch({ type: actionTypes.REQUEST.FECTHING_STATUS, payload: true });
   const res = await axios.get("/api/request/list/" + page).catch(e => null);
   if (!res) return { status: false };
   const { data } = res;
   dispatch({ type: actionTypes.REQUEST.FETCH_LIST, payload: data });
+  dispatch({ type: actionTypes.REQUEST.FECTHING_STATUS, payload: false });
   return { status: res.status === 200 };
 };
 
@@ -282,10 +298,12 @@ export const InsertPO = value => async dispatch => {
 };
 
 export const GetPO = page => async dispatch => {
+  dispatch({ type: actionTypes.PO.FECTHING_STATUS, payload: true });
   const res = await axios.get("/api/po/list/" + page).catch(e => null);
   if (!res) return { status: false };
   const { data } = res;
   dispatch({ type: actionTypes.PO.FETCH_LIST, payload: data });
+  dispatch({ type: actionTypes.PO.FECTHING_STATUS, payload: false });
   return { status: res.status === 200 };
 };
 
@@ -350,10 +368,12 @@ export const InsertRS = value => async dispatch => {
 };
 
 export const GetRS = page => async dispatch => {
+  dispatch({ type: actionTypes.RS.FECTHING_STATUS, payload: true });
   const res = await axios.get("/api/rs/list/" + page).catch(e => null);
   if (!res) return { status: false };
   const { data } = res;
   dispatch({ type: actionTypes.RS.FETCH_LIST, payload: data });
+  dispatch({ type: actionTypes.RS.FECTHING_STATUS, payload: false });
   return { status: res.status === 200 };
 };
 
@@ -403,10 +423,14 @@ export const InsertDN = value => async dispatch => {
 };
 
 export const GetDN = page => async dispatch => {
+  dispatch({ type: actionTypes.DN.FECTHING_STATUS, payload: true });
+
   const res = await axios.get("/api/dn/list/" + page).catch(e => null);
   if (!res) return { status: false };
   const { data } = res;
   dispatch({ type: actionTypes.DN.FETCH_LIST, payload: data });
+
+  dispatch({ type: actionTypes.DN.FECTHING_STATUS, payload: false });
   return { status: res.status === 200 };
 };
 
@@ -466,10 +490,12 @@ export const InsertRN = value => async dispatch => {
 };
 
 export const GetRN = page => async dispatch => {
+  dispatch({ type: actionTypes.RN.FECTHING_STATUS, payload: true });
   const res = await axios.get("/api/rn/list/" + page).catch(e => null);
   if (!res) return { status: false };
   const { data } = res;
   dispatch({ type: actionTypes.RN.FETCH_LIST, payload: data });
+  dispatch({ type: actionTypes.RN.FECTHING_STATUS, payload: false });
   return { status: res.status === 200 };
 };
 

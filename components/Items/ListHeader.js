@@ -7,7 +7,7 @@ const ListHeader = ({
   title,
   icon = "database",
   status,
-  color = "#fe8a4f"
+  color = "#002140"
 }) => {
   return (
     <Header color={color}>
@@ -32,4 +32,5 @@ const Header = styled.div`
   align-items: center;
   padding: 0px 10px;
   width: 100%;
+  height: 10vh;
 `;

@@ -5,30 +5,16 @@ import { Table, Icon } from "antd";
 import styled from "styled-components";
 // import { Link } from "<routes>";
 import Link from "next/link";
-import InfiniteScroll from "react-infinite-scroller";
-import { actionTypes } from "<action_types>";
-import { ListHeader } from "<components>";
+import { PaginationList } from "<components>";
 
 class List extends React.PureComponent {
   state = {
-    page: 1,
-    loading: false
+    page: 1
   };
 
   componentWillMount() {
     this.props.ClearItem();
     this.props.GetItem(this.state.page);
-  }
-
-  async LoadListMore(page) {
-    const { loading } = this.state;
-    const { HasMore } = this.props.ItemReducer;
-    if (HasMore && page !== 1 && !loading) {
-      this.setState({ page, loading: true });
-      await this.props.GetItem(page);
-
-      this.setState({ loading: false });
-    }
   }
 
   render() {
@@ -78,26 +64,36 @@ class List extends React.PureComponent {
         }
       }
     ];
+
+    const { page } = this.state;
+    const { ItemReducer } = this.props;
+
     return (
       <ListContainer>
         <Container>
-          <ListHeader title="รายการสินค้า" />
-          <Loading className="loader" loading={this.state.loading} />
-          <ListTable loading={this.state.loading}>
-            <InfiniteScroll
-              pageStart={0}
-              loadMore={page => this.LoadListMore(page)}
-              useWindow={false}
-              threshold={250}
-            >
-              <Table
-                columns={columns}
-                dataSource={this.props.ItemReducer.List}
-                pagination={false}
-                rowKey={record => record.id}
-              />
-            </InfiniteScroll>
+          <HeaderContainer>
+            <HeaderLabel>รายการสินค้า </HeaderLabel>
+          </HeaderContainer>
+
+          <Loading className="loader" loading={ItemReducer.Fetching_Status} />
+
+          <ListTable>
+            <Table
+              columns={columns}
+              bordered
+              dataSource={ItemReducer.List.slice((page - 1) * 25, page * 25)}
+              pagination={false}
+              rowKey={record => record.id}
+            />
           </ListTable>
+
+          <PaginationContainer>
+            <PaginationList
+              defaultPageSize={25}
+              total={ItemReducer.List.length}
+              onChange={page => this.setState({ page })}
+            />
+          </PaginationContainer>
         </Container>
       </ListContainer>
     );
@@ -127,11 +123,11 @@ const ListContainer = styled.div`
   justify-content: center;
   width: 100%;
 
-  background: #faf6d0;
+  background: #f5f6f5;
 `;
 
 const ListTable = styled.div`
-  height: calc(90vh - ${props => (props.loading ? "5px" : "0px")});
+  height: calc(90vh - 32px);
   overflow-y: auto;
 
   tbody[class*="ant-table-tbody"] {
@@ -141,4 +137,18 @@ const ListTable = styled.div`
 
 const Loading = styled.div`
   display: ${props => (props.loading ? "block" : "none")};
+`;
+
+const HeaderContainer = styled.div`
+  padding: 10px;
+`;
+
+const HeaderLabel = styled.label`
+  font-size: 26px;
+`;
+
+const PaginationContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px 15px;
 `;

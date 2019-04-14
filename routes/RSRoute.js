@@ -130,10 +130,15 @@ module.exports = (app, client) => {
   app.get("/api/rs/list/:page", isAuthenticated, async (req, res) => {
     const { page } = req.params;
 
+    // const data = await client.query(
+    //   `SELECT rs.*, po.code AS po_code from rs left join po on rs.ref_doc_id = po.id
+    //   order by rs.last_modify_time desc OFFSET ${(page - 1) *
+    //     30} ROWS FETCH NEXT 30 ROWS ONLY;`
+    // );
+
     const data = await client.query(
       `SELECT rs.*, po.code AS po_code from rs left join po on rs.ref_doc_id = po.id 
-      order by rs.last_modify_time desc OFFSET ${(page - 1) *
-        30} ROWS FETCH NEXT 30 ROWS ONLY;`
+      order by rs.last_modify_time desc`
     );
 
     const result = {

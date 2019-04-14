@@ -67,11 +67,7 @@ class Report extends React.PureComponent {
 
     return (
       <Container>
-        <ListHeader
-          title="รายงานความเคลื่อนไหวสินค้า"
-          icon="pie-chart"
-          color="#FF4F51"
-        />
+        <ListHeader title="รายงานความเคลื่อนไหวสินค้า" icon="pie-chart" />
 
         <Formik
           initialValues={{
@@ -172,7 +168,6 @@ const MainContainer = styled.div`
 `;
 const Container = styled.div`
   width: 100%;
-  background: #ffbdbe;
 `;
 
 const FlexCenter = styled.div`

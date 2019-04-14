@@ -168,12 +168,16 @@ module.exports = (app, client) => {
   app.get("/api/rn/list/:page", isAuthenticated, async (req, res) => {
     const { page } = req.params;
 
+    // const data = await client.query(
+    //   `SELECT rn.* , dn.code AS dn_code from rn left join dn on rn.ref_doc_id = dn.id
+    //   order by last_modify_time desc OFFSET ${(page - 1) *
+    //     30} ROWS FETCH NEXT 30 ROWS ONLY;`
+    // );
+
     const data = await client.query(
       `SELECT rn.* , dn.code AS dn_code from rn left join dn on rn.ref_doc_id = dn.id 
-      order by last_modify_time desc OFFSET ${(page - 1) *
-        30} ROWS FETCH NEXT 30 ROWS ONLY;`
+      order by last_modify_time desc`
     );
-
     const result = {
       data: data.rows,
       HasMore: data.rows.length === 30

@@ -76,11 +76,7 @@ class Report extends React.PureComponent {
     const { ReportReducer } = this.props;
     return (
       <Container>
-        <ListHeader
-          title="รายงานวันหมดอายุสินค้า"
-          icon="pie-chart"
-          color="#6417FD"
-        />
+        <ListHeader title="รายงานวันหมดอายุสินค้า" icon="pie-chart" />
 
         <Formik
           initialValues={{
@@ -182,7 +178,6 @@ const MainContainer = styled.div`
 `;
 const Container = styled.div`
   width: 100%;
-  background: #c0b4fe;
 `;
 
 const FlexCenter = styled.div`
