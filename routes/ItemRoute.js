@@ -34,11 +34,16 @@ module.exports = (app, client) => {
   app.get("/api/item/list/:page", isAuthenticated, async (req, res) => {
     const { page } = req.params;
 
+    // const data = await client.query(
+    //   `SELECT id, name, item_category_id, item_category_name , item_unit_id
+    //     ,item_unit_name ,qty ,remark from item order by last_modify_time desc OFFSET ${(page -
+    //       1) *
+    //       30} ROWS FETCH NEXT 30 ROWS ONLY;`
+    // );
+
     const data = await client.query(
       `SELECT id, name, item_category_id, item_category_name , item_unit_id
-        ,item_unit_name ,qty ,remark from item order by last_modify_time desc OFFSET ${(page -
-          1) *
-          30} ROWS FETCH NEXT 30 ROWS ONLY;`
+        ,item_unit_name ,qty ,remark from item order by last_modify_time desc`
     );
 
     const result = {

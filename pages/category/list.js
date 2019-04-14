@@ -3,32 +3,17 @@ import { authInitialProps, checkUserRole } from "<utils>/auth";
 import { GetItemCategory, CleaerItemCategory } from "<actions>";
 import { Table, Icon } from "antd";
 import styled from "styled-components";
-// import { Link } from "<routes>";
 import Link from "next/link";
-import InfiniteScroll from "react-infinite-scroller";
-import { actionTypes } from "<action_types>";
+import { PaginationList } from "<components>";
 
 class List extends React.PureComponent {
   state = {
-    page: 1,
-    loading: false
+    page: 1
   };
 
   componentWillMount() {
-    this.props.CleaerItemCategory(0);
+    this.props.CleaerItemCategory();
     this.props.GetItemCategory(this.state.page);
-  }
-
-  async LoadListMore(page) {
-    const { loading } = this.state;
-    const { HasMore } = this.props.ItemCategoryReducer;
-
-    if (HasMore && page !== 1 && !loading) {
-      this.setState({ page, loading: true });
-      await this.props.GetItemCategory(page);
-
-      this.setState({ loading: false });
-    }
   }
 
   render() {
@@ -56,7 +41,7 @@ class List extends React.PureComponent {
               prefetch
             >
               <a onClick={() => this.setState({ loading: true })}>
-                <Icon type="snippets" />
+                <Icon type="form" style={{ fontSize: "22px" }} />
               </a>
             </Link>
           );
@@ -64,27 +49,41 @@ class List extends React.PureComponent {
       }
     ];
 
+    const { page } = this.state;
+    const { ItemCategoryReducer } = this.props;
+
     return (
       <ListContainer>
         <Container>
-          <H1TextCenter>รายการหมวดสินค้า</H1TextCenter>
-          <Loading className="loader" loading={this.state.loading} />
-          <ListTable loading={this.state.loading}>
-            <InfiniteScroll
-              pageStart={0}
-              loadMore={page => this.LoadListMore(page)}
-              hasMore={true}
-              useWindow={false}
-              threshold={250}
-            >
-              <Table
-                columns={columns}
-                dataSource={this.props.ItemCategoryReducer.List}
-                pagination={false}
-                rowKey={record => record.id}
-              />
-            </InfiniteScroll>
+          <HeaderContainer>
+            <HeaderLabel>รายการหมวดหมู่สินค้า </HeaderLabel>
+          </HeaderContainer>
+
+          <Loading
+            className="loader"
+            loading={ItemCategoryReducer.Fetching_Status}
+          />
+
+          <ListTable>
+            <Table
+              columns={columns}
+              bordered
+              dataSource={ItemCategoryReducer.List.slice(
+                (page - 1) * 25,
+                page * 25
+              )}
+              pagination={false}
+              rowKey={record => record.id}
+            />
           </ListTable>
+
+          <PaginationContainer>
+            <PaginationList
+              defaultPageSize={25}
+              total={ItemCategoryReducer.List.length}
+              onChange={page => this.setState({ page })}
+            />
+          </PaginationContainer>
         </Container>
       </ListContainer>
     );
@@ -113,20 +112,33 @@ const ListContainer = styled.div`
   display: flex;
   justify-content: center;
   width: 100%;
+
+  background: #f5f6f5;
 `;
 
 const ListTable = styled.div`
-  height: calc(90vh - ${props => (props.loading ? "5px" : "0px")});
+  height: calc(90vh - 32px);
   overflow-y: auto;
+
+  tbody[class*="ant-table-tbody"] {
+    background: white;
+  }
 `;
 
 const Loading = styled.div`
   display: ${props => (props.loading ? "block" : "none")};
 `;
 
-const H1TextCenter = styled.h1`
-  height: 10vh;
-  margin: 0px;
-  padding: 10px 0px;
-  text-align: center;
+const HeaderContainer = styled.div`
+  padding: 10px;
+`;
+
+const HeaderLabel = styled.label`
+  font-size: 26px;
+`;
+
+const PaginationContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px 15px;
 `;

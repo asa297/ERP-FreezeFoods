@@ -7,7 +7,8 @@ import {
   ActionForm,
   InputDateItem,
   DocStatus,
-  RFQSelectionModal
+  RFQSelectionModal,
+  ListHeader
 } from "<components>";
 import {
   InsertPO,
@@ -279,11 +280,13 @@ class Form extends React.PureComponent {
     const { lines, columns, document, loading } = this.state;
     return (
       <MasterContanier>
+        <ListHeader
+          title="ฟอร์มใบยืนยันคำสั่งซื้อ"
+          icon="file-text"
+          status={document.status}
+        />
+
         <Container>
-          <HeaderForm>
-            <H1Text>ฟอร์มใบยืนยันคำสั่งซื้อ</H1Text>
-            <DocStatus status={document.status} />
-          </HeaderForm>
           <FormContainer>
             <Formik
               initialValues={{
@@ -472,21 +475,19 @@ export default connect(
 )(Form);
 
 const MasterContanier = styled.div`
+  width: 100%;
+`;
+
+const Container = styled.div`
+  width: 100%;
+
   display: flex;
   justify-content: center;
-  width: 100%;
-  margin-top: 10px;
-`;
-const Container = styled.div`
-  width: 80%;
 `;
 
 const FormContainer = styled.div`
-  padding-top: 10px;
-`;
-
-const H1Text = styled.h1`
-  margin: 0px;
+  padding-top: 20px;
+  width: 80%;
 `;
 
 const FlexCenter = styled.div`

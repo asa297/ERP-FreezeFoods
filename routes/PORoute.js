@@ -105,10 +105,15 @@ module.exports = (app, client) => {
   app.get("/api/po/list/:page", isAuthenticated, async (req, res) => {
     const { page } = req.params;
 
+    // const data = await client.query(
+    //   `SELECT po.*, request.code AS request_code from po left join request on po.ref_doc_id = request.id
+    //   order by po.last_modify_time desc OFFSET ${(page - 1) *
+    //     30} ROWS FETCH NEXT 30 ROWS ONLY;`
+    // );
+
     const data = await client.query(
       `SELECT po.*, request.code AS request_code from po left join request on po.ref_doc_id = request.id 
-      order by po.last_modify_time desc OFFSET ${(page - 1) *
-        30} ROWS FETCH NEXT 30 ROWS ONLY;`
+      order by po.last_modify_time desc`
     );
 
     const result = {

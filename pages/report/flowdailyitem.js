@@ -1,7 +1,7 @@
 import { connect } from "react-redux";
 import { authInitialProps, checkUserRole } from "<utils>/auth";
 import moment from "moment";
-import { InputDateItem } from "<components>";
+import { InputDateItem, ListHeader } from "<components>";
 import { Table, Icon, Button } from "antd";
 import styled from "styled-components";
 import { Formik, Field } from "formik";
@@ -67,7 +67,8 @@ class Report extends React.PureComponent {
 
     return (
       <Container>
-        <H1TextCenter>รายงานความเคลื่อนไหวสินค้า</H1TextCenter>
+        <ListHeader title="รายงานความเคลื่อนไหวสินค้า" icon="pie-chart" />
+
         <Formik
           initialValues={{
             start_date: moment(),
@@ -157,18 +158,15 @@ export default connect(
   { FlowDailyItem }
 )(Report);
 
-const H1TextCenter = styled.h1`
-  margin: 0px;
-  padding: 10px 0px;
-  text-align: center;
-`;
-
 const MainContainer = styled.div`
   height: 70vh;
   overflow-y: scroll;
+
+  tbody[class*="ant-table-tbody"] {
+    background: white;
+  }
 `;
 const Container = styled.div`
-  padding: 0px 10px;
   width: 100%;
 `;
 

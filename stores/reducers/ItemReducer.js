@@ -3,6 +3,7 @@ import { actionTypes } from "../type";
 const initState = {
   List: [],
   Item: {},
+  Fetching_Status: false,
   HasMore: true
 };
 
@@ -23,6 +24,11 @@ export default function(state = initState, action) {
     case actionTypes.ITEM.UPDATE:
       return Object.assign({}, state, {
         Item: action.payload
+      });
+
+    case actionTypes.ITEM.FECTHING_STATUS:
+      return Object.assign({}, state, {
+        Fetching_Status: action.payload
       });
     case actionTypes.ITEM.RESET:
       return { ...initState };

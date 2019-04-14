@@ -1,7 +1,7 @@
 import { connect } from "react-redux";
 import { authInitialProps, checkUserRole } from "<utils>/auth";
 import { ItemCategoryFormSchema } from "<utils>/validatior";
-import { InputItemInline, ActionForm } from "<components>";
+import { InputItemInline, ActionForm, ListHeader } from "<components>";
 import {
   InsertItemCategory,
   GetItemCategoryById,
@@ -71,8 +71,8 @@ class Form extends React.PureComponent {
 
     return (
       <MasterContanier>
+        <ListHeader title="ฟอร์มหมวดสินค้า" icon="file-text" />
         <Container>
-          <H1TextCenter>ฟอร์มหมวดสินค้า</H1TextCenter>
           <FormContainer>
             <Formik
               initialValues={this.setInitialDataForm(
@@ -149,21 +149,18 @@ export default connect(
 )(Form);
 
 const MasterContanier = styled.div`
-  display: flex;
-  justify-content: center;
   width: 100%;
-  margin-top: 5%;
 `;
 const Container = styled.div`
-  width: 60%;
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
 `;
 
 const FormContainer = styled.div`
-  padding-top: 10px;
-`;
-
-const H1TextCenter = styled.h1`
-  text-align: center;
+  padding-top: 20px;
+  width: 60%;
 `;
 
 const FlexCenter = styled.div`

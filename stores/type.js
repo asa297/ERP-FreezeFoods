@@ -7,7 +7,8 @@ export const actionTypes = {
     FETCH: "FETCH_CATEGORY",
     DELETE: "DELETE_CATEGORY",
     UPDATE: "UPDATE_CATEGORY",
-    RESET: "RESET_CATEGORY"
+    RESET: "RESET_CATEGORY",
+    FECTHING_STATUS: "FECTHING_STATUS_CATEGORY"
   },
   UNIT: {
     CREATE: "CREATE_UNIT",
@@ -16,7 +17,8 @@ export const actionTypes = {
     FETCH: "FETCH_UNIT",
     DELETE: "DELETE_UNIT",
     UPDATE: "UPDATE_UNIT",
-    RESET: "RESET_UNIT"
+    RESET: "RESET_UNIT",
+    FECTHING_STATUS: "FECTHING_STATUS_UNIT"
   },
   CONTACT: {
     CREATE: "CREATE_CONTACT",
@@ -25,7 +27,8 @@ export const actionTypes = {
     FETCH: "FETCH_CONTACT",
     DELETE: "DELETE_CONTACT",
     UPDATE: "UPDATE_CONTACT",
-    RESET: "RESET_CONTACT"
+    RESET: "RESET_CONTACT",
+    FECTHING_STATUS: "FECTHING_STATUS_CONTACT"
   },
   ITEM: {
     CREATE: "CREATE_ITEM",
@@ -34,7 +37,8 @@ export const actionTypes = {
     FETCH: "FETCH_ITEM",
     DELETE: "DELETE_ITEM",
     UPDATE: "UPDATE_ITEM",
-    RESET: "RESET_ITEM"
+    RESET: "RESET_ITEM",
+    FECTHING_STATUS: "FECTHING_STATUS_ITEM"
   },
   REQUEST: {
     CREATE: "CREATE_REQUEST",
@@ -43,7 +47,8 @@ export const actionTypes = {
     FETCH: "FETCH_REQUEST",
     DELETE: "DELETE_REQUEST",
     UPDATE: "UPDATE_REQUEST",
-    RESET: "RESET_REQUEST"
+    RESET: "RESET_REQUEST",
+    FECTHING_STATUS: "FECTHING_STATUS_REQUEST"
   },
   PO: {
     CREATE: "CREATE_PO",
@@ -52,7 +57,8 @@ export const actionTypes = {
     FETCH: "FETCH_PO",
     DELETE: "DELETE_PO",
     UPDATE: "UPDATE_PO",
-    RESET: "RESET_PO"
+    RESET: "RESET_PO",
+    FECTHING_STATUS: "FECTHING_STATUS_PO"
   },
   RS: {
     CREATE: "CREATE_RS",
@@ -61,7 +67,8 @@ export const actionTypes = {
     FETCH: "FETCH_RS",
     DELETE: "DELETE_RS",
     UPDATE: "UPDATE_RS",
-    RESET: "RESET_RS"
+    RESET: "RESET_RS",
+    FECTHING_STATUS: "FECTHING_STATUS_RS"
   },
   DN: {
     CREATE: "CREATE_DN",
@@ -70,7 +77,8 @@ export const actionTypes = {
     FETCH: "FETCH_DN",
     DELETE: "DELETE_DN",
     UPDATE: "UPDATE_DN",
-    RESET: "RESET_DN"
+    RESET: "RESET_DN",
+    FECTHING_STATUS: "FECTHING_STATUS_DN"
   },
   RN: {
     CREATE: "CREATE_RN",
@@ -79,7 +87,8 @@ export const actionTypes = {
     FETCH: "FETCH_RN",
     DELETE: "DELETE_RN",
     UPDATE: "UPDATE_RN",
-    RESET: "RESET_RN"
+    RESET: "RESET_RN",
+    FECTHING_STATUS: "FECTHING_STATUS_RN"
   },
   REPORT: {
     EXPIRE_ITEM: "EXPIRE_ITEM_REPORT",
