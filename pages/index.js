@@ -12,9 +12,10 @@ class Index extends React.PureComponent {
   }
 
   NoticationCard(line) {
-    const { ItemName, UnitName, DocCode, QTY, ExpireDate } = line;
+    const { ItemName, UnitName, DocCode, QTY, ExpireDate, _id } = line;
+
     return (
-      <NotiCard>
+      <NotiCard key={_id}>
         <NotiCover />
         <NotiText>
           <div>
@@ -49,6 +50,9 @@ class Index extends React.PureComponent {
   }
 
   render() {
+    const { auth } = this.props;
+
+    if (!auth) return <div />;
     return (
       <Container>
         <FlexCenter>
@@ -177,6 +181,7 @@ const MenuBox = styled.div`
   flex-direction: column;
 
   margin: 20px;
+  border-radius: 20px;
 `;
 
 const MenuIcon = styled(Icon)`

@@ -51,7 +51,7 @@ class List extends React.PureComponent {
 
     const { page } = this.state;
     const { ItemCategoryReducer } = this.props;
-
+    console.log(ItemCategoryReducer.List);
     return (
       <ListContainer>
         <Container>
