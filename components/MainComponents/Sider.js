@@ -12,13 +12,10 @@ const SiderComponent = ({ auth }) => {
   const [collapsed, setCollapsed] = useState(true);
   return (
     <SiderContainer
-      collapsible
-      collapsed={collapsed}
-      onCollapse={() => setCollapsed(!collapsed)}
+    // collapsible
+    // collapsed={collapsed}
+    // onCollapse={() => setCollapsed(!collapsed)}
     >
-      <div className="logo">
-        <TextInLogo>{auth ? auth.user.name : "Guest"}</TextInLogo>
-      </div>
       {!auth ? (
         <Menu theme="dark" mode="inline">
           <Menu.Item key="1" onClick={() => Router.push("/")}>
@@ -34,6 +31,9 @@ const SiderComponent = ({ auth }) => {
         MenuManage({ UserRole: auth.user.role })
       )}
       }
+      <Test>
+        <TextInLogo>{auth ? auth.user.name : "Guest"}</TextInLogo>
+      </Test>
     </SiderContainer>
   );
 };
@@ -52,4 +52,15 @@ const TextInLogo = styled.p`
   text-overflow: ellipsis;
   color: white;
   text-align: center;
+`;
+
+const Test = styled.div`
+  width: 100%;
+  position: absolute;
+  bottom: 0px;
+
+  height: 32px;
+  background: rgba(255, 255, 255, 0.2);
+
+  color: white;
 `;

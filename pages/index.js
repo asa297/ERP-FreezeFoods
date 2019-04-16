@@ -4,6 +4,7 @@ import { GetNotification } from "<actions>";
 import { Popover, Button, Icon, Badge, Affix } from "antd";
 import styled from "styled-components";
 import moment from "moment";
+import Link from "next/link";
 
 class Index extends React.PureComponent {
   componentWillMount() {
@@ -11,9 +12,10 @@ class Index extends React.PureComponent {
   }
 
   NoticationCard(line) {
-    const { ItemName, UnitName, DocCode, QTY, ExpireDate } = line;
+    const { ItemName, UnitName, DocCode, QTY, ExpireDate, _id } = line;
+
     return (
-      <NotiCard>
+      <NotiCard key={_id}>
         <NotiCover />
         <NotiText>
           <div>
@@ -48,8 +50,80 @@ class Index extends React.PureComponent {
   }
 
   render() {
+    const { auth } = this.props;
+
+    if (!auth) return <div />;
     return (
-      <div>
+      <Container>
+        <FlexCenter>
+          <MenuBox>
+            <MenuIcon type="file-text" />
+            <MenuText>
+              <Link href={{ pathname: "/category/list" }} prefetch>
+                <TextWhite>หมวดหมู่สินค้า</TextWhite>
+              </Link>
+            </MenuText>
+            <MenuText>
+              <Link href={{ pathname: "/item/list" }} prefetch>
+                <TextWhite>สินค้า</TextWhite>
+              </Link>
+            </MenuText>
+            <MenuText>
+              <Link href={{ pathname: "/unit/list" }} prefetch>
+                <TextWhite>หน่วยสินค้า</TextWhite>
+              </Link>
+            </MenuText>
+            <MenuText>
+              <Link href={{ pathname: "/contact/list" }} prefetch>
+                <TextWhite>บริษัท</TextWhite>
+              </Link>
+            </MenuText>
+          </MenuBox>
+
+          <MenuBox>
+            <MenuIcon type="form" />
+            <MenuText>
+              <Link href={{ pathname: "/request/list" }} prefetch>
+                <TextWhite>ใบสั่งซื้อ</TextWhite>
+              </Link>
+            </MenuText>
+            <MenuText>
+              <Link href={{ pathname: "/po/list" }} prefetch>
+                <TextWhite>ใบยืนยันคำสั่งซื้อ</TextWhite>
+              </Link>
+            </MenuText>
+            <MenuText>
+              <Link href={{ pathname: "/rs/list" }} prefetch>
+                <TextWhite>ใบรับสินค้า</TextWhite>
+              </Link>
+            </MenuText>
+            <MenuText>
+              <Link href={{ pathname: "/dn/list" }} prefetch>
+                <TextWhite>ใบส่งสินค้า</TextWhite>
+              </Link>
+            </MenuText>
+            <MenuText>
+              <Link href={{ pathname: "/rn/list" }} prefetch>
+                <TextWhite>ใบรับสินค้าคืน</TextWhite>
+              </Link>
+            </MenuText>
+          </MenuBox>
+
+          <MenuBox>
+            <MenuIcon type="pie-chart" />
+            <MenuText>
+              <Link href={{ pathname: "/report/expireitem" }} prefetch>
+                <TextWhite>วันหมดอายุสินค้า</TextWhite>
+              </Link>
+            </MenuText>
+            <MenuText>
+              <Link href={{ pathname: "/report/flowdailyitem" }} prefetch>
+                <TextWhite>ความเคลื่อนไหวสินค้า</TextWhite>
+              </Link>
+            </MenuText>
+          </MenuBox>
+        </FlexCenter>
+
         <Affix style={{ position: "absolute", bottom: "30px", right: "30px" }}>
           <Popover
             content={this.NoticationContent()}
@@ -62,7 +136,7 @@ class Index extends React.PureComponent {
             </Badge>
           </Popover>
         </Affix>
-      </div>
+      </Container>
     );
   }
 }
@@ -97,4 +171,41 @@ const NotiText = styled.div`
 
 const NotiContainer = styled.div`
   height: 500px;
+`;
+
+const MenuBox = styled.div`
+  height: 50vh;
+  width: 25vh;
+  background: #21206c;
+  display: flex;
+  flex-direction: column;
+
+  margin: 20px;
+  border-radius: 20px;
+`;
+
+const MenuIcon = styled(Icon)`
+  font-size: 60px;
+  color: white;
+  padding: 25px;
+`;
+
+const MenuText = styled.div`
+  padding: 10px 30px;
+`;
+
+const TextWhite = styled.a`
+  color: white;
+`;
+
+const FlexCenter = styled.div`
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  overflow-y: scroll;
+  height: 100vh;
+`;
+
+const Container = styled.div`
+  width: 100%;
 `;
