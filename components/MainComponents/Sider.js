@@ -12,9 +12,9 @@ const SiderComponent = ({ auth }) => {
   const [collapsed, setCollapsed] = useState(true);
   return (
     <SiderContainer
-      collapsible
-      collapsed={collapsed}
-      onCollapse={() => setCollapsed(!collapsed)}
+    // collapsible
+    // collapsed={collapsed}
+    // onCollapse={() => setCollapsed(!collapsed)}
     >
       <div className="logo">
         <TextInLogo>{auth ? auth.user.name : "Guest"}</TextInLogo>
