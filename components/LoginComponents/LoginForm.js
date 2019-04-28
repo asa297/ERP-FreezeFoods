@@ -1,15 +1,16 @@
-import { Formik, Field } from "formik";
-import { Button } from "antd";
-import { InputItem } from "<components>";
-import styled from "styled-components";
-import { loginUser } from "<utils>/auth";
-import Router from "next/router";
+import { Formik, Field } from 'formik'
+import { Button } from 'antd'
+import { InputItem, ImageProject } from '<components>'
+import styled from 'styled-components'
+import { loginUser } from '<utils>/auth'
+import Router from 'next/router'
 
 const LoginForm = () => {
   return (
     <Contanier>
+      <ImageProject />
+
       <LoginContainer>
-        <H1TextCenter>เข้าสู่ระบบ</H1TextCenter>
         <Formik
           initialValues={
             {
@@ -18,14 +19,14 @@ const LoginForm = () => {
             }
           }
           onSubmit={(values, actions) => {
-            const { username, password } = values;
+            const { username, password } = values
             loginUser(username, password)
               .then(() => {
-                alert("done");
+                alert('done')
               })
               .catch(() => {
-                alert("fail");
-              });
+                alert('fail')
+              })
           }}
           render={props => (
             <form onSubmit={props.handleSubmit}>
@@ -36,7 +37,7 @@ const LoginForm = () => {
                 component={InputItem}
                 value={props.values.username}
                 requireStar="true"
-                onChange={e => props.setFieldValue("username", e.target.value)}
+                onChange={e => props.setFieldValue('username', e.target.value)}
               />
 
               <Field
@@ -46,7 +47,7 @@ const LoginForm = () => {
                 component={InputItem}
                 value={props.values.password}
                 requireStar="true"
-                onChange={e => props.setFieldValue("password", e.target.value)}
+                onChange={e => props.setFieldValue('password', e.target.value)}
               />
               <FlexCenter>
                 <Button type="primary" htmlType="submit">
@@ -58,27 +59,23 @@ const LoginForm = () => {
         />
       </LoginContainer>
     </Contanier>
-  );
-};
+  )
+}
 
-export default LoginForm;
+export default LoginForm
 
 const Contanier = styled.div`
   display: flex;
-  justify-content: center;
+  align-items: center;
+  flex-direction: column;
   width: 100%;
   padding-top: 5%;
-
-`;
+`
 const LoginContainer = styled.div`
   width: 60%;
-`;
-
-const H1TextCenter = styled.h1`
-  text-align: center;
-`;
+`
 
 const FlexCenter = styled.div`
   display: flex;
   justify-content: center;
-`;
+`
