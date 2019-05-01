@@ -50,9 +50,9 @@ const LoginForm = () => {
                 onChange={e => props.setFieldValue('password', e.target.value)}
               />
               <FlexCenter>
-                <Button type="primary" htmlType="submit">
-                  เข้าสู่ระบบ
-                </Button>
+                <ButtonWrapper htmlType="submit">
+                  <div style={{ display: 'flex', alignItems: 'center', height: '100%', width: '100%' }}>เข้าสู่ระบบ</div>
+                </ButtonWrapper>
               </FlexCenter>
             </form>
           )}
@@ -69,13 +69,28 @@ const Contanier = styled.div`
   align-items: center;
   flex-direction: column;
   width: 100%;
-  padding-top: 5%;
+  padding-top: 20px;
 `
 const LoginContainer = styled.div`
-  width: 60%;
+  width: 50%;
 `
 
 const FlexCenter = styled.div`
   display: flex;
   justify-content: center;
+  margin-top: 20px;
+`
+
+const ButtonWrapper = styled(Button)`
+  background-color: black;
+  color: white;
+  padding: 20px 70px;
+  border-radius: 5px;
+
+  :hover,
+  :active,
+  :visited {
+    background-color: black;
+    color: white;
+  }
 `
