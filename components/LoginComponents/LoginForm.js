@@ -84,7 +84,12 @@ const FlexCenter = styled.div`
 const ButtonWrapper = styled(Button)`
   background-color: black;
   color: white;
-  padding: 20px 70px;
+  padding: 20px 100px;
+
+  @media (max-width: 576px) {
+    padding: 20px 50px;
+  }
+
   border-radius: 5px;
 
   :hover,

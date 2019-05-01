@@ -32,14 +32,14 @@ const ImageContainer = styled.div`
   }
 
   @media (min-width: 768px) and (max-width: 1200px) {
-    height: 30%;
-  }
-
-  @media (min-width: 1200px) and (max-width: 1600px) {
     height: 35%;
   }
 
-  height: 40%;
+  @media (min-width: 1200px) and (max-width: 1600px) {
+    height: 40%;
+  }
+
+  height: 45%;
 `
 
 const TextImageContainer = styled.div`
