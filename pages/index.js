@@ -5,6 +5,7 @@ import { Popover, Button, Icon, Badge, Affix } from 'antd'
 import styled from 'styled-components'
 import moment from 'moment'
 import Link from 'next/link'
+import Router from 'next/router'
 
 import { ImageProject } from '<components>'
 
@@ -56,11 +57,13 @@ class Index extends React.PureComponent {
       <CenterContainer>
         <ImageProject />
         <NotAuthHome>
-          <Button type="primary">
-            <Link href={{ pathname: '/login' }} prefetch>
-              เข้าสู่ระบบ
-            </Link>
-          </Button>
+          <ButtonWrapper onClick={() => Router.push('/login')}>
+            <div style={{ display: 'flex', alignItems: 'center', height: '100%', width: '100%' }}>
+              {/* <Link href={{ pathname: '/login' }} prefetch> */}
+              กรุณาเข้าสู่ระบบ
+              {/* </Link> */}
+            </div>
+          </ButtonWrapper>
         </NotAuthHome>
       </CenterContainer>
     )
@@ -224,13 +227,26 @@ const Container = styled.div`
 
 const CenterContainer = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   flex-direction: column;
   width: 100%;
+  margin-top: 20px;
 `
 
-const ImageContainer = styled.div``
+const ButtonWrapper = styled(Button)`
+  background-color: black;
+  color: white;
+  padding: 20px 70px;
+  border-radius: 5px;
+
+  :hover,
+  :active,
+  :visited {
+    background-color: black;
+    color: white;
+  }
+`
 
 const NotAuthHome = styled.div`
   display: flex;

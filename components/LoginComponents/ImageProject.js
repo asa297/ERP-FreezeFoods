@@ -26,7 +26,7 @@ const ImageLogin = styled.div`
 `
 
 const ImageContainer = styled.div`
-  width: 65%;
+  width: 60%;
   @media (min-width: 576px) and (max-width: 768px) {
     height: 25%;
   }
@@ -36,7 +36,7 @@ const ImageContainer = styled.div`
   }
 
   @media (min-width: 1200px) and (max-width: 1600px) {
-    height: 50%;
+    height: 35%;
   }
 
   height: 40%;
