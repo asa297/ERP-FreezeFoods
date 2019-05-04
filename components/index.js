@@ -4,6 +4,8 @@ export { default as ActionForm } from './MainComponents/ActionForm'
 
 export { default as InputItem } from './FormItems/InputItem'
 export { default as InputItemInline } from './FormItems/InputItemInline'
+
+export { default as InputItemInlineNoBorder } from './FormItems/InputItemInlineNoBorder'
 export { default as InputTextAreaInline } from './FormItems/InputTextAreaInline'
 export { default as InputTextArea } from './FormItems/InputTextArea'
 export { default as SelectItem } from './FormItems/SelectItem'
@@ -29,3 +31,4 @@ export { default as ListHeader } from './Items/ListHeader'
 export { default as PaginationList } from './Items/PaginationList'
 
 export { default as ImageProject } from './LoginComponents/ImageProject'
+export { default as ImageOverlay } from './LoginComponents/ImageOverlay'
