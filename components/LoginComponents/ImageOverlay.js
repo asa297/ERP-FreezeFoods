@@ -32,6 +32,10 @@ const ImageContainer = styled.div`
     height: 150px;
   }
 
+  @media (min-width: 1600px) {
+    height: 300px;
+  }
+
   height: 200px;
 `
 
