@@ -18,7 +18,7 @@
 .loader:before {
   display: block;
   position: absolute;
-  content: "";
+  content: '';
   left: -200px;
   width: 100%;
   height: 5px;
@@ -48,6 +48,6 @@
   }
 }
 
-.ant-popover-inner > div:nth-child(1) {
+ {
   overflow-y: scroll;
 }

@@ -30,5 +30,5 @@ export { default as ListHeader } from './Items/ListHeader'
 
 export { default as PaginationList } from './Items/PaginationList'
 
-export { default as ImageProject } from './LoginComponents/ImageProject'
+export { default as HomeComponent } from './MainComponents/HomeComponent'
 export { default as ImageOverlay } from './LoginComponents/ImageOverlay'

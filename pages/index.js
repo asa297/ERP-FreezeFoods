@@ -1,13 +1,12 @@
 import { authInitialProps } from '<utils>/auth'
 import { connect } from 'react-redux'
 import { GetNotification } from '<actions>'
-import { Popover, Button, Icon, Badge, Affix } from 'antd'
+import { HomeComponent } from '<components>'
+import { Popover, Icon, Badge, Affix } from 'antd'
 import styled from 'styled-components'
 import moment from 'moment'
 import Link from 'next/link'
 import Router from 'next/router'
-
-import { ImageProject } from '<components>'
 
 class Index extends React.PureComponent {
   componentWillMount() {
@@ -52,98 +51,12 @@ class Index extends React.PureComponent {
     )
   }
 
-  ComponentNotAuth() {
-    return (
-      <CenterContainer>
-        <ImageProject />
-        <NotAuthHome>
-          <ButtonWrapper onClick={() => Router.push('/login')}>
-            <div style={{ display: 'flex', alignItems: 'center', height: '100%', width: '100%' }}>
-              {/* <Link href={{ pathname: '/login' }} prefetch> */}
-              กรุณาเข้าสู่ระบบ
-              {/* </Link> */}
-            </div>
-          </ButtonWrapper>
-        </NotAuthHome>
-      </CenterContainer>
-    )
-  }
-
   render() {
     const { auth } = this.props
-
-    if (!auth) return this.ComponentNotAuth()
+    if (!auth) return <></>
     return (
       <Container>
-        <FlexCenter>
-          <MenuBox>
-            <MenuIcon type="file-text" />
-            <MenuText>
-              <Link href={{ pathname: '/category/list' }} prefetch>
-                <TextWhite>หมวดหมู่สินค้า</TextWhite>
-              </Link>
-            </MenuText>
-            <MenuText>
-              <Link href={{ pathname: '/item/list' }} prefetch>
-                <TextWhite>สินค้า</TextWhite>
-              </Link>
-            </MenuText>
-            <MenuText>
-              <Link href={{ pathname: '/unit/list' }} prefetch>
-                <TextWhite>หน่วยสินค้า</TextWhite>
-              </Link>
-            </MenuText>
-            <MenuText>
-              <Link href={{ pathname: '/contact/list' }} prefetch>
-                <TextWhite>บริษัท</TextWhite>
-              </Link>
-            </MenuText>
-          </MenuBox>
-
-          <MenuBox>
-            <MenuIcon type="form" />
-            <MenuText>
-              <Link href={{ pathname: '/request/list' }} prefetch>
-                <TextWhite>ใบสั่งซื้อ</TextWhite>
-              </Link>
-            </MenuText>
-            <MenuText>
-              <Link href={{ pathname: '/po/list' }} prefetch>
-                <TextWhite>ใบยืนยันคำสั่งซื้อ</TextWhite>
-              </Link>
-            </MenuText>
-            <MenuText>
-              <Link href={{ pathname: '/rs/list' }} prefetch>
-                <TextWhite>ใบรับสินค้า</TextWhite>
-              </Link>
-            </MenuText>
-            <MenuText>
-              <Link href={{ pathname: '/dn/list' }} prefetch>
-                <TextWhite>ใบส่งสินค้า</TextWhite>
-              </Link>
-            </MenuText>
-            <MenuText>
-              <Link href={{ pathname: '/rn/list' }} prefetch>
-                <TextWhite>ใบรับสินค้าคืน</TextWhite>
-              </Link>
-            </MenuText>
-          </MenuBox>
-
-          <MenuBox>
-            <MenuIcon type="pie-chart" />
-            <MenuText>
-              <Link href={{ pathname: '/report/expireitem' }} prefetch>
-                <TextWhite>วันหมดอายุสินค้า</TextWhite>
-              </Link>
-            </MenuText>
-            <MenuText>
-              <Link href={{ pathname: '/report/flowdailyitem' }} prefetch>
-                <TextWhite>ความเคลื่อนไหวสินค้า</TextWhite>
-              </Link>
-            </MenuText>
-          </MenuBox>
-        </FlexCenter>
-
+        <HomeComponent />
         <Affix style={{ position: 'absolute', bottom: '30px', right: '30px' }}>
           <Popover content={this.NoticationContent()} title="การแจ้งเตือน" trigger="hover" placement="leftBottom">
             <Badge count={this.props.NotificationReducer.length}>
@@ -188,72 +101,6 @@ const NotiContainer = styled.div`
   height: 500px;
 `
 
-const MenuBox = styled.div`
-  height: 50vh;
-  width: 25vh;
-  background: #21206c;
-  display: flex;
-  flex-direction: column;
-
-  margin: 20px;
-  border-radius: 20px;
-`
-
-const MenuIcon = styled(Icon)`
-  font-size: 60px;
-  color: white;
-  padding: 25px;
-`
-
-const MenuText = styled.div`
-  padding: 10px 30px;
-`
-
-const TextWhite = styled.a`
-  color: white;
-`
-
-const FlexCenter = styled.div`
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  overflow-y: scroll;
-  height: 100vh;
-`
-
 const Container = styled.div`
   width: 100%;
-`
-
-const CenterContainer = styled.div`
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  flex-direction: column;
-  width: 100%;
-  margin-top: 20px;
-`
-
-const ButtonWrapper = styled(Button)`
-  background-color: black;
-  color: white;
-  padding: 20px 100px;
-  @media (max-width: 576px) {
-    padding: 20px 50px;
-  }
-  border-radius: 5px;
-
-  :hover,
-  :active,
-  :visited {
-    background-color: black;
-    color: white;
-  }
-`
-
-const NotAuthHome = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding-top: 20px;
 `

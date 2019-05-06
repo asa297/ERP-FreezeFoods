@@ -19,6 +19,7 @@ const ImageLogin = styled.div`
   height: 100%;
   background: url(${props => props.src});
   background-size: 100%;
+  background-repeat: round;
 
   display: flex;
   justify-content: center;
