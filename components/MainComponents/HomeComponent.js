@@ -3,88 +3,88 @@ import { Icon, Popover } from 'antd'
 import Link from 'next/link'
 
 const Managecontent = () => (
-  <div>
+  <MenuContentContainer>
     <MenuWrapper>
       <IconMenuContent type="book" />
       <Link href={{ pathname: '/category/list' }} prefetch>
-        หมวดสินค้า
+        <MenuContentText>หมวดสินค้า</MenuContentText>
       </Link>
     </MenuWrapper>
 
     <MenuWrapper>
       <IconMenuContent type="book" />
       <Link href={{ pathname: '/item/list' }} prefetch>
-        สินค้า
+        <MenuContentText>สินค้า</MenuContentText>
       </Link>
     </MenuWrapper>
 
     <MenuWrapper>
       <IconMenuContent type="book" />
       <Link href={{ pathname: '/unit/list' }} prefetch>
-        หน่วยสินค้า
+        <MenuContentText>หน่วยสินค้า</MenuContentText>
       </Link>
     </MenuWrapper>
     <MenuWrapper>
       <IconMenuContent type="book" />
       <Link href={{ pathname: '/contact/list' }} prefetch>
-        บริษัท
+        <MenuContentText>บริษัท</MenuContentText>
       </Link>
     </MenuWrapper>
-  </div>
+  </MenuContentContainer>
 )
 
 const Documentcontent = () => (
-  <div>
+  <MenuContentContainer>
     <MenuWrapper>
       <IconMenuContent type="form" />
       <Link href={{ pathname: '/request/list' }} prefetch>
-        ใบสั่งซื้อ
+        <MenuContentText>ใบสั่งซื้อ</MenuContentText>
       </Link>
     </MenuWrapper>
     <MenuWrapper>
       <IconMenuContent type="form" />
       <Link href={{ pathname: '/po/list' }} prefetch>
-        ใบยืนยันคำสั่งซื้อ
+        <MenuContentText>ใบยืนยันคำสั่งซื้อ</MenuContentText>
       </Link>
     </MenuWrapper>
 
     <MenuWrapper>
       <IconMenuContent type="form" />
       <Link href={{ pathname: '/rs/list' }} prefetch>
-        ใบรับสินค้า
+        <MenuContentText>ใบรับสินค้า</MenuContentText>
       </Link>
     </MenuWrapper>
     <MenuWrapper>
       <IconMenuContent type="form" />
       <Link href={{ pathname: '/dn/list' }} prefetch>
-        ใบส่งสินค้า
+        <MenuContentText>ใบส่งสินค้า</MenuContentText>
       </Link>
     </MenuWrapper>
     <MenuWrapper>
       <IconMenuContent type="form" />
       <Link href={{ pathname: '/rn/list' }} prefetch>
-        ใบรับสินค้าคืน
+        <MenuContentText>ใบรับสินค้าคืน</MenuContentText>
       </Link>
     </MenuWrapper>
-  </div>
+  </MenuContentContainer>
 )
 
 const Reportcontent = () => (
-  <div>
+  <MenuContentContainer>
     <MenuWrapper>
       <IconMenuContent type="solution" />
       <Link href={{ pathname: '/report/expireitem' }} prefetch>
-        วันหมดอายุสินค้า
+        <MenuContentText>วันหมดอายุสินค้า</MenuContentText>
       </Link>
     </MenuWrapper>
 
     <MenuWrapper>
       <IconMenuContent type="solution" />
       <Link href={{ pathname: '/report/flowdailyitem' }} prefetch>
-        ความเคลื่อนไหวสินค้า
+        <MenuContentText>ความเคลื่อนไหวสินค้า</MenuContentText>
       </Link>
     </MenuWrapper>
-  </div>
+  </MenuContentContainer>
 )
 
 export default () => {
@@ -162,7 +162,7 @@ const MenuContainer = styled.div`
 `
 
 const MenuBox = styled.div`
-  width: 200px;
+  width: 250px;
   background: rgba(113, 113, 113, 0.8);
   margin: 0 10px;
 
@@ -191,7 +191,7 @@ const MenuText = styled.div`
 `
 
 const MenuWrapper = styled.div`
-  width: 150px;
+  width: 100%;
 
   display: flex;
   justify-content: center;
@@ -202,4 +202,14 @@ const IconMenuContent = styled(Icon)`
   color: rgb(64, 169, 255);
   margin-right: 5px;
   cursor: pointer;
+`
+
+const MenuContentText = styled.div`
+  font-size: 18px;
+  color: rgb(64, 169, 255);
+  cursor: pointer;
+`
+
+const MenuContentContainer = styled.div`
+  width: 300px;
 `

@@ -2,11 +2,13 @@ import { authInitialProps } from '<utils>/auth'
 import { connect } from 'react-redux'
 import { GetNotification } from '<actions>'
 import { HomeComponent } from '<components>'
-import { Popover, Icon, Badge, Affix } from 'antd'
+import { Popover, Button, Icon, Badge, Affix } from 'antd'
 import styled from 'styled-components'
 import moment from 'moment'
 import Link from 'next/link'
 import Router from 'next/router'
+
+import { ImageProject } from '<components>'
 
 class Index extends React.PureComponent {
   componentWillMount() {
@@ -51,9 +53,26 @@ class Index extends React.PureComponent {
     )
   }
 
+  ComponentNotAuth() {
+    return (
+      <CenterContainer>
+        <ImageProject />
+        <NotAuthHome>
+          <ButtonWrapper onClick={() => Router.push('/login')}>
+            <div style={{ display: 'flex', alignItems: 'center', height: '100%', width: '100%' }}>
+              {/* <Link href={{ pathname: '/login' }} prefetch> */}
+              กรุณาเข้าสู่ระบบ
+              {/* </Link> */}
+            </div>
+          </ButtonWrapper>
+        </NotAuthHome>
+      </CenterContainer>
+    )
+  }
+
   render() {
     const { auth } = this.props
-    if (!auth) return <></>
+    if (!auth) return this.ComponentNotAuth()
     return (
       <Container>
         <HomeComponent />
@@ -103,4 +122,36 @@ const NotiContainer = styled.div`
 
 const Container = styled.div`
   width: 100%;
+`
+
+const CenterContainer = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  margin-top: 20px;
+`
+
+const ButtonWrapper = styled(Button)`
+  background-color: black;
+  color: white;
+  padding: 20px 100px;
+  @media (max-width: 576px) {
+    padding: 20px 50px;
+  }
+  border-radius: 5px;
+  :hover,
+  :active,
+  :visited {
+    background-color: black;
+    color: white;
+  }
+`
+
+const NotAuthHome = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 20px;
 `
