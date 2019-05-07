@@ -74,10 +74,10 @@ const Contanier = styled.div`
 `
 const LoginContainer = styled.div`
   @media (min-width: 0px) and (max-width: 1200px) {
-    width: 70%;
+    width: 60%;
   }
 
-  width: 50%;
+  width: 40%;
 `
 
 const FlexCenter = styled.div`
