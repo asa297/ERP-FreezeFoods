@@ -78,6 +78,6 @@ const LabelContainer = styled.label`
   }
 
   @media (min-width: 1600px) {
-    width: 10%;
+    width: 15%;
   }
 `
