@@ -5,63 +5,63 @@
       "sub": "manage",
       "type": "List",
       "page": "Category",
-      "role": [1]
+      "role": [1, 2]
     },
     {
       "path": "/item/list",
       "sub": "manage",
       "type": "List",
       "page": "Item",
-      "role": [1]
+      "role": [1, 2]
     },
     {
       "path": "/unit/list",
       "sub": "manage",
       "type": "List",
       "page": "Unit",
-      "role": [1]
+      "role": [1, 2]
     },
     {
       "path": "/contact/list",
       "sub": "manage",
       "type": "List",
       "page": "Contact",
-      "role": [1]
+      "role": [1, 2]
     },
     {
       "path": "/category/form",
       "sub": "manage",
       "type": "Form",
       "page": "Category",
-      "role": [1]
+      "role": [1, 2]
     },
     {
       "path": "/item/form",
       "sub": "manage",
       "type": "Form",
       "page": "Item",
-      "role": [1]
+      "role": [1, 2]
     },
     {
       "path": "/unit/form",
       "sub": "manage",
       "type": "Form",
       "page": "Unit",
-      "role": [1]
+      "role": [1, 2]
     },
     {
       "path": "/contact/form",
       "sub": "manage",
       "type": "Form",
       "page": "Contact",
-      "role": [1]
+      "role": [1, 2]
     },
     {
       "path": "/request/list",
       "sub": "document",
       "type": "List",
       "page": "Request",
-      "role": [1]
+      "role": [1, 2]
     },
     {
       "path": "/request/form",
@@ -75,56 +75,56 @@
       "sub": "document",
       "type": "List",
       "page": "Purchase",
-      "role": [1]
+      "role": [1, 2]
     },
     {
       "path": "/po/form",
       "sub": "document",
       "type": "Form",
       "page": "Purchase",
-      "role": [1]
+      "role": [1, 2]
     },
     {
       "path": "/rs/list",
       "sub": "document",
       "type": "List",
       "page": "ReceiveSuppier",
-      "role": [1]
+      "role": [1, 2, 3, 4]
     },
     {
       "path": "/rs/form",
       "sub": "document",
       "type": "Form",
       "page": "ReceiveSuppier",
-      "role": [1]
+      "role": [1, 2]
     },
     {
       "path": "/dn/list",
       "sub": "document",
       "type": "List",
       "page": "DeliveryNote",
-      "role": [1]
+      "role": [1, 2, 3]
     },
     {
       "path": "/dn/form",
       "sub": "document",
       "type": "Form",
       "page": "DeliveryNote",
-      "role": [1]
+      "role": [1, 2]
     },
     {
       "path": "/rn/list",
       "sub": "document",
       "type": "List",
       "page": "ReceiveNote",
-      "role": [1]
+      "role": [1, 2, 3]
     },
     {
       "path": "/rn/form",
       "sub": "document",
       "type": "Form",
       "page": "ReceiveNote",
-      "role": [1]
+      "role": [1, 2, 3]
     },
     {
       "path": "/report/expireitem",

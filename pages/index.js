@@ -58,7 +58,7 @@ class Index extends React.PureComponent {
     if (!auth) return <LoginForm />
     return (
       <Container>
-        <HomeComponent />
+        <HomeComponent auth={auth} />
         <Affix style={{ position: 'absolute', bottom: '30px', right: '30px' }}>
           <Popover content={this.NoticationContent()} title="การแจ้งเตือน" trigger="hover" placement="leftBottom">
             <Badge count={this.props.NotificationReducer.length}>
