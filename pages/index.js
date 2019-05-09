@@ -91,7 +91,8 @@ const NotiCard = styled.div`
 
 const NotiCover = styled.div`
   width: 20%;
-  background: #d9d9d9;
+  background-image: url(/static/images/icon.png);
+  background-size: 100% 100%;
 `
 
 const NotiText = styled.div`
