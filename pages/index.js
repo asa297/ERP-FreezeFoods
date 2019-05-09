@@ -101,6 +101,7 @@ const NotiText = styled.div`
 
 const NotiContainer = styled.div`
   height: 500px;
+  overflow-y: scroll;
 `
 
 const Container = styled.div`
